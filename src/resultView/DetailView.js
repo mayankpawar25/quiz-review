@@ -1,10 +1,5 @@
 import * as actionSDK from "@microsoft/m365-action-sdk";
 import { Localizer } from '../common/ActionSdkHelper';
-import { result } from "lodash";
-
-$(document).ready(function() {
-    OnPageLoad();
-});
 
 let actionContext = null;
 let actionInstance = null;
@@ -17,6 +12,8 @@ let myUserId = "";
 let score = 0;
 let total = 0;
 let answer_is = "";
+let request = new actionSDK.GetContext.Request();
+
 let dueByKey = '';
 let expiredOnKey = '';
 let correctKey = '';
@@ -24,9 +21,15 @@ let incorrectKey = '';
 let backKey = '';
 let youKey = '';
 
-let request = new actionSDK.GetContext.Request();
+/* Initiate Method */
+$(document).ready(function() {
+    OnPageLoad();
+});
+
+/* Calling method  for theme selection based on teams theme */
 getTheme(request);
 
+/* Async method for fetching localization strings */
 async function getStringKeys() {
     Localizer.getString('dueBy').then(function(result) {
         dueByKey = result;
@@ -60,15 +63,15 @@ async function getStringKeys() {
     });
 }
 
-
+/* 
+ * @desc Method to select theme based on the teams theme  
+ * @param request context request
+ */
 async function getTheme(request) {
     let response = await actionSDK.executeApi(request);
     let context = response.context;
-    console.log("getContext response: ");
-    console.log(JSON.stringify(context));
     $("form.section-1").show();
     var theme = context.theme;
-    console.log(`theme: ${context.theme}`);
     $("link#theme").attr("href", "css/style-" + theme + ".css");
     getStringKeys();
 
@@ -78,6 +81,7 @@ async function getTheme(request) {
 
 var root = document.getElementById("root");
 
+/* Method loads the landing page */
 function OnPageLoad() {
     actionSDK
         .executeApi(new actionSDK.GetContext.Request())
@@ -91,6 +95,10 @@ function OnPageLoad() {
         });
 }
 
+/* 
+ * @desc Method to get data rows  
+ * @param request context action id
+ */
 function getDataRows(actionId) {
     var getActionRequest = new actionSDK.GetAction.Request(actionId);
     var getSummaryRequest = new actionSDK.GetActionDataRowsSummary.Request(
@@ -115,10 +123,11 @@ function getDataRows(actionId) {
             createBody();
         })
         .catch(function(error) {
-            console.log("Console log: Error: " + JSON.stringify(error));
+            console.error("Console log: Error: " + JSON.stringify(error));
         });
 }
 
+/* Method for creating the response view structure and initialize value */
 async function createBody() {
     let getSubscriptionCount = "";
     $("#root").html("");
@@ -140,8 +149,6 @@ async function createBody() {
     participationPercentage = Math.round(
         (actionSummary.rowCreatorCount / memberCount) * 100
     );
-
-
     Localizer.getString('participation', participationPercentage).then(function(result) {
         $pcard.append(
             `<label><strong>${result}</strong></label><div class="progress mb-2"><div class="progress-bar bg-primary" role="progressbar" style="width: ${participationPercentage}%" aria-valuenow="${participationPercentage}" aria-valuemin="0" aria-valuemax="100"></div></div>`
@@ -152,24 +159,15 @@ async function createBody() {
         $pcard.append(`<p class="date-color cursur-pointer under-line md-0" id="show-responders">${xofy}</p>`);
     });
 
-
     $("#root").append($pcard);
-
     await getUserprofile();
-
-    console.log("ResponderDate: " + JSON.stringify(ResponderDate));
-
-    console.log(`actionContext: ${JSON.stringify(actionContext)}`);
     if (Object.keys(ResponderDate).length > 0) {
         ResponderDate.forEach((responder) => {
-            console.log('responder: ');
-            console.log(responder);
             if (responder.value2 == myUserId) {
                 createReponderQuestionView(myUserId, responder);
             }
         });
     } else {
-        console.log("actionNonResponders: " + JSON.stringify(actionNonResponders));
         actionNonResponders.forEach((nonresponders) => {
             if (nonresponders.value2 == myUserId) {
                 var name = nonresponders.label;
@@ -192,6 +190,7 @@ async function createBody() {
     return true;
 }
 
+/* Method for creating head section for title, progress bar, dueby */
 function head() {
     var title = actionInstance.displayName;
     var description = actionInstance.customProperties[0]["value"];
@@ -208,11 +207,10 @@ function head() {
     $card.append($title_sec);
     $card.append($description_sec);
     $card.append($date_sec);
-    // $card.append("<hr>");
-
     $("#root").append($card);
 }
 
+/* Method for fetch responder user details */
 async function getUserprofile() {
     let memberIds = [];
     ResponderDate = [];
@@ -220,20 +218,12 @@ async function getUserprofile() {
     if (actionDataRowsLength > 0) {
         for (let i = 0; i < actionDataRowsLength; i++) {
             memberIds.push(actionDataRows[i].creatorId);
-            console.log("memberIds" + JSON.stringify(memberIds));
-
             let requestResponders = new actionSDK.GetSubscriptionMembers.Request(
                 actionContext.subscription, [actionDataRows[i].creatorId]
             ); // ids of responders
 
             let responseResponders = await actionSDK.executeApi(requestResponders);
-
-            // console.log("requestResponders: " + JSON.stringify(requestResponders));
-            // console.log("responseResponders: " + JSON.stringify(responseResponders));
-            // return true;
-
             let perUserProfile = responseResponders.members;
-            // console.log("perUserProfile: " + perUserProfile);
             ResponderDate.push({
                 label: perUserProfile[0].displayName,
                 value: new Date(actionDataRows[i].updateTime).toDateString(),
@@ -243,17 +233,12 @@ async function getUserprofile() {
     }
 
     myUserId = actionContext.userId;
-    // console.log(myUserId);
     let requestNonResponders = new actionSDK.GetActionSubscriptionNonParticipants.Request(
         actionContext.actionId,
         actionContext.subscription.id
     );
     let responseNonResponders = await actionSDK.executeApi(requestNonResponders);
     let tempresponse = responseNonResponders.nonParticipants;
-    console.log(
-        "responseNonResponders: " + JSON.stringify(responseNonResponders)
-    );
-    console.log("tempresponse: " + JSON.stringify(tempresponse));
     if (tempresponse != null) {
         for (let i = 0; i < tempresponse.length; i++) {
             actionNonResponders.push({
@@ -262,9 +247,9 @@ async function getUserprofile() {
             });
         }
     }
-    console.log("actionNonResponders:" + JSON.stringify(actionNonResponders));
 }
 
+/* Method for fetch list of responders */
 function getResponders() {
     $("table#responder-table tbody").html("");
 
@@ -308,6 +293,7 @@ function getResponders() {
     }
 }
 
+/* Method for fetch list of non-responders in the channel */
 function getNonresponders() {
     $("table#non-responder-table tbody").html("");
 
@@ -338,17 +324,11 @@ function getNonresponders() {
     }
 }
 
+/* Click evet fetching result of responders */
 $(document).on("click", ".getresult", function() {
     var userId = $(this).attr("id");
-    console.log(userId);
-
-    console.log("actionInstance: " + JSON.stringify(actionInstance));
-    console.log("actionSummary: " + JSON.stringify(actionSummary));
-    console.log("actionDataRows: " + JSON.stringify(actionDataRows));
-
     $("#root").html("");
     head();
-    // var question_content = $('.question-content').clone();
     $("#root").append($(".question-content").clone());
     createQuestionView(userId);
 
@@ -359,6 +339,11 @@ $(document).on("click", ".getresult", function() {
     }
 });
 
+/* 
+ * @desc Method to creat4e responder correct and incorrect quiz responses  
+ * @param userId contains user id for identifications
+ * @param responder contains responders
+ */
 function createReponderQuestionView(userId, responder = '') {
     total = 0;
     score = 0;
@@ -382,9 +367,6 @@ function createReponderQuestionView(userId, responder = '') {
     }
 
     actionInstance.dataTables.forEach((dataTable) => {
-        // var $linebreak = $("<br>");
-        // $qDiv.append($linebreak);
-
         total = Object.keys(dataTable.dataColumns).length;
 
         dataTable.dataColumns.forEach((question, ind) => {
@@ -396,11 +378,8 @@ function createReponderQuestionView(userId, responder = '') {
             $cardDiv.append($rowdDiv);
             $rowdDiv.append($qDiv);
             $cardDiv.append($dflexDiv);
-
             var count = ind + 1;
             var $questionHeading = $("<label></label>");
-            console.log("question: " + JSON.stringify(question));
-
             $questionHeading.append(
                 "<strong>" + count + ". " + question.displayName + "</strong>"
             );
@@ -421,34 +400,23 @@ function createReponderQuestionView(userId, responder = '') {
                         var userResponseLength = Object.keys(userResponse).length;
 
                         for (var j = 1; j <= userResponseLength; j++) {
-                            // console.log('isJson(userResponse[' + j + '])' + isJson(userResponse[j]));
                             if (isJson(userResponse[j])) {
                                 var userResponseAns = JSON.parse(userResponse[j]);
                                 var userResponseAnsLen = userResponseAns.length;
-                                // console.log('userResponseAns: ' + JSON.stringify(userResponseAns));
-                                // console.log('userResponseAnsLen: ' + userResponseAnsLen);
                                 if (userResponseAnsLen > 1) {
-                                    console.log("here if block");
                                     for (var k = 0; k < userResponseAnsLen; k++) {
-                                        console.log("userResponseAns[k]" + userResponseAns[k]);
                                         if (userResponseAns[k] == option.name) {
                                             userResponseAnswer = userResponseAns[k];
-                                            // console.log('if userResponseAnswer' + k + ': ' + JSON.stringify(userResponseAnswer));
                                         } else {
                                             continue;
                                         }
                                     }
                                 } else {
                                     userResponseAnswer = userResponseAns;
-                                    // console.log('userResponseAnswer: ' + userResponseAnswer);
                                 }
                             } else {
-                                console.log(
-                                    "Else: userResponseAns - " + JSON.stringify(userResponse)
-                                );
                                 if (userResponse[j] == option.name) {
                                     userResponseAnswer = userResponse[j];
-                                    // console.log('userResponseAnswer: ' + userResponseAnswer);
                                 }
                             }
                         }
@@ -462,16 +430,10 @@ function createReponderQuestionView(userId, responder = '') {
                 var correctResponseLength = Object.keys(correctResponse).length;
                 var correctAnswer = "";
                 for (let j = 0; j < correctResponseLength; j++) {
-                    console.log("correctResponse: " + JSON.stringify(correctResponse[j]));
-
                     var correctResponseAns = correctResponse[j];
-                    console.log(
-                        "correctResponseAns: " + JSON.stringify(correctResponseAns)
-                    );
                     var correctResponseAnsLen = correctResponseAns.length;
                     for (let k = 0; k < correctResponseAnsLen; k++) {
                         if (correctResponseAns[k] == option.name) {
-                            console.log("correctAnswer: " + JSON.stringify(correctAnswer));
                             correctAnswer = correctResponseAns[k];
                         }
                     }
@@ -484,11 +446,7 @@ function createReponderQuestionView(userId, responder = '') {
                     userResponseAnswer,
                     correctAnswer
                 );
-                console.log($radioOption);
                 $cardDiv.append($radioOption);
-
-                // console.log("name: " + "#status-" + question.name);
-                console.log("answer_is: " + JSON.stringify(answer_is));
                 $cardDiv.find("#status-" + question.name).html(`<span class="${answer_is == 'Correct' ? 'text-success' : 'text-danger'}">${answer_is == 'Correct' ? correctKey : incorrectKey}</span>`);
             });
 
@@ -496,13 +454,9 @@ function createReponderQuestionView(userId, responder = '') {
                 score++;
             }
             $("#root").append($cardDiv);
-            console.log(`question: ${question}`);
         });
     });
     $("#root").append('<div class="ht-100"></div>');
-
-    console.log(`score: `);
-    console.log(`${score} / ${total}`)
     var scorePercentage = Math.round((score / total) * 100);
 
     Localizer.getString("score", ":").then(function(result) {
@@ -510,26 +464,24 @@ function createReponderQuestionView(userId, responder = '') {
     });
 }
 
+/* 
+ * @desc Method for Question view based on user id  
+ * @param user id String contains userId
+ */
 function createQuestionView(userId) {
     total = 0;
     score = 0;
     $("div#root > div.question-content").html("");
 
-    // console.log(JSON.stringify(actionInstance));
     actionInstance.dataTables.forEach((dataTable) => {
-        // var $linebreak = $("<br>");
-        // $qDiv.append($linebreak);
         total = Object.keys(dataTable.dataColumns).length;
-
         dataTable.dataColumns.forEach((question, ind) => {
             answer_is = "";
-
             var $cardDiv = $('<div class="card-box card-blank bt"></div>');
             var $rowdDiv = $('<div class="row"></div>');
             var $qDiv = $('<div class="col-sm-12"></div>');
             $cardDiv.append($rowdDiv);
             $rowdDiv.append($qDiv);
-
             var count = ind + 1;
             var $questionHeading = $("<label></label>");
             $questionHeading.append(
@@ -540,52 +492,38 @@ function createQuestionView(userId) {
             $cardDiv.append(
                 '<label class="float-right" id="status-' + question.name + '"></label>'
             );
-
             question.options.forEach((option) => {
                 /* User Responded */
                 var userResponse = [];
                 var userResponseAnswer = "";
-
                 for (let i = 0; i < actionDataRowsLength; i++) {
                     if (actionDataRows[i].creatorId == userId) {
                         userResponse = actionDataRows[i].columnValues;
                         var userResponseLength = Object.keys(userResponse).length;
 
                         for (var j = 1; j <= userResponseLength; j++) {
-                            // console.log('isJson(userResponse[' + j + '])' + isJson(userResponse[j]));
                             if (isJson(userResponse[j])) {
                                 var userResponseAns = JSON.parse(userResponse[j]);
                                 var userResponseAnsLen = userResponseAns.length;
-                                // console.log('userResponseAns: ' + JSON.stringify(userResponseAns));
-                                // console.log('userResponseAnsLen: ' + userResponseAnsLen);
                                 if (userResponseAnsLen > 1) {
-                                    console.log("here if block");
                                     for (var k = 0; k < userResponseAnsLen; k++) {
-                                        console.log("userResponseAns[k]" + userResponseAns[k]);
                                         if (userResponseAns[k] == option.name) {
                                             userResponseAnswer = userResponseAns[k];
-                                            // console.log('if userResponseAnswer' + k + ': ' + JSON.stringify(userResponseAnswer));
                                         } else {
                                             continue;
                                         }
                                     }
                                 } else {
                                     userResponseAnswer = userResponseAns;
-                                    // console.log('userResponseAnswer: ' + userResponseAnswer);
                                 }
                             } else {
-                                console.log(
-                                    "Else: userResponseAns - " + JSON.stringify(userResponse)
-                                );
                                 if (userResponse[j] == option.name) {
                                     userResponseAnswer = userResponse[j];
-                                    // console.log('userResponseAnswer: ' + userResponseAnswer);
                                 }
                             }
                         }
                     }
                 }
-
                 /* Correct Answer */
                 var correctResponse = JSON.parse(
                     actionInstance.customProperties[4].value
@@ -593,16 +531,10 @@ function createQuestionView(userId) {
                 var correctResponseLength = Object.keys(correctResponse).length;
                 var correctAnswer = "";
                 for (let j = 0; j < correctResponseLength; j++) {
-                    console.log("correctResponse: " + JSON.stringify(correctResponse[j]));
-
                     var correctResponseAns = correctResponse[j];
-                    console.log(
-                        "correctResponseAns: " + JSON.stringify(correctResponseAns)
-                    );
                     var correctResponseAnsLen = correctResponseAns.length;
                     for (let k = 0; k < correctResponseAnsLen; k++) {
                         if (correctResponseAns[k] == option.name) {
-                            console.log("correctAnswer: " + JSON.stringify(correctAnswer));
                             correctAnswer = correctResponseAns[k];
                         }
                     }
@@ -615,7 +547,6 @@ function createQuestionView(userId) {
                     userResponseAnswer,
                     correctAnswer
                 );
-                console.log($radioOption);
                 $cardDiv.append($radioOption);
                 $cardDiv.find("#status-" + question.name).html(`<span class="${answer_is == 'Correct' ? 'text-success' : 'text-danger'}">${answer_is}</span>`);
 
@@ -630,8 +561,6 @@ function createQuestionView(userId) {
     });
     $("div.question-content:first").append('<div class="ht-100"></div>');
 
-    console.log(`score: `);
-    console.log(`${score} / ${total}`);
     var scorePercentage = Math.round((score / total) * 100);
 
     Localizer.getString("score", ":").then(function(result) {
@@ -639,10 +568,15 @@ function createQuestionView(userId) {
     });
 }
 
+/* 
+ * @desc Method for Question view based on user id  
+ * @param text String contains correct and incorrect message
+ * @param name String contains option name
+ * @param id String contains option id
+ * @param userResponse String contains user response data
+ * @param correctAnswer String contains correct answer 
+ */
 function getOptions(text, name, id, userResponse, correctAnswer) {
-    console.log(
-        text + ", " + name + ", " + id + ", " + userResponse + ", " + correctAnswer
-    );
     var $oDiv = $('<div class="form-group"></div>');
     /*  If answer is correct  and answered */
     if ($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) == $.trim(id)) {
@@ -680,6 +614,10 @@ function getOptions(text, name, id, userResponse, correctAnswer) {
     return $oDiv;
 }
 
+/* 
+ * @desc Method to return the input is json object   
+ * @param str object contains json values
+ */
 function isJson(str) {
     try {
         JSON.parse(str);
@@ -689,6 +627,10 @@ function isJson(str) {
     return true;
 }
 
+/* 
+ * @desc Method for creating footer based on user id  
+ * @param userId String contains user identifier to load footer based on that
+ */
 function footer(userId) {
     $("div.question-content").append(`
         <div class="footer">
@@ -712,6 +654,7 @@ function footer(userId) {
         </div>`);
 }
 
+/* Method for footer for return back to landing page  */
 function footer1() {
     $("#root > div.card-box").append(
         `<div class="footer">
@@ -736,6 +679,7 @@ function footer1() {
     );
 }
 
+/* Method for footer for return back for internal pages  */
 function footer2() {
     $("div.question-content").append(
         `<div class="footer">
@@ -760,19 +704,23 @@ function footer2() {
     );
 }
 
+/* Click Event for rerender the landing page  */
 $(document).on("click", ".back", function() {
     createBody();
 });
 
+/* Click Event for back to responder and non responder page */
 $(document).on("click", ".back1", function() {
     var userId = $(this).attr("userid-data");
     create_responder_nonresponders();
 });
 
+/* Click Event for responder page */
 $(document).on("click", "#show-responders", function() {
     create_responder_nonresponders();
 });
 
+/* Click Event for non responder page */
 function create_responder_nonresponders() {
     if (actionInstance.customProperties[2].value == "Only me") {
         if (actionContext.userId == actionInstance.creatorId) {

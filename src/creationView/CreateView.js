@@ -65,7 +65,7 @@ $(document).on("click", "#add-questions", function() {
     $('.choice-label').text(choicesKey);
     $('.check-me').text(checkMeKey);
     $('.check-me-title').attr({ "title": checkMeKey });
-    $('.add-options').html(` <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt tc gv">
+    $('.add-options').html(`<svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt tc gv">
         <path class="ui-icon__outline cc" d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
         </path>
         <path class="ui-icon__filled gr" d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
@@ -494,7 +494,7 @@ $(document).ready(function() {
     getTheme(request);
 });
 
-/* Asyn method for fetching localization strings */
+/* Async method for fetching localization strings */
 async function getStringKeys() {
     Localizer.getString('quizTitle').then(function(result) {
         $('#quiz-title').attr({ 'placeholder': result });
@@ -518,12 +518,13 @@ async function getStringKeys() {
     });
 
     Localizer.getString('addMoreOptions').then(function(result) {
+        addMoreOptionsKey = result;
         $('.add-options').html(`<svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt tc gv">
-        <path class="ui-icon__outline cc" d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
-        </path>
-        <path class="ui-icon__filled gr" d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
-        </path>
-    </svg> ${result}`);
+            <path class="ui-icon__outline cc" d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
+            </path>
+            <path class="ui-icon__filled gr" d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
+            </path>
+        </svg> ${addMoreOptionsKey}`);
     });
 
     Localizer.getString('choices').then(function(result) {
@@ -593,7 +594,6 @@ async function getStringKeys() {
         answerCannotChangeKey = result;
         $('.answer-cannot-change-key').text(answerCannotChangeKey);
     });
-
 }
 
 /* 
@@ -620,14 +620,16 @@ async function getTheme(request) {
 
     question_section = $("#question-section div.container").clone();
     opt = $("div#option-section .option-div").clone();
+    let week_date_format;
+    let current_time;
 
     /* If Edit back the quiz */
     if (lastSession != null) {
         let ddtt = ((lastSession.action.customProperties[1].value).split('T'));
         let dt = ddtt[0].split('-');
-        let week_date_format = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
+        week_date_format = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
         let tt_time = (ddtt[1].split('Z')[0]).split(':');
-        let current_time = `${tt_time[0]}:${tt_time[1]}`;
+        current_time = `${tt_time[0]}:${tt_time[1]}`;
 
         if (lastSession.action.customProperties[2].value == 'Everyone') {
             $('input[name="visible_to"][value="Everyone"]').prop("checked", true);
@@ -667,9 +669,9 @@ async function getTheme(request) {
         let week_month = new Date(week_date).toLocaleString('default', { month: 'short' });
         let week_d = new Date(week_date).getDate();
         let week_year = new Date(week_date).getFullYear();
-        let week_date_format = week_month + " " + week_d + ", " + week_year;
+        week_date_format = week_month + " " + week_d + ", " + week_year;
 
-        let current_time = (("0" + new Date().getHours()).substr(-2)) + ":" + (("0" + new Date().getMinutes()).substr(-2));
+        current_time = (("0" + new Date().getHours()).substr(-2)) + ":" + (("0" + new Date().getMinutes()).substr(-2));
     }
 
     let today = new Date()
