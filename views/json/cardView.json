@@ -23,7 +23,7 @@
             {
                 "id": "ResultVisibility",
                 "type": "TextBlock",
-                "text": "${if(equals(action.dataTables[0].rowsVisibility, 'All'), strings.result_everyone, strings.result_creator)}",
+                "text": "${if(equals(action.customProperties[2].value, 'Everyone'), strings.result_everyone, strings.result_creator)}",
                 "maxLines": 2,
                 "wrap": true,
                 "isSubtle": true,
@@ -36,7 +36,7 @@
                 "style": "emphasis",
                 "items": [{
                     "type": "TextBlock",
-                    "text": "${formatString(strings.question_numbers, count(action.dataTables[0].dataColumns))}",
+                    "text": "${formatString(strings.totalQuestionQuiz, count(action.dataTables[0].dataColumns), if(count(action.dataTables[0].dataColumns) > 1, strings.questions, strings.question ))}",
                     "size": "medium",
                     "wrap": true,
                     "spacing": "medium"

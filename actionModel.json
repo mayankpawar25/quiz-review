@@ -5,7 +5,7 @@
     "dataTables": {
         "canAddMore": false,
         "values": [{
-            "name": "PollDataTable",
+            "name": "QuizDataTable",
             "dataColumns": {
                 "canAddMore": true
             }
