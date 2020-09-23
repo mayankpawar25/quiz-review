@@ -466,7 +466,7 @@ a.theme-color:hover {
     text-decoration: none;
 }
 
-.cursur-pointer {
+.cursor-pointer {
     cursor: pointer;
 }
 
@@ -627,8 +627,8 @@ a#back-setting svg {
     position: absolute;
     top: 3px;
     left: 0;
-    height: 14px;
-    width: 14px;
+    height: 12px;
+    width: 12px;
     background-color: transparent;
     border-radius: 50%;
     border: 1px solid var(--app-black);
@@ -638,12 +638,20 @@ a#back-setting svg {
     background-color: var(--app-white);
 }
 
+.custom-radio:hover input~span {
+    color: var(--app-black-hover);
+}
+
 .custom-radio:focus input~.radio-block {
     box-shadow: 0px 0px 1px 1px var(--main-bg-color);
 }
 
 .custom-radio input:checked~.radio-block {
     background-color: var(--main-bg-color);
+}
+
+.custom-radio input:checked~span {
+    color: var(--app-black-hover);
 }
 
 .custom-radio:after {
@@ -1311,7 +1319,8 @@ body {
     padding: 0.25rem;
     background: var(--app-gray-08) none repeat scroll 0% 0%;
     color: var(--app-white);
-    border: 1px solid var(--app-gray-06) text-align: left;
+    border: 1px solid var(--app-gray-06);
+    text-align: left;
 }
 
 .tooltip.show {
@@ -1320,10 +1329,21 @@ body {
 
 .bs-tooltip-auto[x-placement^=bottom] .arrow::before,
 .bs-tooltip-bottom .arrow::before {
-    border-bottom-color: var(--app-gray-06)
-    /* Red */
+    border-bottom-color: var(--app-gray-06);
 }
 
 .pr-35 {
     padding-right: 35px;
+}
+
+.input-group.date.form_date {
+    margin-bottom: 24px;
+}
+
+.hide {
+    display: none;
+}
+
+.setting-section .custom-radio-outer:last-child {
+    margin-bottom: 24px;
 }
