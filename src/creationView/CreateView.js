@@ -1,12 +1,11 @@
 import * as actionSDK from "@microsoft/m365-action-sdk";
-import { Localizer } from '../common/ActionSdkHelper';
+import { Localizer, ActionHelper } from '../common/ActionSdkHelper';
 
 let request;
 let questionCount = 0;
 let questions = new Array();
-let validate = true;
-let setting_text = '';
-let question_section = '';
+let settingText = '';
+let questionSection = '';
 let opt = '';
 let lastSession = '';
 
@@ -27,26 +26,46 @@ let everyoneKey = '';
 let onlyMeKey = '';
 let showCorrectAnswerKey = '';
 let answerCannotChangeKey = '';
+let invalidDateTimeKey = '';
+let sureDeleteThisKey = '';
+let okKey = '';
+let cancelKey = '';
+let forQuizAtleastOneQuestionKey = '';
+let maxTenOptionKey = '';
+let atLeastTwoOptionsRequiredKey = '';
+let questionLeftBlankKey = '';
+let selectCorrectChoiceKey = '';
+let addQuestionKey = '';
+let uploadCoverImageKey = '';
 
-/* Click Event for add the Question */
+/** 
+ * @event Click for add Question Section
+ */
 $(document).on("click", "#add-questions", function() {
-    let question_counter;
-    $(this).parents("div.container").before(question_section.clone());
+    let questionCounter;
+    $(this).parents("div.container").before(questionSection.clone());
+
+    Localizer.getString('option', '').then(function(result) {
+        $('.opt-cls').attr('placeholder', result)
+    });
 
     $("div.container").each(function(ind, el) {
         $(el).find('div.option-div > div.input-group > input[type="text"]')
             .each(function(index, elem) {
                 let counter = index + 1;
-                Localizer.getString('option', counter).then(function(result) {
-                    $(elem).attr({
-                        placeholder: result,
-                    });
-                    $(elem).attr({ id: "option" + counter });
-                    $(elem)
-                        .parents(".option-div")
-                        .find("input.form-check-input")
-                        .attr({ id: "check" + counter });
+                $(elem).attr({
+                    placeholder: optionKey,
                 });
+                $(elem).attr({ id: "option" + counter });
+                $(elem)
+                    .parents(".option-div")
+                    .find("input[type='file']")
+                    .attr({ id: "option-image-" + counter });
+                $(elem)
+                    .parents(".option-div")
+                    .find("input.form-check-input")
+                    .attr({ id: "check" + counter });
+
             });
     });
 
@@ -55,14 +74,14 @@ $(document).on("click", "#add-questions", function() {
     });
 
     $("div.question-container:visible").each(function(index, elem) {
-        question_counter = index + 1;
+        questionCounter = index + 1;
         $(elem)
             .find("span.question-number")
-            .text(question_counter + ".");
-        $(elem).attr({ id: "question" + question_counter });
+            .text('Question # ' + questionCounter);
+        $(elem).find('input[name="question_image"]').attr({ id: "question-image-" + questionCounter });
+        $(elem).attr({ id: "question" + questionCounter });
     });
     questionCount++;
-    $('.choice-label').text(choicesKey);
     $('.check-me').text(checkMeKey);
     $('.check-me-title').attr({ "title": checkMeKey });
     $('.add-options').html(`<svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt tc gv">
@@ -74,79 +93,79 @@ $(document).on("click", "#add-questions", function() {
 
 });
 
-/* Click Event for remove the Question */
+/**
+ * @event Click for cancel button on confirm box of question deletion
+ */
+$(document).on('click', '.cancel-question-delete', function() {
+    $(this).parents('.question-container').find('.add-options').show();
+    $(this).parents('.confirm-box').remove();
+})
+
+/**
+ * @event Click for remove the Question from the section-2
+ */
 $(document).on("click", ".remove-question", function() {
     let element = $(this);
+    $(this).parents('.question-container').find('.confirm-box').remove();
+    $(this).parents('.question-container').find('.question-required-err').remove();
+
     if ($("div.question-container:visible").length > 1) {
-        $("#exampleModalCenter")
-            .find("#exampleModalLongTitle")
-            .html('<svg viewBox="-40 0 427 427.00131" xmlns="http://www.w3.org/2000/svg" class="gt gs mt--4">< path d = "m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" ></path ><path d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"></path><path d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0"></path><path d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0"></path></svg > Delete?');
-        $("#exampleModalCenter")
-            .find(".modal-body")
-            .html("Are you sure you want to delete?");
-        $("#exampleModalCenter")
-            .find(".modal-footer")
-            .html(
-                '<button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Close</button><button type="button" class="btn btn-primary" id="delete-question">Ok</button>'
-            );
-        $("#exampleModalCenter").modal("show");
+        $(this).parents('.question-container').find('.add-options').hide();
+        $(this).parents('.question-container').find('.form-group-opt').after(`
+            <div class="confirm-box">
+                <div class="clearfix"></div>
+                <div class="d-flex-alert  mb--8">
+                    <div class="pr--8">
+                        <label class="confirm-box text-danger"> ${sureDeleteThisKey} </label>
+                    </div>
+                    <div class="pl--8 text-right">
+                        <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">${cancelKey}</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="delete-question">${okKey}</button>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $(this).parents('.question-container').find(".confirm-box").offset().top - 200
+        }, 1000);
+
+        $(this).parents('.question-container').find(".confirm-box #delete-question").focus();
 
         $(document).on("click", "#delete-question", function() {
-            $("#exampleModalCenter").modal("hide");
-
-            element.parents("div.question-container").remove();
-            let question_counter;
+            $(this).parents("div.question-container").remove();
+            let questionCounter;
             $("div.question-container:visible").each(function(index, elem) {
-                question_counter = index + 1;
-                $(elem).find("span.question-number").text(question_counter);
-                $(elem).attr({ id: "question" + question_counter });
+                questionCounter = index + 1;
+                $(elem).find("span.question-number").text('Question # ' + questionCounter);
+                $(elem).find('input[name="question_image"]').attr({ id: "question-image-" + questionCounter });
+                $(elem).attr({ id: "question" + questionCounter });
             });
         });
     } else {
-        $("#exampleModalCenter")
-            .find("#exampleModalLongTitle")
-            .html('<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="gt gs mt--4"><g><g><g><path d="M507.113,428.415L287.215,47.541c-6.515-11.285-18.184-18.022-31.215-18.022c-13.031,0-24.7,6.737-31.215,18.022L4.887,428.415c-6.516,11.285-6.516,24.76,0,36.044c6.515,11.285,18.184,18.022,31.215,18.022h439.796c13.031,0,24.7-6.737,31.215-18.022C513.629,453.175,513.629,439.7,507.113,428.415z M481.101,449.441c-0.647,1.122-2.186,3.004-5.202,3.004H36.102c-3.018,0-4.556-1.881-5.202-3.004c-0.647-1.121-1.509-3.394,0-6.007L250.797,62.559c1.509-2.613,3.907-3.004,5.202-3.004c1.296,0,3.694,0.39,5.202,3.004L481.1,443.434C482.61,446.047,481.748,448.32,481.101,449.441z"/><rect x="240.987" y="166.095" width="30.037" height="160.197" /><circle cx="256.005" cy="376.354" r="20.025" /></g></g></g > <g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg > Notice!');
-        $("#exampleModalCenter")
-            .find(".modal-body")
-            .html("For quiz atleast one question is required.");
-        $("#exampleModalCenter")
-            .find(".modal-footer")
-            .html(
-                '<button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Close</button>'
-            );
-        $("#exampleModalCenter").modal("show");
+        $(this).parents('div.question-container')
+            .find("div.input-group:first")
+            .before(`<label class="label-alert d-block question-required-err"><font>${forQuizAtleastOneQuestionKey}</font></label>`);
+
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $(".label-alert.d-block:first").offset().top - 200
+        }, 2000);
     }
 });
 
-/* Click Event for add the Option */
+/** 
+ * @event Click to add the Option under question
+ */
 $(document).on("click", ".add-options", function() {
-    if ($(this).parents("div.container").find("div.option-div > div.input-group > input[type='text']").length >= 10) {
-        $("#exampleModalCenter")
-            .find("#exampleModalLongTitle")
-            .html(`<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="gt gs mt--4">
-                <g>
-                    <g>
-                        <g>
-                            <path d="M507.113,428.415L287.215,47.541c-6.515-11.285-18.184-18.022-31.215-18.022c-13.031,0-24.7,6.737-31.215,18.022
-                                L4.887,428.415c-6.516,11.285-6.516,24.76,0,36.044c6.515,11.285,18.184,18.022,31.215,18.022h439.796
-                                c13.031,0,24.7-6.737,31.215-18.022C513.629,453.175,513.629,439.7,507.113,428.415z M481.101,449.441
-                                c-0.647,1.122-2.186,3.004-5.202,3.004H36.102c-3.018,0-4.556-1.881-5.202-3.004c-0.647-1.121-1.509-3.394,0-6.007
-                                L250.797,62.559c1.509-2.613,3.907-3.004,5.202-3.004c1.296,0,3.694,0.39,5.202,3.004L481.1,443.434
-                                C482.61,446.047,481.748,448.32,481.101,449.441z"/>
-                            <rect x="240.987" y="166.095" width="30.037" height="160.197"/>
-                            <circle cx="256.005" cy="376.354" r="20.025"/>
-                        </g>
-                    </g>
-                </g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg> Notice!`);
-        $("#exampleModalCenter")
-            .find(".modal-body")
-            .html("Maximum 10 options allowed for a Question");
-        $("#exampleModalCenter")
-            .find(".modal-footer")
-            .html(
-                '<button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Close</button>'
-            );
-        $("#exampleModalCenter").modal("show");
+    if ($(this).parents("div#options").find("div.option-div input[type='text'][id^=option]").length >= 10) {
+        $(this).parents('.question-container').find('.add-options').hide();
+        $(this).parents('.question-container').find('.add-options').after(`
+            <div class="max-option-err-box"> ${maxTenOptionKey} </div>
+        `);
+
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $(this).parents('.question-container').find(".max-option-err-box").offset().top - 200
+        }, 1000);
         return false;
     }
     $(this).parents(".container").find("div.option-div:last").after(opt.clone());
@@ -156,25 +175,36 @@ $(document).on("click", ".add-options", function() {
         .find('div.option-div div.input-group input[type="text"]')
         .each(function(index, elem) {
             let counter = index + 1;
-            Localizer.getString('option', counter).then(function(result) {
-
-                $(elem).attr({
-                    placeholder: result,
-                });
-                $(elem).attr({ id: "option" + counter });
-                $(elem)
-                    .parents(".option-div")
-                    .find("input.form-check-input")
-                    .attr({ id: "check" + counter });
+            $(elem).attr({
+                placeholder: optionKey,
             });
+            $(elem).attr({ id: "option" + counter });
+            $(elem)
+                .parents(".option-div")
+                .find("input[type='file']")
+                .attr({ id: "option-image-" + counter });
+            $(elem)
+                .parents(".option-div")
+                .find("input.form-check-input")
+                .attr({ id: "check" + counter });
         });
     $('.check-me').text(checkMeKey);
     $('.check-me-title').attr({ "title": checkMeKey });
 
 });
 
-/* Click Event for remove the Option */
+/** 
+ * Click Event for remove the Option
+ */
 $(document).on("click", ".remove-option", function(eve) {
+    $(this).parents("div.question-container").find('.option-required-err').remove();
+
+    /* Remove Error Message and show add option button */
+    if ($(this).parents('.question-container').find('.max-option-err-box').length > 0) {
+        $(this).parents('.question-container').find('.max-option-err-box').remove();
+        $(this).parents('.question-container').find('.add-options').show();
+    }
+
     if ($(this).parents("div.question-container").find("div.option-div").length > 2) {
         let selector = $(this).closest("div.container");
         $(this).parents("div.option-div").remove();
@@ -183,66 +213,267 @@ $(document).on("click", ".remove-option", function(eve) {
             .find('div.option-div div.input-group input[type="text"]')
             .each(function(index, elem) {
                 let counter = index + 1;
-                Localizer.getString('option', counter).then(function(result) {
-                    $(elem).attr({
-                        placeholder: result,
-                    });
-                    $(elem).attr({ id: "option" + counter });
-                    $(elem)
-                        .parents(".option-div")
-                        .find("input.form-check-input")
-                        .attr({ id: "check" + counter });
+                $(elem).attr({
+                    placeholder: optionKey,
                 });
+                $(elem).attr({ id: "option" + counter });
+                $(elem)
+                    .parents(".option-div")
+                    .find("input[type='file']")
+                    .attr({ id: "option-image-" + counter });
+                $(elem)
+                    .parents(".option-div")
+                    .find("input.form-check-input")
+                    .attr({ id: "check" + counter });
             });
 
     } else {
-        $("#exampleModalCenter")
-            .find("#exampleModalLongTitle")
-            .html(`<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="gt gs mt--4">
-<g>
-	<g>
-		<g>
-			<path d="M507.113,428.415L287.215,47.541c-6.515-11.285-18.184-18.022-31.215-18.022c-13.031,0-24.7,6.737-31.215,18.022
-				L4.887,428.415c-6.516,11.285-6.516,24.76,0,36.044c6.515,11.285,18.184,18.022,31.215,18.022h439.796
-				c13.031,0,24.7-6.737,31.215-18.022C513.629,453.175,513.629,439.7,507.113,428.415z M481.101,449.441
-				c-0.647,1.122-2.186,3.004-5.202,3.004H36.102c-3.018,0-4.556-1.881-5.202-3.004c-0.647-1.121-1.509-3.394,0-6.007
-				L250.797,62.559c1.509-2.613,3.907-3.004,5.202-3.004c1.296,0,3.694,0.39,5.202,3.004L481.1,443.434
-				C482.61,446.047,481.748,448.32,481.101,449.441z"/>
-			<rect x="240.987" y="166.095" width="30.037" height="160.197"/>
-			<circle cx="256.005" cy="376.354" r="20.025"/>
-		</g>
-	</g>
-</g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg> Notice!`);
-        $("#exampleModalCenter")
-            .find(".modal-body")
-            .html("At least 2 options required for a Question.");
-        $("#exampleModalCenter")
-            .find(".modal-footer")
-            .html(
-                '<button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Close</button>'
-            );
-        $("#exampleModalCenter").modal("show");
+        $(this).parents('div.question-container')
+            .find("div.form-group-opt:first")
+            .after(`
+                <div class="clearfix"></div>
+                <label class="label-alert d-block option-required-err text-left pull-left mt--8 mb--16">
+                    <font>${atLeastTwoOptionsRequiredKey}</font>
+                </label>
+                <div class="clearfix"></div>
+            `);
+
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $(".label-alert.d-block:first").offset().top
+        }, 2000);
     }
 });
 
-/* Click Event for show setting page */
+/**
+ * Click Event for show setting page
+ */
 $(document).on("click", ".show-setting", function() {
     $(".section-1").hide();
     $(".section-1-footer").hide();
     $("form #setting").show();
 });
 
-/* Click Event for Submit Quiz */
+/**
+ * Click Event for Submit Quiz
+ */
 $(document).on("click", "#submit", function() {
     $("#submit").prop('disabled', true);
     submitForm();
 });
 
-/* Method for quiz data and submit the datas */
+/**
+ * Change Event on quiz title
+ */
+$(document).on("change", "#quiz-title", function() {
+    if ($('#quiz-title').val().length > 0) {
+        $('#next').prop('disabled', false);
+        $(this).parents('.form-group').find('.label-alert.d-block:first').remove();
+        $(this).removeClass('danger');
+    }
+});
+
+/**
+ * Event when click on clear button on training section
+ */
+$(document).on('click', '.quiz-clear', function() {
+    $('.error-msg').remove();
+    $('div.section-1 .photo-box').show();
+    $('div.section-1 .quiz-updated-img').hide();
+    $('div.section-2 .card-box:first #cover-image').val('');
+    $('div.section-2 .card-box:first .quiz-updated-img').hide();
+    $(this).hide();
+});
+
+/**
+ * Click Event for next section at Quiz title and description page
+ */
+$(document).on("click", "#next", function() {
+    let isError = false;
+
+    $("form").find("input[type='text']").each(function() {
+        let element = $(this);
+        if (element.val() == "") {
+            if (element.attr("id") == "quiz-title") {
+                isError = true;
+                $("#quiz-title").addClass("danger");
+                $("#quiz-title").before(`<label class="label-alert d-block mb--4"><font class="required-key">${requiredKey}</font></label>`);
+                $('#next').prop('disabled', true);
+            }
+        }
+    });
+
+    if (isError == false) {
+        $('#next').prop('disabled', false);
+
+        $(".section-1").hide();
+        $(".section-1-footer").hide();
+
+        if ($(".section-2.d-none").length > 0) {
+            $(".section-2").removeClass('d-none');
+        } else {
+            $(".section-2").show();
+
+        }
+        if ($(".section-2-footer.d-none").length > 0) {
+            $(".section-2-footer").removeClass('d-none');
+        } else {
+            $(".section-2-footer").show();
+        }
+
+        /* Populate Data on the question area */
+        $('#quiz-title-content').html($('#quiz-title').val());
+        $('#quiz-description-content').html($('#quiz-description').val());
+    }
+});
+
+/**
+ * Click event for back button
+ */
+$(document).on("click", "#back", function() {
+    $(".section-1").show();
+    $(".section-1-footer").show();
+
+    $("form #setting").hide();
+    $('#due').text(settingText);
+});
+
+/**
+ * Event to back button on section 2
+ */
+$(document).on("click", "#back-section2", function() {
+    $(".section-2").hide();
+    $(".section-2-footer").hide();
+
+    $(".section-1").show();
+    $(".section-1-footer").show();
+    $('.error-msg').remove();
+});
+
+/**
+ * Change event for setting inputs
+ */
+$(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], .visible-to, #show-correct-answer", function() {
+    $('.invalid-date-err').remove();
+    let end = new Date($('input[name="expiry_date"]').val() + ' ' + $('input[name="expiry_time"]').val());
+    $('.text-danger').parent('div.col-12').remove();
+    $('#back').removeClass('disabled');
+
+    let start = new Date();
+    let days = calcDateDiff(start, end);
+
+    if (days == undefined || days == NaN) {
+        $('.setting-section .row:first').append(`<div class="col-12 mt--32 invalid-date-err"><p class="text-danger">${invalidDateTimeKey}</p></div>`);
+        $('#back').addClass('disabled');
+    } else {
+        let resultVisible = $('.visible-to:checked').val() == 'Everyone' ? resultEveryoneKey : resultMeKey;
+        let correctAnswer = $('#show-correct-answer:eq(0)').is(":checked") == true ? correctAnswerKey : '';
+
+        Localizer.getString('dueIn', days, correctAnswer).then(function(result) {
+            settingText = result;
+        });
+    }
+});
+
+/**
+ * Click event for correct answer inputs
+ */
+$(document).on('click', '.check-me-title', function() {
+    if ($(this).parents('div.col-12').find('input[type="checkbox"]').prop('checked') == false) {
+        $(this).parents('div.col-12').find('input[type="checkbox"]').prop("checked", true);
+        $(this).addClass('checked-112');
+    } else {
+        $(this).parents('div.col-12').find('input[type="checkbox"]').prop("checked", false);
+        $(this).removeClass('checked-112');
+    }
+})
+
+/**
+ * Event when click on class then open hidden file
+ */
+$(document).on('click', '.upvj', function(event) {
+    event.preventDefault();
+    if ($(this).parents('div.section-1').length > 0) {
+        $('.section-2').find('div.card-box:first').find('input[type="file"]').click();
+    } else {
+        $('.section-2').find('div.card-box:last').find('input[type="file"]').click();
+    }
+})
+
+/**
+ * Event to show trash on focusin at input
+ */
+$(document).on('focusin', '.option-div, .input-group-tpt, .input-group-tpt > input[type="text"], .remove-option', function() {
+    $('.remove-option').hide();
+    setTimeout(() => {
+        $(this).parents('div.row').find('.remove-option').show();
+    }, 100);
+});
+
+/**
+ * Event to hide trash on focusout at input
+ */
+$(document).on('focusout', '.option-div, .input-group-tpt, .input-group-tpt > input[type="text"], .remove-option', function() {
+    setTimeout(() => {
+        $(this).parents('div.row').find('.remove-option').hide();
+    }, 1500);
+});
+
+/**
+ * Event to show trash on focusin at input
+ */
+$(document).on('hover', '.remove-option', function() {
+    $(this).show();
+});
+
+
+/**
+ * Event when quiz cover image changes
+ */
+$(document).on('change', '#cover-image', function() {
+    $('.error-msg').remove();
+    readURL(this, '#quiz-img-preview, #quiz-title-image');
+    $('.photo-box').hide();
+    $('.quiz-updated-img').show();
+    $('.quiz-updated-img').show();
+    $('#quiz-title-image').show();
+    $('.quiz-updated-img').show();
+    $('.quiz-clear').show();
+});
+
+/**
+ * Event when question cover image changes
+ */
+$(document).on('click', '.question-image, .option-image', function() {
+    $(this).parents('.input-group').find('input[type="file"]').click();
+});
+
+
+/**
+ * Event when question cover image changes
+ */
+$(document).on('change', 'input[name="question_image"]', function() {
+    readURL(this, $(this).parents('div.form-group-question').find('.question-preview-image'));
+    $(this).parents('div.form-group-question').find('.question-preview-image').show();
+    $(this).parents('div.form-group-question').find('.question-preview').show();
+});
+
+/**
+ * Event when option cover image changes
+ */
+$(document).on('change', 'input[name="option_image"]', function() {
+    readURL(this, $(this).parents('div.row').find('.option-preview-image'));
+    $(this).parents('div.row').find('.option-preview-image').show();
+    $(this).parents('div.row').find('div.option-preview').show();
+});
+
+
+/**
+ * @description Method for quiz data and submit the datas
+ */
 function submitForm() {
     /* Validate */
-    let error_text = "";
-    let question_number = 0;
+    let errorText = "";
+
     $("input[type='text']").removeClass("danger");
     $("label.label-alert").remove();
     $("div.card-box-alert").removeClass("card-box-alert").addClass("card-box");
@@ -252,50 +483,63 @@ function submitForm() {
         .each(function() {
             let element = $(this);
             if (element.val() == "") {
-                validate = false;
-
                 $(this)
                     .parents("div.card-box")
                     .removeClass("card-box")
                     .addClass("card-box-alert");
 
                 if (element.attr("id") == "quiz-title") {
-                    error_text += "<p>Quiz title is required.</p>";
+                    errorText += "<p>Quiz title is required.</p>";
                     $("#quiz-title").addClass("danger");
                     $("#quiz-title").before(
-                        '<label class="label-alert d-block"><small class="required-key">${requiredKey}</small></label>'
+                        `<label class="label-alert d-block mb--4"><font class="required-key">${requiredKey}</font></label>`
                     );
                 } else if (element.attr("id").startsWith("question-title")) {
-                    $(this).addClass("danger");
-                    $(this)
-                        .parents("div.input-group")
-                        .before(
-                            '<label class="label-alert d-block"><small class="required-key">${requiredKey}</small></label>'
-                        );
+                    if ($(element).parents('div.input-group').find('input[name="question_image"]').val() != "") {
+                        // Do nothing
+                    } else {
+                        $(element).addClass("danger");
+                        Localizer.getString('questionLeftBlank').then(function(result) {
+                            $('.question-blank-key').text(result);
+                            $(element)
+                                .parents("div.form-group-question").find('.question-number').parent('div')
+                                .after(
+                                    `<label class="label-alert d-block mb--4"><font class="question-blank-key">${result}</font></label>`
+                                );
+                        });
 
-                    error_text += "<p>Question is required. </p>";
+                        errorText += "<p>Question cannot not left blank.</p>";
+                        $(element).addClass("danger");
+                    }
+
+
                 } else if (element.attr("id").startsWith("option")) {
-                    $(this).addClass("danger");
-                    $(this)
-                        .parents("div.input-group")
-                        .before(
-                            '<label class="label-alert d-block"><small class="required-key">${requiredKey}</small></label>'
-                        );
+                    if ($(element).parents('div.input-group').find('input[name="option_image"]').val() != "") {
+                        // Do nothing
+                    } else {
+                        $(this).addClass("danger");
+                        $(this)
+                            .parents("div.col-12")
+                            .prepend(
+                                `<label class="label-alert d-block mb--4"><font class="required-key">${requiredKey}</font></label>`
+                            );
 
-                    error_text +=
-                        "<p>Blank option not allowed for " +
-                        element.attr("placeholder") +
-                        ".</p>";
+                        errorText +=
+                            "<p>Blank option not allowed for " +
+                            element.attr("placeholder") +
+                            ".</p>";
+                    }
                 }
             }
         });
 
-    if ($.trim(error_text).length <= 0) {
+    if ($.trim(errorText).length <= 0) {
         actionSDK
             .executeApi(request)
             .then(function(response) {
-                console.info("GetContext - Response: " + JSON.stringify(response));
-                createAction(response.context.actionPackageId);
+                uploadImages().then(function() {
+                    createAction(response.context.actionPackageId);
+                });
             })
             .catch(function(error) {
                 console.error("GetContext - Error: " + JSON.stringify(error));
@@ -307,61 +551,61 @@ function submitForm() {
     }
 }
 
-/* Method to get questions and return question object */
+/**
+ * @description Method to get questions and return question object
+ */
 function getQuestionSet() {
     let questionCount = $("form").find("div.container.question-container").length;
     questions = new Array();
     let error = false;
     for (let i = 1; i <= questionCount; i++) {
-        let option_type = actionSDK.ActionDataColumnValueType.SingleOption;
+        let optionType = actionSDK.ActionDataColumnValueType.SingleOption;
         let option = [];
-        let is_selected = 0;
+        let isSelected = 0;
+        let questionAttachmentId = $("#question" + i).find('textarea#question-attachment-id').length > 0 ? $("#question" + i).find('textarea#question-attachment-id').val() : '';
 
         /* Looping for options */
         $("#question" + i)
             .find("div.option-div")
             .each(function(index, elem) {
                 let count = index + 1;
-                let opt_id = "question" + i + "option" + count;
-                let opt_title = $("#question" + i).find("#option" + count).val();
+                let optId = "question" + i + "option" + count;
+                let optTitle = $("#question" + i).find("#option" + count).val();
+                let optionAttachmentId = $("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-id').length > 0 ? $("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-id').val() : '';
 
                 if ($("#question" + i).find("#check" + count).is(":checked")) {
                     // if it is checked
-                    is_selected++;
+                    isSelected++;
                 }
 
                 if ($("#question" + i).find("input[type=checkbox]:checked").length > 1) {
-                    option_type = actionSDK.ActionDataColumnValueType.MultiOption;
+                    optionType = actionSDK.ActionDataColumnValueType.MultiOption;
                 } else {
-                    option_type = actionSDK.ActionDataColumnValueType.SingleOption;
+                    optionType = actionSDK.ActionDataColumnValueType.SingleOption;
                 }
-                option.push({ name: opt_id, displayName: opt_title });
+                let optDisplayData = JSON.stringify({ name: optTitle, attachmentId: optionAttachmentId });
+                option.push({ name: optId, displayName: optDisplayData });
             });
 
+
+        let QuestionDisplayData = JSON.stringify({ name: $("#question" + i).find("#question-title").val(), attachmentId: questionAttachmentId });
         let val = {
             name: i.toString(),
-            displayName: $("#question" + i)
-                .find("#question-title")
-                .val(),
-            valueType: option_type,
+            displayName: QuestionDisplayData,
+            valueType: optionType,
             allowNullValue: false,
             options: option,
         };
 
-        if (is_selected == 0) {
-            validate = false;
+        if (isSelected == 0) {
             $("#question" + i)
-                .find("div.input-group:first")
-                .before(
-                    '<label class="label-alert d-block"><small>Please select correct choice for the question</small></label>'
-                );
+                .find("div.d-flex-ques")
+                .after(`<div class="clearfix"></div>
+                    <label class="label-alert d-block option-required-err text-left pull-left mt--8 mb--16"><font>${selectCorrectChoiceKey}</font></label>
+                    <div class="clearfix"></div>`);
 
             $("#submit").prop('disabled', false);
 
-
-            $("#question" + i)
-                .find("#question-title")
-                .addClass("danger");
 
             $("#question" + i)
                 .find("div.card-box")
@@ -373,14 +617,19 @@ function getQuestionSet() {
     }
 
     if (error == false) {
+        $('.sec1').prepend(loader);
         return questions;
+    } else {
+        return false;
     }
 }
 
-/* Method to get correct answers and retrun property object */
+/**
+ * @description Method to get correct answers and retrun property object
+ */
 function getCorrectAnswer() {
     let questionCount = $("form").find("div.container.question-container").length;
-    let correct_option = [];
+    let correctOption = [];
 
     for (let i = 1; i <= questionCount; i++) {
         let correct = [];
@@ -392,25 +641,111 @@ function getCorrectAnswer() {
                 let count = index + 1;
 
                 if ($("#question" + i).find("#check" + count).is(":checked")) {
-                    let opt_id = "question" + i + "option" + count;
+                    let optId = "question" + i + "option" + count;
 
                     // if it is checked
-                    correct.push(opt_id);
+                    correct.push(optId);
                 }
             });
-        correct_option[i - 1] = correct;
+        correctOption[i - 1] = correct;
     }
     let property = {
         name: "Question Answers",
         type: "LargeText",
-        value: JSON.stringify(correct_option),
+        value: JSON.stringify(correctOption),
     };
 
     return property;
 }
 
-/* 
- * @desc Method to create Action Request and submit data to server  
+/**
+ * @description Method to upload image to server
+ */
+function uploadImages() {
+    let imageCounter = 0;
+    let dfd = $.Deferred();
+    let totalImageUpload = 0;
+    $('input[type="file"]').each(function(imgIndex, fileData) {
+        if ($(fileData).val() != '') {
+            totalImageUpload++;
+        }
+    });
+    $('input[type="file"]').each(function(imgIndex, fileData) {
+        if ($(fileData).val() != '') {
+            let identifier = $(fileData).attr('name');
+            let coverImage = $(fileData).get(0).files[0];
+            let attachment = ActionHelper.attachmentUpload(coverImage, coverImage['type']);
+            let attachmentRequest = ActionHelper.requestAttachmentUplod(attachment);
+
+            switch (identifier) {
+                case "quiz_image":
+                    ActionHelper.executeApi(attachmentRequest)
+                        .then(function(response) {
+                            imageCounter++;
+                            console.log(response);
+                            if ($('#quiz-attachment-id').length > 0) {
+                                $('#quiz-attachment-id').val(response.attachmentId);
+                            } else {
+                                $(fileData).after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentId + '</textarea>');
+                            }
+                        })
+                        .catch(function(error) {
+                            console.log("GetContext - Error: " + JSON.stringify(error));
+                        });
+                    break;
+                case "question_image":
+                    ActionHelper.executeApi(attachmentRequest)
+                        .then(function(response) {
+                            imageCounter++;
+                            let selector = $(fileData).parents('.question-container').attr('id');
+                            if ($('#' + selector).find('#question-attachment-id').length > 0) {
+                                $('#' + selector).find('#question-attachment-id').val(response.attachmentId);
+                            } else {
+                                $(fileData).after('<textarea id="question-attachment-id" class="d-none" >' + response.attachmentId + '</textarea>');
+                            }
+                        })
+                        .catch(function(error) {
+                            console.log("GetContext - Error: " + JSON.stringify(error));
+                        });
+                    break;
+
+                default:
+                    ActionHelper.executeApi(attachmentRequest)
+                        .then(function(response) {
+                            imageCounter++;
+                            let selector = $(fileData).parents('.row');
+                            if ($(selector).find('textarea.option-attachment-id').length > 0) {
+                                $(selector).find('textarea.option-attachment-id').val(response.attachmentId);
+                            } else {
+                                $(fileData).after('<textarea id="option-attachment-id" class="d-none" >' + response.attachmentId + '</textarea>');
+                            }
+                        })
+                        .catch(function(error) {
+                            console.log("GetContext - Error: " + JSON.stringify(error));
+                        });
+                    break;
+            }
+
+            $(".loader-overlay").remove();
+        }
+    });
+
+    let tid = setInterval(() => {
+        if (imageCounter >= totalImageUpload) {
+            dfd.resolve();
+            clearInterval(tid);
+        }
+    }, 100);
+
+    return $.when(dfd).done(function() {
+
+    }).promise();
+
+}
+
+
+/** 
+ * @description Method to create Action Request and submit data to server  
  * @param action package id
  */
 function createAction(actionPackageId) {
@@ -418,7 +753,7 @@ function createAction(actionPackageId) {
     let quizDescription = $("#quiz-description").val();
     let quizExpireDate = $("input[name='expiry_date']").val();
     let quizExpireTime = $("input[name='expiry_time']").val();
-
+    let quizAttachementId = $('#quiz-attachment-id').length > 0 ? $('#quiz-attachment-id').val() : '';
     let resultVisible = $("input[name='visible_to']:checked").val();
     let showCorrectAnswer = $("#show-correct-answer").is(":checked") ?
         "Yes" :
@@ -426,8 +761,8 @@ function createAction(actionPackageId) {
     let questionsSet = getQuestionSet();
     let getcorrectanswers = getCorrectAnswer();
 
-    if (questionsSet.length <= 0) {
-        return;
+    if (questionsSet == false) {
+        return false;;
     }
 
     let properties = [];
@@ -447,6 +782,10 @@ function createAction(actionPackageId) {
         name: "Show Correct Answer",
         type: "Text",
         value: showCorrectAnswer,
+    }, {
+        name: "Attachment Id",
+        type: "LargeText",
+        value: quizAttachementId,
     });
     properties.push(getcorrectanswers);
     let action = {
@@ -478,7 +817,9 @@ function createAction(actionPackageId) {
         });
 }
 
-/* Method to generate GUID */
+/**
+ * @description Method to generate GUID
+ */
 function generateGUID() {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
         let r = (Math.random() * 16) | 0,
@@ -487,14 +828,18 @@ function generateGUID() {
     });
 }
 
-/* Initiate Method */
+/**
+ * Initiate Method
+ */
 $(document).ready(function() {
     request = new actionSDK.GetContext.Request();
     getStringKeys();
     getTheme(request);
 });
 
-/* Async method for fetching localization strings */
+/**
+ * @description Async method for fetching localization strings
+ */
 async function getStringKeys() {
     Localizer.getString('quizTitle').then(function(result) {
         $('#quiz-title').attr({ 'placeholder': result });
@@ -511,10 +856,11 @@ async function getStringKeys() {
 
     Localizer.getString('option', '').then(function(result) {
         optionKey = result;
+        $('.opt-cls').attr('placeholder', optionKey)
     });
-    Localizer.getString('dueIn', ' 1 week', ', Results visible to everyone', ', Correct answer shown after every question').then(function(result) {
-        setting_text = result;
-        $('#due').text(setting_text);
+    Localizer.getString('dueIn', ' 1 week', ', Correct answer shown after every question').then(function(result) {
+        settingText = result;
+        $('#due').text(settingText);
     });
 
     Localizer.getString('addMoreOptions').then(function(result) {
@@ -594,49 +940,91 @@ async function getStringKeys() {
         answerCannotChangeKey = result;
         $('.answer-cannot-change-key').text(answerCannotChangeKey);
     });
+
+    Localizer.getString('invalidDateTime').then(function(result) {
+        invalidDateTimeKey = result;
+    });
+
+    Localizer.getString('sureDeleteThis').then(function(result) {
+        sureDeleteThisKey = result;
+    });
+
+    Localizer.getString('ok').then(function(result) {
+        okKey = result;
+    });
+
+    Localizer.getString('cancel').then(function(result) {
+        cancelKey = result;
+    });
+
+    Localizer.getString('forQuizAtleastOneQuestion').then(function(result) {
+        forQuizAtleastOneQuestionKey = result;
+    });
+
+    Localizer.getString('maxTenOption').then(function(result) {
+        maxTenOptionKey = result;
+    });
+
+    Localizer.getString('atLeastTwoOptionsRequired').then(function(result) {
+        atLeastTwoOptionsRequiredKey = result;
+    });
+
+    Localizer.getString('questionLeftBlank').then(function(result) {
+        questionLeftBlankKey = result;
+        $('.question-blank-key').text(result);
+    });
+
+    Localizer.getString('selectCorrectChoice').then(function(result) {
+        selectCorrectChoiceKey = result;
+    });
+
+    Localizer.getString('addQuestion').then(function(result) {
+        addQuestionKey = result;
+        $('.add-question-key').text(addQuestionKey)
+    });
+
+    Localizer.getString('uploadCoverImage').then(function(result) {
+        uploadCoverImageKey = result;
+        $('.upload-cover-image-key').text(uploadCoverImageKey)
+    });
 }
 
-/* 
- * @desc Method to select theme based on the teams theme  
+/**
+ * @description Method to select theme based on the teams theme  
  * @param request context request
  */
 async function getTheme(request) {
-
     let response = await actionSDK.executeApi(request);
-
     let context = response.context;
-
     lastSession = context.lastSessionData;
-
     let theme = context.theme;
     $("link#theme").attr("href", "css/style-" + theme + ".css");
-    $('form.sec1').append(form_section);
-    $('form.sec1').after(modal_section);
-    $('form.sec1').after(setting_section);
-    $('form.sec1').after(option_section);
-    $('form.sec1').after(questions_section);
-
+    $('form.sec1').append(formSection);
+    $('form.sec1').append(section2);
+    $('form.sec1').after(settingSection);
+    $('form.sec1').after(optionSection);
+    $('form.sec1').after(questionsSection);
     getStringKeys();
-
-    question_section = $("#question-section div.container").clone();
+    questionSection = $("#question-section div.container").clone();
     opt = $("div#option-section .option-div").clone();
-    let week_date_format;
-    let current_time;
+    let weekDateFormat;
+    let currentTime;
 
     /* If Edit back the quiz */
     if (lastSession != null) {
+
+        console.log("lastsession: " + JSON.stringify(lastSession));
+
         let ddtt = ((lastSession.action.customProperties[1].value).split('T'));
         let dt = ddtt[0].split('-');
-        week_date_format = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
-        let tt_time = (ddtt[1].split('Z')[0]).split(':');
-        current_time = `${tt_time[0]}:${tt_time[1]}`;
-
+        weekDateFormat = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
+        let ttTime = (ddtt[1].split('Z')[0]).split(':');
+        currentTime = `${ttTime[0]}:${ttTime[1]}`;
         if (lastSession.action.customProperties[2].value == 'Everyone') {
             $('input[name="visible_to"][value="Everyone"]').prop("checked", true);
         } else {
             $('input[name="visible_to"][value="Only me"]').prop("checked", true);
         }
-
         if (lastSession.action.customProperties[3].value == 'Yes') {
             $('#show-correct-answer').prop("checked", true);
         } else {
@@ -647,31 +1035,49 @@ async function getTheme(request) {
         $('#quiz-title').val(lastSession.action.displayName);
         $('#quiz-description').val(lastSession.action.customProperties[0].value);
 
+        /* Quiz Section Attachment Check */
+        if (lastSession.action.customProperties[4].value != "") {
+            // let req = ActionHelper.getAttachmentInfo(lastSession.action.customProperties[4].value);
+            let req = ActionHelper.getAttachmentInfo(null, lastSession.action.customProperties[4].value);
+            ActionHelper.executeApi(req).then(function(response) {
+                    // console.info("Attachment - Response: " + JSON.stringify(response));
+                    $('#quiz-img-preview, #quiz-title-image').attr("src", response.attachmentInfo.downloadUrl);
+                    $('.photo-box').hide();
+                    $('.quiz-updated-img').show();
+                    $('.quiz-updated-img').show();
+                    $('#quiz-title-image').show();
+                    $('.quiz-updated-img').show();
+                    $('.quiz-clear').show();
+                    $('#cover-image').after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentInfo.downloadUrl + '</textarea>');
+                })
+                .catch(function(error) {
+                    console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                });
+        }
 
         /* Due Setting String */
-        let end = new Date(week_date_format + ' ' + current_time);
+        let end = new Date(weekDateFormat + ' ' + currentTime);
         let start = new Date();
-        let days = calc_date_diff(start, end);
+        let days = calcDateDiff(start, end);
 
-        let result_visible = lastSession.action.customProperties[2].value == 'Everyone' ? resultEveryoneKey : resultMeKey;
-        let correct_answer = lastSession.action.customProperties[3].value == 'Yes' ? correctAnswerKey : '';
+        let resultVisible = lastSession.action.customProperties[2].value == 'Everyone' ? resultEveryoneKey : resultMeKey;
+        let correctAnswer = lastSession.action.customProperties[3].value == 'Yes' ? correctAnswerKey : '';
 
-        Localizer.getString('dueIn', days, ', ' + result_visible, correct_answer).then(function(result) {
-            setting_text = result;
-            $('#due').text(setting_text);
+        Localizer.getString('dueIn', days, correctAnswer).then(function(result) {
+            settingText = result;
+            $('#due').text(settingText);
         });
 
     } else {
-        let week_date = new Date(new Date().setDate(new Date().getDate() + 7))
+        let weekDate = new Date(new Date().setDate(new Date().getDate() + 7))
             .toISOString()
             .split("T")[0];
 
-        let week_month = new Date(week_date).toLocaleString('default', { month: 'short' });
-        let week_d = new Date(week_date).getDate();
-        let week_year = new Date(week_date).getFullYear();
-        week_date_format = week_month + " " + week_d + ", " + week_year;
-
-        current_time = (("0" + new Date().getHours()).substr(-2)) + ":" + (("0" + new Date().getMinutes()).substr(-2));
+        let weekMonth = new Date(weekDate).toLocaleString('default', { month: 'short' });
+        let weekD = new Date(weekDate).getDate();
+        let weekYear = new Date(weekDate).getFullYear();
+        weekDateFormat = weekMonth + " " + weekD + ", " + weekYear;
+        currentTime = (("0" + new Date().getHours()).substr(-2)) + ":" + (("0" + new Date().getMinutes()).substr(-2));
     }
 
     let today = new Date()
@@ -684,10 +1090,8 @@ async function getTheme(request) {
         $("form.sec1").show();
     }, 1000);
 
-
-    $('.form_date input').val(week_date_format);
-    $(".form_date").attr({ "data-date": week_date_format });
-
+    $('.form_date input').val(weekDateFormat);
+    $(".form_date").attr({ "data-date": weekDateFormat });
     $('.form_time').datetimepicker({
         language: 'en',
         weekStart: 1,
@@ -700,10 +1104,9 @@ async function getTheme(request) {
         forceParse: 0
     });
 
-    $('.form_time input').val(current_time);
+    $('.form_time input').val(currentTime);
 
-
-    let date_input = $('input[name="expiry_date"]');
+    let dateInput = $('input[name="expiry_date"]');
     let container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
     let options = {
         format: 'M dd, yyyy',
@@ -712,53 +1115,101 @@ async function getTheme(request) {
         autoclose: true,
         orientation: 'top'
     };
-    date_input.datepicker(options);
+    dateInput.datepicker(options);
     await actionSDK.executeApi(new actionSDK.HideLoadingIndicator.Request());
 
     if (lastSession != null) {
         setTimeout(() => {
             let option = $("div#option-section .option-div").clone();
-
             lastSession.action.dataTables[0].dataColumns.forEach((e, ind) => {
-                let correct_ans_arr = JSON.parse(lastSession.action.customProperties[4].value);
-
+                let correctAnsArr = JSON.parse(lastSession.action.customProperties[5].value);
+                console.log("ind: " + ind);
                 if (ind == 0) {
-                    $('#question1').find('#question-title').val(e.displayName);
+                    let questionTitleData = JSON.parse(e.displayName).name;
+                    let questionAttachmentData = JSON.parse(e.displayName).attachmentId;
+                    $('#question1').find('#question-title').val(questionTitleData);
+
+                    if (questionAttachmentData != "") {
+                        let req = ActionHelper.getAttachmentInfo(null, questionAttachmentData);
+                        ActionHelper.executeApi(req).then(function(response) {
+                                $('#question1').find('.question-preview').show()
+                                $('#question1').find('.question-preview-image').show()
+                                $('#question1').find('.question-preview-image').attr("src", response.attachmentInfo.downloadUrl);
+                                $('#question-image-1').after('<textarea id="question-attachment-id" class="d-none">' + response.attachmentInfo.downloadUrl + '</textarea>');
+                            })
+                            .catch(function(error) {
+                                console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                            });
+                    }
+
                     e.options.forEach((opt, i) => {
                         let counter = i + 1;
+                        let optionName = JSON.parse(opt.displayName).name;
+                        let optionAttachment = JSON.parse(opt.displayName).attachmentId;
                         if (i <= 1) {
-                            $('#question1').find('#option' + counter).val(opt.displayName);
+                            $('#question1').find('#option' + counter).val(optionName);
                         } else {
                             $('#question1').find("div.option-div:last").after(option.clone());
-
-                            Localizer.getString('option', counter).then(function(result) {
-
-                                $('#question1').find("div.option-div:last input[type='text']").attr({
-                                    placeholder: result,
-                                });
-                                $('#question1').find("div.option-div:last input[type='text']").attr({ id: "option" + counter }).val(opt.displayName);
-                                $('#question1').find("div.option-div:last input[type='text']")
-                                    .parents(".option-div")
-                                    .find("input.form-check-input")
-                                    .attr({ id: "check" + counter });
+                            $('#question1').find("div.option-div:last input[type='text']").attr({
+                                placeholder: optionKey,
                             });
+                            $('#question1').find("div.option-div:last input[type='text']").attr({ id: "option" + counter }).val(optionName);
+                            $('#question1').find("div.option-div:last input[type='text']")
+                                .parents(".option-div")
+                                .find("input[type='image']")
+                                .attr({ id: "option-image-" + counter });
+                            $('#question1').find("div.option-div:last input[type='text']")
+                                .parents(".option-div")
+                                .find("input.form-check-input")
+                                .attr({ id: "check" + counter });
                         }
-                        $.each(correct_ans_arr, function(cindex, c_ans) {
-                            if ($.inArray("question1option" + counter, c_ans) != -1) {
+
+                        $.each(correctAnsArr, function(cindex, cAns) {
+                            if ($.inArray("question1option" + counter, cAns) != -1) {
                                 $('#question1').find('#check' + counter).prop('checked', true);
-                                $('#question1').find('#option' + counter).parents('div.input-group.input-group-tpt.mb-2').find('.check-opt span.input-group-text.input-tpt').addClass('text-success');
-                                $('#question1').find('#option' + counter).parents('div.input-group.input-group-tpt.mb-2').find(' .checked-status').text('Correct Answer');
+                                $('#question1').find('#option' + counter).parents('div.input-group.input-group-tpt.mb--8').find('.check-me-title').addClass('checked-112');
                             }
                         });
+                        if (optionAttachment != "") {
+                            let req = ActionHelper.getAttachmentInfo(null, optionAttachment);
+                            ActionHelper.executeApi(req).then(function(response) {
+                                    $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview').show()
+                                    $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').show()
+                                    $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').attr("src", response.attachmentInfo.downloadUrl);
+                                    $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.downloadUrl + '</textarea>');
+                                })
+                                .catch(function(error) {
+                                    console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                                });
+                        }
                     });
                 } else {
                     let qcounter = ind + 1;
-                    let ocounter = 0;
-                    $('#add-questions').parents("div.container").before(question_section.clone());
+                    console.log('qcounter: ' + qcounter);
+                    $(".section-2").find('#add-questions').parents("div.container").before($('#question-section').html());
 
-                    $("div.container.question-container:visible:last").attr('id', 'question' + qcounter);
-                    $("#question" + qcounter).find("span.question-number").text(qcounter + ".");
-                    $('#question' + qcounter).find('#question-title').val(e.displayName);
+                    let ocounter = 0;
+                    let questionTitleData = JSON.parse(e.displayName).name;
+                    let questionAttachmentData = JSON.parse(e.displayName).attachmentId;
+                    $(".section-2").find("div.container.question-container:last").attr('id', 'question' + qcounter);
+                    Localizer.getString('question').then(function(result) {
+                        $("#question" + qcounter).find("span.question-number").text(result + ' # ' + qcounter) + '.';
+                    })
+
+                    $('#question' + qcounter).find('#question-title').val(questionTitleData);
+
+                    if (questionAttachmentData != "") {
+                        let req = ActionHelper.getAttachmentInfo(null, questionAttachmentData);
+                        ActionHelper.executeApi(req).then(function(response) {
+                                $('#question' + qcounter).find('.question-preview').show()
+                                $('#question' + qcounter).find('.question-preview-image').show()
+                                $('#question' + qcounter).find('.question-preview-image').attr("src", response.attachmentInfo.downloadUrl);
+                                $('#question-image-' + qcounter).after('<textarea id="question-attachment-id" class="d-none">' + response.attachmentInfo.downloadUrl + '</textarea>');
+                            })
+                            .catch(function(error) {
+                                console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                            });
+                    }
 
                     Localizer.getString('enterTheQuestion').then(function(result) {
                         $("div.container.question-container:visible:last").find('input[type="text"]').attr({
@@ -767,30 +1218,41 @@ async function getTheme(request) {
                     });
                     e.options.forEach((opt, i) => {
                         ocounter = i + 1;
+                        let optionName = JSON.parse(opt.displayName).name;
+                        let optionAttachment = JSON.parse(opt.displayName).attachmentId;
                         if (i <= 1) {
-                            $('#question' + qcounter).find('#option' + ocounter).val(opt.displayName);
+                            $('#question' + qcounter).find('#option' + ocounter).val(optionName);
                         } else {
                             $('#question' + qcounter).find("div.option-div:last").after(option.clone());
-
-                            Localizer.getString('option', ocounter).then(function(result) {
-
-                                $('#question' + qcounter).find("div.option-div:visible:last input[type='text']").attr({
-                                    placeholder: result,
-                                });
-                                $('#question' + qcounter).find("div.option-div:last input[type='text']").attr({ id: "option" + ocounter }).val(opt.displayName);
-                                $('#question' + qcounter).find("div.option-div:last input[type='text']")
-                                    .parents(".option-div")
-                                    .find("input.form-check-input")
-                                    .attr({ id: "check" + ocounter });
+                            $('#question' + qcounter).find("div.option-div:visible:last input[type='text']").attr({
+                                placeholder: optionKey,
                             });
+                            $('#question' + qcounter).find("div.option-div:last input[type='text']").attr({ id: "option" + ocounter }).val(optionName);
+                            $('#question' + qcounter).find("div.option-div:last input[type='file']").attr({ id: "option-image-" + ocounter });
+                            $('#question' + qcounter).find("div.option-div:last input[type='text']")
+                                .parents(".option-div")
+                                .find("input.form-check-input")
+                                .attr({ id: "check" + ocounter });
                         }
-                        $.each(correct_ans_arr, (cindex, c_ans) => {
-                            if ($.inArray("question" + qcounter + "option" + ocounter, c_ans) != -1) {
+                        $.each(correctAnsArr, (cindex, cAns) => {
+                            if ($.inArray("question" + qcounter + "option" + ocounter, cAns) != -1) {
                                 $('#question' + qcounter).find('#check' + ocounter).prop('checked', true);
-                                $('#question' + qcounter).find('#option' + ocounter).parents('div.input-group.input-group-tpt.mb-2').find('.check-opt span.input-group-text.input-tpt').addClass('text-success');
-                                $('#question' + qcounter).find('#option' + ocounter).parents('div.input-group.input-group-tpt.mb-2').find(' .checked-status').text('Correct Answer');
+                                $('#question' + qcounter).find('#option' + ocounter).parents('div.input-group.input-group-tpt.mb--8').find('.check-me-title').addClass('checked-112');
                             }
                         });
+
+                        if (optionAttachment != "") {
+                            let req = ActionHelper.getAttachmentInfo(null, optionAttachment);
+                            ActionHelper.executeApi(req).then(function(response) {
+                                    $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview').show()
+                                    $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').show()
+                                    $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').attr("src", response.attachmentInfo.downloadUrl);
+                                    $('#question' + qcounter).find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.downloadUrl + '</textarea>');
+                                })
+                                .catch(function(error) {
+                                    console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                                });
+                        }
                     });
                 }
             });
@@ -798,61 +1260,15 @@ async function getTheme(request) {
     }
 }
 
-/* Click event for back button */
-$(document).on("click", "#back", function() {
-    $(".section-1").show();
-    $(".section-1-footer").show();
-
-    $("form #setting").hide();
-    $('#due').text(setting_text);
-
-});
-
-/* Change event for setting inputs */
-$(document).on("change", ".form_time input, .form_date input, .visible-to, #show-correct-answer", function() {
-    let end = new Date($('input[name="expiry_date"]').val() + ' ' + $('input[name="expiry_time"]').val());
-    let start = new Date();
-    let days = calc_date_diff(start, end);
-
-    if (days == undefined || days == NaN) {
-        $("#exampleModalCenter")
-            .find("#exampleModalLongTitle")
-            .html('<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="gt gs mt--4"><g><g><g><path d="M507.113,428.415L287.215,47.541c-6.515-11.285-18.184-18.022-31.215-18.022c-13.031,0-24.7,6.737-31.215,18.022L4.887,428.415c-6.516,11.285-6.516,24.76,0,36.044c6.515,11.285,18.184,18.022,31.215,18.022h439.796c13.031,0,24.7-6.737,31.215-18.022C513.629,453.175,513.629,439.7,507.113,428.415z M481.101,449.441c-0.647,1.122-2.186,3.004-5.202,3.004H36.102c-3.018,0-4.556-1.881-5.202-3.004c-0.647-1.121-1.509-3.394,0-6.007L250.797,62.559c1.509-2.613,3.907-3.004,5.202-3.004c1.296,0,3.694,0.39,5.202,3.004L481.1,443.434C482.61,446.047,481.748,448.32,481.101,449.441z"/><rect x="240.987" y="166.095" width="30.037" height="160.197" /><circle cx="256.005" cy="376.354" r="20.025" /></g></g></g > <g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg > Notice!');
-        $("#exampleModalCenter")
-            .find(".modal-body")
-            .html("<p><strong>Invalid Date or Time!</strong></p><p>It must be greater than current date and time.</p>");
-        $("#exampleModalCenter")
-            .find(".modal-footer")
-            .html(
-                '<button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Close</button>'
-            );
-        $("#exampleModalCenter").modal("show");
-    } else {
-        let result_visible = $('.visible-to:checked').val() == 'Everyone' ? resultEveryoneKey : resultMeKey;
-        let correct_answer = $('#show-correct-answer:eq(0)').is(":checked") == true ? correctAnswerKey : '';
-
-        Localizer.getString('dueIn', days, ', ' + result_visible, correct_answer).then(function(result) {
-            setting_text = result;
-        });
-    }
-});
-
-/* Click event for correct answer inputs */
-$(document).on('click', '.check-me-title', function() {
-    if ($(this).parents('div.col-12').find('input[type="checkbox"]').prop('checked') == false) {
-        $(this).parents('div.col-12').find('input[type="checkbox"]').prop("checked", true);
-        $(this).parents('div.col-12').find('p.checked-status').text("Correct Answer");
-        $(this).parents('span.input-group-text').addClass('text-success');
-    } else {
-        $(this).parents('div.col-12').find('input[type="checkbox"]').prop("checked", false);
-        $(this).parents('div.col-12').find('p.checked-status').text("");
-        $(this).parents('span.input-group-text').removeClass('text-success');
-    }
-})
-
-/* Method for calculating date diff from current date in weeks, days, hours, minutes */
-function calc_date_diff(start, end) {
+/**
+ * @description Method for calculating date diff from current date in weeks, days, hours, minutes
+ * @param start - Date type
+ * @param end - Date type
+ */
+function calcDateDiff(start, end) {
     let days = (end - start) / (1000 * 60 * 60 * 24);
+    let hourText = 'hour';
+    let minuteText = 'minute';
     if (days > 6) {
         let weeks = Math.ceil(days) / 7;
         return Math.floor(weeks) + ' week';
@@ -866,14 +1282,14 @@ function calc_date_diff(start, end) {
             minsDiff = minsDiff % 60;
 
             if (hourDiff > 1) {
-                let hourText = 'hours';
+                hourText = 'hours';
             } else {
-                let hourText = 'hour';
+                hourText = 'hour';
             }
             if (hourDiff > 1) {
-                let minuteText = 'minutes';
+                minuteText = 'minutes';
             } else {
-                let minuteText = 'minute';
+                minuteText = 'minute';
             }
             if (hourDiff > 0 && minsDiff > 0) {
                 return hourDiff + ' ' + hourText + ', ' + minsDiff + ' ' + minuteText;
@@ -888,35 +1304,51 @@ function calc_date_diff(start, end) {
     }
 }
 
+/**
+ * Method to get base64 data of file
+ * @param input object html file type input element
+ * @param elem object html elem where preview need to show
+ */
+function readURL(input, elem) {
+    if (input.files && input.files[0]) {
+        let reader = new FileReader();
 
-/*  HTML Sections  */
-// form: first section when page init
-let form_section = `<div class="section-1">
-            <div class="container pt-4">
-                <div id="root" class="">
-                    <div class="form-group">
-                        <input type="Text" placeholder="" class="in-t input-lg form-control"
-                            id="quiz-title" />
+        reader.onload = function(e) {
+            $(elem).attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]); // convert to base64 string
+    }
+}
+
+
+/********************************************   HTML Sections  ***********************************************************/
+/**
+ * Quiz Landing Page
+ */
+let formSection = `<div class="section-1">
+            <div class="container">
+                <div id="root">
+                    <div class="form-group mb--16">
+                        <input type="Text" placeholder="" class="in-t input-title form-control" id="quiz-title" />
                     </div>
 
-                    <div class="form-group">
-                        <input type="Text" placeholder="" class="in-t form-control"
-                            id="quiz-description" />
+                    <div class="form-group mb--16">
+                        <textarea class="form-control in-t" id="quiz-description"></textarea>
                     </div>
-                </div>
-            </div>
-
-            <div class="container pb-5">
-                <div class="form-group pb-5">
-                    <button type="button" class="btn btn-primary btn-sm" id="add-questions"> <svg role="presentation"
-                            focusable="false" viewBox="8 8 16 16" class="cc gs gt wh gv">
-                            <path class="ui-icon__outline cc"
-                                d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
-                            </path>
-                            <path class="ui-icon__filled gr"
-                                d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
-                            </path>
-                        </svg> Add Question</button>
+                    <div class="form-group mb0">
+                        <label class="cover-image-label semi-bold mb--8">Cover Image (Optional)</label>
+                        <label class="quiz-clear semi-bold mb--8 cursor-pointer pull-right theme-color" style="display:none">Clear</label>
+                        <div class="relative">
+                            <!-- hide this div after img added -->
+                            <div class="photo-box card card-bg card-border max-min-220 upvj cursor-pointer">
+                                <span class="tap-upload-label upload-cover-image-key">${uploadCoverImageKey}</span>
+                            </div>
+                            <!-- show this div after img added -->
+                            <div class="quiz-updated-img card max-min-220 card-bg card-border cursor-pointer updated-img" style="display:none">
+                                <img src="" id="quiz-img-preview" class="quiz-updated-img card card-bg card-border cursor-pointer">
+                            </div>
+                        </div> 
+                    </div>
                 </div>
             </div>
         </div>
@@ -925,159 +1357,457 @@ let form_section = `<div class="section-1">
             <div class="footer-padd bt">
                 <div class="container ">
                     <div class="row">
-                        <div class="col-9">
-                            <a class="theme-color cursur-pointer show-setting" id="hide1">
-                                <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt ha gv"><path class="ui-icon__outline cc" d="M13.82,8.07a.735.735,0,0,1,.5.188l1.438,1.3c.2-.008.4,0,.594.007l1.21-1.25a.724.724,0,0,1,.532-.226,3.117,3.117,0,0,1,.867.226c.469.172,1.3.438,1.328,1.032l.094,1.929a5.5,5.5,0,0,1,.414.422c.594-.007,1.187-.023,1.781-.023a.658.658,0,0,1,.352.117,4.122,4.122,0,0,1,1,2.031.735.735,0,0,1-.188.5l-1.3,1.438c.008.2,0,.4-.007.594l1.25,1.21a.724.724,0,0,1,.226.532,3.117,3.117,0,0,1-.226.867c-.172.461-.438,1.3-1.024,1.328l-1.937.094a5.5,5.5,0,0,1-.422.414c.007.594.023,1.187.023,1.781a.611.611,0,0,1-.117.344A4.1,4.1,0,0,1,18.18,23.93a.735.735,0,0,1-.5-.188l-1.438-1.3c-.2.008-.4,0-.594-.007l-1.21,1.25a.724.724,0,0,1-.532.226,3.117,3.117,0,0,1-.867-.226c-.469-.172-1.3-.438-1.328-1.032l-.094-1.929a5.5,5.5,0,0,1-.414-.422c-.594.007-1.187.023-1.781.023a.611.611,0,0,1-.344-.117A4.1,4.1,0,0,1,8.07,18.18a.735.735,0,0,1,.188-.5l1.3-1.438c-.008-.2,0-.4.007-.594l-1.25-1.21a.724.724,0,0,1-.226-.532,3.117,3.117,0,0,1,.226-.867c.172-.461.446-1.3,1.024-1.328l1.937-.094A5.5,5.5,0,0,1,11.7,11.2c-.007-.594-.023-1.187-.023-1.781a.658.658,0,0,1,.117-.352A4.122,4.122,0,0,1,13.82,8.07ZM12.672,9.617l.023,1.8c.008.312-.859,1.164-1.164,1.18l-1.976.1-.422,1.133,1.289,1.258c.2.2.164.562.164.82a1.781,1.781,0,0,1-.148.844L9.117,18.227l.5,1.1c.6-.008,1.211-.023,1.813-.023.312,0,1.156.859,1.172,1.164l.1,1.976,1.133.422,1.258-1.289c.2-.2.562-.164.82-.164a1.7,1.7,0,0,1,.844.148l1.469,1.321,1.1-.5-.023-1.8c-.008-.312.859-1.164,1.164-1.18l1.976-.1.422-1.133-1.289-1.258c-.2-.2-.164-.562-.164-.82a1.781,1.781,0,0,1,.148-.844l1.321-1.469-.5-1.1c-.6.008-1.211.023-1.813.023-.312,0-1.156-.859-1.172-1.164l-.1-1.976-1.133-.422-1.258,1.289c-.2.2-.562.164-.82.164a1.781,1.781,0,0,1-.844-.148L13.773,9.117ZM16.008,13.5A2.5,2.5,0,1,1,13.5,16,2.531,2.531,0,0,1,16.008,13.5ZM16,14.5a1.5,1.5,0,1,0,1.5,1.461A1.513,1.513,0,0,0,16,14.5Z"></path></svg>    
-                                <span id="due"> ${setting_text}</span>
-                            </a>
-
+                        <div class="col-9 d-table">
+                            <div class="d-table-cell">
+                                <a class="theme-color cursor-pointer show-setting" id="hide1">
+                                    <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt ha gv"><path class="ui-icon__outline cc" d="M13.82,8.07a.735.735,0,0,1,.5.188l1.438,1.3c.2-.008.4,0,.594.007l1.21-1.25a.724.724,0,0,1,.532-.226,3.117,3.117,0,0,1,.867.226c.469.172,1.3.438,1.328,1.032l.094,1.929a5.5,5.5,0,0,1,.414.422c.594-.007,1.187-.023,1.781-.023a.658.658,0,0,1,.352.117,4.122,4.122,0,0,1,1,2.031.735.735,0,0,1-.188.5l-1.3,1.438c.008.2,0,.4-.007.594l1.25,1.21a.724.724,0,0,1,.226.532,3.117,3.117,0,0,1-.226.867c-.172.461-.438,1.3-1.024,1.328l-1.937.094a5.5,5.5,0,0,1-.422.414c.007.594.023,1.187.023,1.781a.611.611,0,0,1-.117.344A4.1,4.1,0,0,1,18.18,23.93a.735.735,0,0,1-.5-.188l-1.438-1.3c-.2.008-.4,0-.594-.007l-1.21,1.25a.724.724,0,0,1-.532.226,3.117,3.117,0,0,1-.867-.226c-.469-.172-1.3-.438-1.328-1.032l-.094-1.929a5.5,5.5,0,0,1-.414-.422c-.594.007-1.187.023-1.781.023a.611.611,0,0,1-.344-.117A4.1,4.1,0,0,1,8.07,18.18a.735.735,0,0,1,.188-.5l1.3-1.438c-.008-.2,0-.4.007-.594l-1.25-1.21a.724.724,0,0,1-.226-.532,3.117,3.117,0,0,1,.226-.867c.172-.461.446-1.3,1.024-1.328l1.937-.094A5.5,5.5,0,0,1,11.7,11.2c-.007-.594-.023-1.187-.023-1.781a.658.658,0,0,1,.117-.352A4.122,4.122,0,0,1,13.82,8.07ZM12.672,9.617l.023,1.8c.008.312-.859,1.164-1.164,1.18l-1.976.1-.422,1.133,1.289,1.258c.2.2.164.562.164.82a1.781,1.781,0,0,1-.148.844L9.117,18.227l.5,1.1c.6-.008,1.211-.023,1.813-.023.312,0,1.156.859,1.172,1.164l.1,1.976,1.133.422,1.258-1.289c.2-.2.562-.164.82-.164a1.7,1.7,0,0,1,.844.148l1.469,1.321,1.1-.5-.023-1.8c-.008-.312.859-1.164,1.164-1.18l1.976-.1.422-1.133-1.289-1.258c-.2-.2-.164-.562-.164-.82a1.781,1.781,0,0,1,.148-.844l1.321-1.469-.5-1.1c-.6.008-1.211.023-1.813.023-.312,0-1.156-.859-1.172-1.164l-.1-1.976-1.133-.422-1.258,1.289c-.2.2-.562.164-.82.164a1.781,1.781,0,0,1-.844-.148L13.773,9.117ZM16.008,13.5A2.5,2.5,0,1,1,13.5,16,2.531,2.531,0,0,1,16.008,13.5ZM16,14.5a1.5,1.5,0,1,0,1.5,1.461A1.513,1.513,0,0,0,16,14.5Z"></path></svg>    
+                                    <span id="due"> ${settingText}</span>
+                                </a>
+                            </div>
                         </div>
-                        <div class="col-3 text-right"> <button type="button" class="btn btn-primary btn-sm pull-right"
-                                id="submit"> <span class="next-key">${nextKey}</span></button></div>
+                        <div class="col-3 pl--8 text-right"> 
+                            <button type="button" class="btn btn-primary btn-sm pull-right" id="next"> <span class="next-key">${nextKey}</span></button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>`;
 
-// Question Section
-let questions_section = `<div style="display: none;" id="question-section">
-        <div class="container question-container" id="question1">
-            <div class="card-box card-border card-bg">
-                <div class="form-group">
-                    <div class="input-group mb-2">
-                        <div class="input-group-append">
-                            <span class="question-number input-group-text input-tpt pl-0 strong" style="cursor: pointer;">1.</span>
-                        </div>
-                        <input type="text" class="form-control in-t pr-35" placeholder="${questionTitleKey}" aria-label="${questionTitleKey}" aria-describedby="basic-addon2" id="question-title">
-                        <div class="input-group-append">
-                            <span class="input-group-text remove-question remove-option-q input-tpt" style="cursor: pointer;" aria-hidden="true">
-                                <svg viewBox="-40 0 427 427.00131" xmlns="http://www.w3.org/2000/svg" class="gt gs">
-                                    <path d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                    <path d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                    <path d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0" />
-                                    <path d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                </svg>
-                            </span>
+/**
+ * Section2 Question Landing page
+ */
+let section2 = `<div class="section-2 d-none">
+                    <div class="card-box quiz-card-section container quiz-preview-sec">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="quiz-updated-img card max-min-220 card-bg card-border cover-img cursor-pointer mb--16 updated-img" style="display:none">
+                                    <img src="" id="quiz-title-image" style="display:none" class="quiz-updated-img card card-bg card-border">
+                                    <input type="file" name="quiz_image" class="d-none" id="cover-image" accept="image/*" src="images/px-img.png" />
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <h4 id="quiz-title-content" class="mb--8"></h4>
+                                <p class="text-justify" id="quiz-description-content"></p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="d-flex">
-                    <div class="ext-flex"></div>
-                    <div class="form-group" id="options">
-                        <label><strong class="choice-label">${choicesKey}</strong></label>
-                        <div class="option-div">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="input-group input-group-tpt mb-2 ">
-                                        <div class="input-group-append">
-
-                                        </div>
-                                        <input type="text" class="form-control in-t" placeholder="Option 1" aria-label="Option 1" aria-describedby="basic-addon2" id="option1">        
-                                        <div class="input-group-append check-opt">
-                                            <span class="input-group-text input-tpt" style="cursor: pointer;">
-                                                <i class="fa fa-check check-me-title"  data-toggle="tooltip" data-placement="bottom" title="${checkMeKey}" aria-hidden="true"></i>
-                                            </span>
-                                        </div>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text remove-option input-tpt" style="cursor: pointer;">
-                                                <svg viewBox="-40 0 427 427.00131" xmlns="http://www.w3.org/2000/svg" class="gt gs">
-                                                    <path
-                                                        d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                                    <path
-                                                        d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                                    <path
-                                                        d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0" />
-                                                    <path
-                                                        d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="text-right text-success">
-                                            <p class="checked-status"> </p>
-                                            <input type="checkbox" class="form-check-input" id="check1" value="yes" style="display:none">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="option-div">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="input-group input-group-tpt mb-2">
-                                        <div class="input-group-append">
-
-                                        </div>
-                                        <input type="text" class="form-control in-t" placeholder="Option 2" aria-label="Option 2" aria-describedby="basic-addon2" id="option2">
-                                        <div class="input-group-append check-opt">
-                                            <span class="input-group-text input-tpt" style="cursor: pointer;">
-                                                <i class="fa fa-check check-me-title"  data-toggle="tooltip" data-placement="bottom" title="${checkMeKey}" aria-hidden="true"></i>
-                                            </span>
-                                        </div>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text remove-option input-tpt" style="cursor: pointer;">
-                                                <svg viewBox="-40 0 427 427.00131"
-                                                    xmlns="http://www.w3.org/2000/svg" class="gt gs">
-                                                    <path
-                                                        d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                                    <path
-                                                        d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                                    <path
-                                                        d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0" />
-                                                    <path
-                                                        d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="text-right text-success">
-                                            <p class="checked-status"> </p>
-                                            <input type="checkbox" class="form-check-input" value="yes" id="check2" style="display:none"> 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="container">
                         <div class="">
-                            <button type="button" class="teams-link add-options"> 
-                                <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt tc gv">
+                            <button type="button" class="btn btn-primary btn-sm" id="add-questions"> <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt wh gv">
                                     <path class="ui-icon__outline cc" d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
                                     </path>
                                     <path class="ui-icon__filled gr" d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
                                     </path>
-                                </svg>  
-                                ${addMoreOptionsKey}
+                                </svg> <span class="add-question-key">${addQuestionKey}</span>
                             </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer section-2-footer d-none">
+                    <div class="footer-padd bt">
+                        <div class="container ">
+                            <div class="row">
+                                <div class="col-9">
+                                    <a class=" cursor-pointer" id="back-section2">
+                                        <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="gt ki gs">
+                                            <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
+                                            </path>
+                                            <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
+                                            </path>
+                                        </svg> Back
+                                    </a>
+                                </div>
+                                <div class="col-3 text-right"> 
+                                    <button type="button" class="btn btn-primary btn-sm pull-right" id="submit"> <span class="next-key">${nextKey}</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+let section21 = `<div class="section-2 d-none">
+                    <div class="card-box card-bg card-border quiz-card-section">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="img-thumbnail" style="display:none">
+                                    <img src="" id="quiz-title-image" style="display:none">
+                                    <input type="file" name="quiz_image" placeholder="Upload Cover Image" class="in-t form-control" id="cover-image" accept="image/*" src="images/px-img.png" style="width:100%; height: 180px; display:none"/>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <h4 id="quiz-title-content"></h4>
+                                <p class="mb0 text-justify" id="quiz-description-content"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container pb-5">
+                        <div class="form-group pb-5">
+                            <button type="button" class="btn btn-primary btn-sm" id="add-questions"> <svg role="presentation"
+                                    focusable="false" viewBox="8 8 16 16" class="cc gs gt wh gv">
+                                    <path class="ui-icon__outline cc"
+                                        d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
+                                    </path>
+                                    <path class="ui-icon__filled gr"
+                                        d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
+                                    </path>
+                                </svg> Add Question</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer section-2-footer d-none">
+                    <div class="footer-padd bt">
+                        <div class="container ">
+                            <div class="row">
+                                <div class="col-9">
+                                    <a class=" cursor-pointer" id="back-section2">
+                                        <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="gt ki gs">
+                                            <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
+                                            </path>
+                                            <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
+                                            </path>
+                                        </svg> Back
+                                    </a>
+                                </div>
+                                <div class="col-3 text-right"> 
+                                    <button type="button" class="btn btn-primary btn-sm pull-right" id="submit"> <span class="next-key">${nextKey}</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+/** 
+ * Question Section
+ */
+let questionsSection = `<div style="display: none;" id="question-section">
+        <div class="container question-container" id="question1">
+            <div class="card-box card-border card-bg">
+                <div class="form-group-question">
+                    <div>
+                        <span class="question-number input-group-text mb--8 input-tpt pl-0 strong cursor-pointer">Question # 1.</span>
+                        <span class="input-group-text remove-question remove-option-q input-tpt cursor-pointer" aria-hidden="true">
+                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                            <rect x="-1.352" y="1.773" fill="none" width="16" height="16"/>
+                            <rect fill="none" width="16" height="16"/>
+                            <path id="Path_586" d="M11.502,4.001c0.197-0.001,0.392,0.041,0.57,0.125c0.355,0.16,0.64,0.444,0.8,0.8
+                                c0.083,0.179,0.126,0.373,0.125,0.57v8.554c0.009,0.294-0.079,0.582-0.25,0.82c-0.177,0.228-0.4,0.414-0.656,0.547
+                                c-0.286,0.148-0.591,0.259-0.905,0.328c-0.338,0.077-0.68,0.136-1.023,0.172c-0.339,0.036-0.664,0.06-0.977,0.069
+                                c-0.313,0.011-0.58,0.014-0.8,0.009h-0.9c-0.354,0.005-0.73-0.005-1.133-0.031c-0.4-0.026-0.801-0.075-1.199-0.147
+                                c-0.368-0.064-0.728-0.172-1.07-0.32c-0.299-0.132-0.564-0.326-0.781-0.57c-0.203-0.245-0.31-0.557-0.3-0.875v-8.55
+                                C3,5.305,3.04,5.111,3.119,4.931c0.079-0.178,0.19-0.339,0.327-0.477c0.138-0.139,0.3-0.25,0.478-0.328
+                                C4.105,4.042,4.303,4,4.502,4.001H11.502z M7.002,13.001h-1v-6h1V13.001z M4.502,5.001c-0.274,0.004-0.496,0.226-0.5,0.5v8.554
+                                c0.004,0.154,0.083,0.297,0.211,0.383c0.164,0.116,0.346,0.203,0.539,0.258c0.243,0.072,0.491,0.127,0.742,0.164
+                                c0.271,0.042,0.533,0.073,0.789,0.095c0.255,0.021,0.488,0.034,0.699,0.039c0.219,0.005,0.379,0.007,0.48,0.007h1.078
+                                c0.109,0,0.268-0.002,0.476-0.008c0.209-0.006,0.442-0.019,0.7-0.039c0.261-0.021,0.524-0.049,0.789-0.086
+                                c0.249-0.037,0.493-0.092,0.733-0.164c0.196-0.059,0.381-0.148,0.548-0.266c0.13-0.085,0.209-0.229,0.211-0.383V5.501
+                                c-0.004-0.274-0.226-0.496-0.5-0.5H4.502z M10.002,13.001h-1v-6h1V13.001z M8.002,0.001c0.215,0.002,0.43,0.025,0.641,0.07
+                                C8.87,0.11,9.088,0.185,9.291,0.291c0.197,0.094,0.37,0.231,0.508,0.4c0.139,0.172,0.209,0.389,0.2,0.609v0.702h3
+                                c0.276,0.002,0.499,0.227,0.497,0.503c-0.001,0.131-0.053,0.256-0.145,0.349c-0.092,0.095-0.218,0.148-0.35,0.148h-10
+                                C2.87,3.003,2.743,2.949,2.651,2.854c-0.193-0.19-0.196-0.501-0.006-0.694c0.002-0.002,0.004-0.004,0.006-0.006
+                                C2.742,2.056,2.87,2.001,3.002,2.001h3v-0.7C5.995,1.079,6.069,0.861,6.21,0.689c0.136-0.168,0.307-0.304,0.5-0.4
+                                c0.205-0.104,0.425-0.178,0.651-0.218C7.573,0.027,7.788,0.004,8.002,0.001z M8.002,1.001c-0.084,0.001-0.167,0.006-0.25,0.016
+                                c-0.102,0.005-0.202,0.021-0.3,0.047C7.36,1.085,7.271,1.116,7.186,1.159C7.11,1.194,7.045,1.251,7,1.322v0.679h2v-0.7
+                                c-0.054-0.064-0.123-0.115-0.2-0.148C8.715,1.111,8.625,1.08,8.534,1.06C8.444,1.039,8.352,1.025,8.26,1.021
+                                C8.174,1.009,8.088,1.003,8.002,1.001z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="question-preview min-max-132 updated-img" style="display:none">
+                        <img src="" class="question-preview-image" style="display:none" />
+                    </div>
+                    <div class="input-group mb--16 input-group-tpt-q">
+                        <div class="input-group-append cursor-pointer">
+                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                            width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve" class="question-image">
+                                <g>
+                                    <path id="Path_589" d="M14.5,2c0.201-0.001,0.4,0.038,0.586,0.117c0.361,0.151,0.648,0.438,0.8,0.8
+                                    C15.963,3.102,16.002,3.3,16,3.5v9c0.001,0.199-0.039,0.396-0.117,0.578c-0.077,0.181-0.188,0.346-0.328,0.484
+                                    c-0.137,0.136-0.299,0.244-0.477,0.319C14.896,13.961,14.699,14,14.5,14h-13c-0.199,0.001-0.396-0.039-0.578-0.117
+                                    c-0.18-0.076-0.344-0.185-0.484-0.32c-0.135-0.141-0.243-0.305-0.319-0.483C0.039,12.896-0.001,12.699,0,12.5v-9
+                                    c-0.001-0.199,0.039-0.396,0.117-0.578c0.075-0.178,0.184-0.34,0.32-0.477c0.139-0.139,0.304-0.25,0.484-0.328
+                                    C1.104,2.039,1.301,1.999,1.5,2H14.5z M4.875,7.039C4.74,7.035,4.609,7.088,4.516,7.187L1,11.086V12.5
+                                    c-0.002,0.133,0.053,0.26,0.148,0.352C1.24,12.947,1.367,13.002,1.5,13h7.711L5.273,7.242C5.229,7.178,5.17,7.127,5.1,7.094
+                                    C5.03,7.058,4.953,7.04,4.875,7.039z M1.5,3C1.367,2.999,1.24,3.052,1.148,3.148C1.053,3.24,0.998,3.367,1,3.5v6.094L3.8,6.5
+                                    c0.132-0.148,0.295-0.266,0.478-0.344C4.689,5.985,5.155,6.001,5.555,6.2c0.219,0.104,0.406,0.267,0.539,0.469L10.422,13H14.5
+                                    c0.274-0.004,0.496-0.226,0.5-0.5v-9c0.002-0.133-0.053-0.26-0.148-0.352C14.76,3.052,14.633,2.999,14.5,3H1.5z M11.5,4.5
+                                    c0.266-0.002,0.529,0.051,0.773,0.156c0.482,0.202,0.867,0.586,1.069,1.07C13.448,5.97,13.502,6.234,13.5,6.5
+                                    c0.001,0.267-0.055,0.53-0.164,0.773c-0.101,0.24-0.246,0.457-0.43,0.641c-0.184,0.181-0.397,0.327-0.633,0.43
+                                    C12.029,8.449,11.766,8.502,11.5,8.5c-0.266,0.001-0.529-0.052-0.773-0.156c-0.475-0.214-0.855-0.595-1.069-1.07
+                                    C9.553,7.029,9.499,6.766,9.5,6.5C9.498,6.234,9.551,5.971,9.656,5.727c0.104-0.236,0.248-0.45,0.43-0.633
+                                    c0.184-0.183,0.401-0.329,0.641-0.43C10.971,4.555,11.233,4.499,11.5,4.5z M11.5,5.5c-0.135-0.001-0.268,0.025-0.391,0.078
+                                    c-0.12,0.052-0.229,0.126-0.32,0.219c-0.09,0.09-0.161,0.196-0.211,0.312C10.525,6.232,10.498,6.366,10.5,6.5
+                                    c0,0.134,0.025,0.267,0.078,0.391c0.097,0.242,0.289,0.434,0.531,0.531C11.232,7.474,11.365,7.5,11.5,7.5
+                                    c0.135,0.001,0.268-0.025,0.391-0.078c0.117-0.05,0.224-0.121,0.313-0.211c0.093-0.092,0.167-0.2,0.219-0.32
+                                    c0.104-0.25,0.104-0.531,0-0.781c-0.097-0.242-0.288-0.434-0.53-0.531C11.768,5.526,11.635,5.499,11.5,5.5z"/>
+                                </g>
+                            </svg>
+                            <input type="file" name="question_image" class="d-none" accept="image/*" id="question-image-1"/>
+                        </div>
+                        <input type="text" class="form-control in-t pl--32" placeholder="${questionTitleKey}" aria-label="${questionTitleKey}" aria-describedby="basic-addon2" id="question-title">
+                    </div>
+                </div>
+                <div class="d-flex-ques">
+                    <div class="form-group-opt mb--8" id="options">
+                        <div class="choice-outer">
+                            <div class="option-div">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="option-preview min-max-132 updated-img" style="display:none">
+                                            <img src="" class="option-preview-image" style="display:none" />
+                                        </div>
+                                        <div class="input-group input-group-tpt mb--8 ">
+                                            <div class="input-group-append left cursor-pointer">
+                                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                                width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve" class="option-image">
+                                                    <g>
+                                                        <path id="Path_589" d="M14.5,2c0.201-0.001,0.4,0.038,0.586,0.117c0.361,0.151,0.648,0.438,0.8,0.8
+                                                            C15.963,3.102,16.002,3.3,16,3.5v9c0.001,0.199-0.039,0.396-0.117,0.578c-0.077,0.181-0.188,0.346-0.328,0.484
+                                                            c-0.137,0.136-0.299,0.244-0.477,0.319C14.896,13.961,14.699,14,14.5,14h-13c-0.199,0.001-0.396-0.039-0.578-0.117
+                                                            c-0.18-0.076-0.344-0.185-0.484-0.32c-0.135-0.141-0.243-0.305-0.319-0.483C0.039,12.896-0.001,12.699,0,12.5v-9
+                                                            c-0.001-0.199,0.039-0.396,0.117-0.578c0.075-0.178,0.184-0.34,0.32-0.477c0.139-0.139,0.304-0.25,0.484-0.328
+                                                            C1.104,2.039,1.301,1.999,1.5,2H14.5z M4.875,7.039C4.74,7.035,4.609,7.088,4.516,7.187L1,11.086V12.5
+                                                            c-0.002,0.133,0.053,0.26,0.148,0.352C1.24,12.947,1.367,13.002,1.5,13h7.711L5.273,7.242C5.229,7.178,5.17,7.127,5.1,7.094
+                                                            C5.03,7.058,4.953,7.04,4.875,7.039z M1.5,3C1.367,2.999,1.24,3.052,1.148,3.148C1.053,3.24,0.998,3.367,1,3.5v6.094L3.8,6.5
+                                                            c0.132-0.148,0.295-0.266,0.478-0.344C4.689,5.985,5.155,6.001,5.555,6.2c0.219,0.104,0.406,0.267,0.539,0.469L10.422,13H14.5
+                                                            c0.274-0.004,0.496-0.226,0.5-0.5v-9c0.002-0.133-0.053-0.26-0.148-0.352C14.76,3.052,14.633,2.999,14.5,3H1.5z M11.5,4.5
+                                                            c0.266-0.002,0.529,0.051,0.773,0.156c0.482,0.202,0.867,0.586,1.069,1.07C13.448,5.97,13.502,6.234,13.5,6.5
+                                                            c0.001,0.267-0.055,0.53-0.164,0.773c-0.101,0.24-0.246,0.457-0.43,0.641c-0.184,0.181-0.397,0.327-0.633,0.43
+                                                            C12.029,8.449,11.766,8.502,11.5,8.5c-0.266,0.001-0.529-0.052-0.773-0.156c-0.475-0.214-0.855-0.595-1.069-1.07
+                                                            C9.553,7.029,9.499,6.766,9.5,6.5C9.498,6.234,9.551,5.971,9.656,5.727c0.104-0.236,0.248-0.45,0.43-0.633
+                                                            c0.184-0.183,0.401-0.329,0.641-0.43C10.971,4.555,11.233,4.499,11.5,4.5z M11.5,5.5c-0.135-0.001-0.268,0.025-0.391,0.078
+                                                            c-0.12,0.052-0.229,0.126-0.32,0.219c-0.09,0.09-0.161,0.196-0.211,0.312C10.525,6.232,10.498,6.366,10.5,6.5
+                                                            c0,0.134,0.025,0.267,0.078,0.391c0.097,0.242,0.289,0.434,0.531,0.531C11.232,7.474,11.365,7.5,11.5,7.5
+                                                            c0.135,0.001,0.268-0.025,0.391-0.078c0.117-0.05,0.224-0.121,0.313-0.211c0.093-0.092,0.167-0.2,0.219-0.32
+                                                            c0.104-0.25,0.104-0.531,0-0.781c-0.097-0.242-0.288-0.434-0.53-0.531C11.768,5.526,11.635,5.499,11.5,5.5z"/>
+                                                    </g>
+                                                </svg>
+                                                <input type="file" name="option_image" class="d-none" accept="image/*" id="option-image-1"/>
+                                            </div>
+                                            <input type="text" class="form-control in-t opt-cls pl--32" placeholder="${optionKey}" aria-label="Option 1" aria-describedby="basic-addon2" id="option1">
+                                            <div class="input-group-append check-opt check-me-title"  title="${checkMeKey}">
+                                                <span class="input-group-text input-tpt cursor-pointer">
+                                                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                                                        <rect x="22.695" y="-6" fill="none" width="16" height="16"/>
+                                                        <path id="Path_594" d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
+                                                            c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
+                                                            l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
+                                                            c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z"/>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="input-group-append  input-tpt trash-ic cursor-pointer">
+                                                <span class="remove-option" >
+                                                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                                                        <rect x="-1.352" y="1.773" fill="none" width="16" height="16"/>
+                                                        <rect fill="none" width="16" height="16"/>
+                                                        <path id="Path_586" d="M11.502,4.001c0.197-0.001,0.392,0.041,0.57,0.125c0.355,0.16,0.64,0.444,0.8,0.8
+                                                            c0.083,0.179,0.126,0.373,0.125,0.57v8.554c0.009,0.294-0.079,0.582-0.25,0.82c-0.177,0.228-0.4,0.414-0.656,0.547
+                                                            c-0.286,0.148-0.591,0.259-0.905,0.328c-0.338,0.077-0.68,0.136-1.023,0.172c-0.339,0.036-0.664,0.06-0.977,0.069
+                                                            c-0.313,0.011-0.58,0.014-0.8,0.009h-0.9c-0.354,0.005-0.73-0.005-1.133-0.031c-0.4-0.026-0.801-0.075-1.199-0.147
+                                                            c-0.368-0.064-0.728-0.172-1.07-0.32c-0.299-0.132-0.564-0.326-0.781-0.57c-0.203-0.245-0.31-0.557-0.3-0.875v-8.55
+                                                            C3,5.305,3.04,5.111,3.119,4.931c0.079-0.178,0.19-0.339,0.327-0.477c0.138-0.139,0.3-0.25,0.478-0.328
+                                                            C4.105,4.042,4.303,4,4.502,4.001H11.502z M7.002,13.001h-1v-6h1V13.001z M4.502,5.001c-0.274,0.004-0.496,0.226-0.5,0.5v8.554
+                                                            c0.004,0.154,0.083,0.297,0.211,0.383c0.164,0.116,0.346,0.203,0.539,0.258c0.243,0.072,0.491,0.127,0.742,0.164
+                                                            c0.271,0.042,0.533,0.073,0.789,0.095c0.255,0.021,0.488,0.034,0.699,0.039c0.219,0.005,0.379,0.007,0.48,0.007h1.078
+                                                            c0.109,0,0.268-0.002,0.476-0.008c0.209-0.006,0.442-0.019,0.7-0.039c0.261-0.021,0.524-0.049,0.789-0.086
+                                                            c0.249-0.037,0.493-0.092,0.733-0.164c0.196-0.059,0.381-0.148,0.548-0.266c0.13-0.085,0.209-0.229,0.211-0.383V5.501
+                                                            c-0.004-0.274-0.226-0.496-0.5-0.5H4.502z M10.002,13.001h-1v-6h1V13.001z M8.002,0.001c0.215,0.002,0.43,0.025,0.641,0.07
+                                                            C8.87,0.11,9.088,0.185,9.291,0.291c0.197,0.094,0.37,0.231,0.508,0.4c0.139,0.172,0.209,0.389,0.2,0.609v0.702h3
+                                                            c0.276,0.002,0.499,0.227,0.497,0.503c-0.001,0.131-0.053,0.256-0.145,0.349c-0.092,0.095-0.218,0.148-0.35,0.148h-10
+                                                            C2.87,3.003,2.743,2.949,2.651,2.854c-0.193-0.19-0.196-0.501-0.006-0.694c0.002-0.002,0.004-0.004,0.006-0.006
+                                                            C2.742,2.056,2.87,2.001,3.002,2.001h3v-0.7C5.995,1.079,6.069,0.861,6.21,0.689c0.136-0.168,0.307-0.304,0.5-0.4
+                                                            c0.205-0.104,0.425-0.178,0.651-0.218C7.573,0.027,7.788,0.004,8.002,0.001z M8.002,1.001c-0.084,0.001-0.167,0.006-0.25,0.016
+                                                            c-0.102,0.005-0.202,0.021-0.3,0.047C7.36,1.085,7.271,1.116,7.186,1.159C7.11,1.194,7.045,1.251,7,1.322v0.679h2v-0.7
+                                                            c-0.054-0.064-0.123-0.115-0.2-0.148C8.715,1.111,8.625,1.08,8.534,1.06C8.444,1.039,8.352,1.025,8.26,1.021
+                                                            C8.174,1.009,8.088,1.003,8.002,1.001z"/>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="text-right text-success">
+                                                <p class="checked-status"> </p>
+                                                <input type="checkbox" class="form-check-input d-none" id="check1" value="yes">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="option-div">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="option-preview min-max-132 updated-img" style="display:none">
+                                            <img src="" class="option-preview-image" style="display:none" />
+                                        </div>
+                                        <div class="input-group input-group-tpt mb--8">
+                                            <div class="input-group-append left cursor-pointer">
+                                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                                width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve" class="option-image">
+                                                    <g>
+                                                        <path id="Path_589" d="M14.5,2c0.201-0.001,0.4,0.038,0.586,0.117c0.361,0.151,0.648,0.438,0.8,0.8
+                                                            C15.963,3.102,16.002,3.3,16,3.5v9c0.001,0.199-0.039,0.396-0.117,0.578c-0.077,0.181-0.188,0.346-0.328,0.484
+                                                            c-0.137,0.136-0.299,0.244-0.477,0.319C14.896,13.961,14.699,14,14.5,14h-13c-0.199,0.001-0.396-0.039-0.578-0.117
+                                                            c-0.18-0.076-0.344-0.185-0.484-0.32c-0.135-0.141-0.243-0.305-0.319-0.483C0.039,12.896-0.001,12.699,0,12.5v-9
+                                                            c-0.001-0.199,0.039-0.396,0.117-0.578c0.075-0.178,0.184-0.34,0.32-0.477c0.139-0.139,0.304-0.25,0.484-0.328
+                                                            C1.104,2.039,1.301,1.999,1.5,2H14.5z M4.875,7.039C4.74,7.035,4.609,7.088,4.516,7.187L1,11.086V12.5
+                                                            c-0.002,0.133,0.053,0.26,0.148,0.352C1.24,12.947,1.367,13.002,1.5,13h7.711L5.273,7.242C5.229,7.178,5.17,7.127,5.1,7.094
+                                                            C5.03,7.058,4.953,7.04,4.875,7.039z M1.5,3C1.367,2.999,1.24,3.052,1.148,3.148C1.053,3.24,0.998,3.367,1,3.5v6.094L3.8,6.5
+                                                            c0.132-0.148,0.295-0.266,0.478-0.344C4.689,5.985,5.155,6.001,5.555,6.2c0.219,0.104,0.406,0.267,0.539,0.469L10.422,13H14.5
+                                                            c0.274-0.004,0.496-0.226,0.5-0.5v-9c0.002-0.133-0.053-0.26-0.148-0.352C14.76,3.052,14.633,2.999,14.5,3H1.5z M11.5,4.5
+                                                            c0.266-0.002,0.529,0.051,0.773,0.156c0.482,0.202,0.867,0.586,1.069,1.07C13.448,5.97,13.502,6.234,13.5,6.5
+                                                            c0.001,0.267-0.055,0.53-0.164,0.773c-0.101,0.24-0.246,0.457-0.43,0.641c-0.184,0.181-0.397,0.327-0.633,0.43
+                                                            C12.029,8.449,11.766,8.502,11.5,8.5c-0.266,0.001-0.529-0.052-0.773-0.156c-0.475-0.214-0.855-0.595-1.069-1.07
+                                                            C9.553,7.029,9.499,6.766,9.5,6.5C9.498,6.234,9.551,5.971,9.656,5.727c0.104-0.236,0.248-0.45,0.43-0.633
+                                                            c0.184-0.183,0.401-0.329,0.641-0.43C10.971,4.555,11.233,4.499,11.5,4.5z M11.5,5.5c-0.135-0.001-0.268,0.025-0.391,0.078
+                                                            c-0.12,0.052-0.229,0.126-0.32,0.219c-0.09,0.09-0.161,0.196-0.211,0.312C10.525,6.232,10.498,6.366,10.5,6.5
+                                                            c0,0.134,0.025,0.267,0.078,0.391c0.097,0.242,0.289,0.434,0.531,0.531C11.232,7.474,11.365,7.5,11.5,7.5
+                                                            c0.135,0.001,0.268-0.025,0.391-0.078c0.117-0.05,0.224-0.121,0.313-0.211c0.093-0.092,0.167-0.2,0.219-0.32
+                                                            c0.104-0.25,0.104-0.531,0-0.781c-0.097-0.242-0.288-0.434-0.53-0.531C11.768,5.526,11.635,5.499,11.5,5.5z"/>
+                                                    </g>
+                                                </svg>
+                                                <input type="file" name="option_image" class="d-none" accept="image/*" id="option-image-2"/>
+                                            </div>
+                                            <input type="text" class="form-control in-t opt-cls pl--32" placeholder="${optionKey}" aria-label="Option 2" aria-describedby="basic-addon2" id="option2">
+                                            <div class="input-group-append check-opt check-me-title" title="${checkMeKey}">
+                                                <span class="input-group-text input-tpt cursor-pointer">
+                                                    <svg version="1.1" id="Layer_1"  x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16"  xml:space="preserve">
+                                                        <rect x="22.695" y="-6" fill="none" width="16" height="16"/>
+                                                        <path id="Path_594"  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
+                                                            c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
+                                                            l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
+                                                            c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z"/>
+                                                    </svg>
+
+                                                </span>
+                                            </div>
+                                            <div class="input-group-append input-tpt trash-ic cursor-pointer">
+                                                <span class="remove-option">
+                                                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                                                        <rect x="-1.352" y="1.773" fill="none" width="16" height="16"/>
+                                                        <rect fill="none" width="16" height="16"/>
+                                                        <path id="Path_586" d="M11.502,4.001c0.197-0.001,0.392,0.041,0.57,0.125c0.355,0.16,0.64,0.444,0.8,0.8
+                                                            c0.083,0.179,0.126,0.373,0.125,0.57v8.554c0.009,0.294-0.079,0.582-0.25,0.82c-0.177,0.228-0.4,0.414-0.656,0.547
+                                                            c-0.286,0.148-0.591,0.259-0.905,0.328c-0.338,0.077-0.68,0.136-1.023,0.172c-0.339,0.036-0.664,0.06-0.977,0.069
+                                                            c-0.313,0.011-0.58,0.014-0.8,0.009h-0.9c-0.354,0.005-0.73-0.005-1.133-0.031c-0.4-0.026-0.801-0.075-1.199-0.147
+                                                            c-0.368-0.064-0.728-0.172-1.07-0.32c-0.299-0.132-0.564-0.326-0.781-0.57c-0.203-0.245-0.31-0.557-0.3-0.875v-8.55
+                                                            C3,5.305,3.04,5.111,3.119,4.931c0.079-0.178,0.19-0.339,0.327-0.477c0.138-0.139,0.3-0.25,0.478-0.328
+                                                            C4.105,4.042,4.303,4,4.502,4.001H11.502z M7.002,13.001h-1v-6h1V13.001z M4.502,5.001c-0.274,0.004-0.496,0.226-0.5,0.5v8.554
+                                                            c0.004,0.154,0.083,0.297,0.211,0.383c0.164,0.116,0.346,0.203,0.539,0.258c0.243,0.072,0.491,0.127,0.742,0.164
+                                                            c0.271,0.042,0.533,0.073,0.789,0.095c0.255,0.021,0.488,0.034,0.699,0.039c0.219,0.005,0.379,0.007,0.48,0.007h1.078
+                                                            c0.109,0,0.268-0.002,0.476-0.008c0.209-0.006,0.442-0.019,0.7-0.039c0.261-0.021,0.524-0.049,0.789-0.086
+                                                            c0.249-0.037,0.493-0.092,0.733-0.164c0.196-0.059,0.381-0.148,0.548-0.266c0.13-0.085,0.209-0.229,0.211-0.383V5.501
+                                                            c-0.004-0.274-0.226-0.496-0.5-0.5H4.502z M10.002,13.001h-1v-6h1V13.001z M8.002,0.001c0.215,0.002,0.43,0.025,0.641,0.07
+                                                            C8.87,0.11,9.088,0.185,9.291,0.291c0.197,0.094,0.37,0.231,0.508,0.4c0.139,0.172,0.209,0.389,0.2,0.609v0.702h3
+                                                            c0.276,0.002,0.499,0.227,0.497,0.503c-0.001,0.131-0.053,0.256-0.145,0.349c-0.092,0.095-0.218,0.148-0.35,0.148h-10
+                                                            C2.87,3.003,2.743,2.949,2.651,2.854c-0.193-0.19-0.196-0.501-0.006-0.694c0.002-0.002,0.004-0.004,0.006-0.006
+                                                            C2.742,2.056,2.87,2.001,3.002,2.001h3v-0.7C5.995,1.079,6.069,0.861,6.21,0.689c0.136-0.168,0.307-0.304,0.5-0.4
+                                                            c0.205-0.104,0.425-0.178,0.651-0.218C7.573,0.027,7.788,0.004,8.002,0.001z M8.002,1.001c-0.084,0.001-0.167,0.006-0.25,0.016
+                                                            c-0.102,0.005-0.202,0.021-0.3,0.047C7.36,1.085,7.271,1.116,7.186,1.159C7.11,1.194,7.045,1.251,7,1.322v0.679h2v-0.7
+                                                            c-0.054-0.064-0.123-0.115-0.2-0.148C8.715,1.111,8.625,1.08,8.534,1.06C8.444,1.039,8.352,1.025,8.26,1.021
+                                                            C8.174,1.009,8.088,1.003,8.002,1.001z"/>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="text-right text-success">
+                                                <p class="checked-status"> </p>
+                                                <input type="checkbox" class="form-check-input d-none" value="yes" id="check2"> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="">
+                                <button type="button" class="teams-link add-options"> 
+                                    <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt tc gv">
+                                        <path class="ui-icon__outline cc" d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
+                                        </path>
+                                        <path class="ui-icon__filled gr" d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
+                                        </path>
+                                    </svg>  
+                                     ${addMoreOptionsKey}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="clearfix"></div>
     </div>`;
-
-// Option Section
-let option_section = `<div style="display: none;" id="option-section">
+/**
+ * Option Section
+ */
+let optionSection = `<div style="display: none;" id="option-section">
         <div class="option-div">
             <div class="row">
                 <div class="col-12">
-                    <div class="input-group input-group-tpt mb-2">
-                        <div class="input-group-append">
+                    <div class="option-preview min-max-132 updated-img" style="display:none">
+                        <img src="" class="option-preview-image" style="display:none" />
+                    </div>
+                    <div class="input-group input-group-tpt mb--8">
+                        <div class="input-group-append left cursor-pointer">
+                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                            width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve" class="option-image">
+                                <g>
+                                    <path id="Path_589" d="M14.5,2c0.201-0.001,0.4,0.038,0.586,0.117c0.361,0.151,0.648,0.438,0.8,0.8
+                                        C15.963,3.102,16.002,3.3,16,3.5v9c0.001,0.199-0.039,0.396-0.117,0.578c-0.077,0.181-0.188,0.346-0.328,0.484
+                                        c-0.137,0.136-0.299,0.244-0.477,0.319C14.896,13.961,14.699,14,14.5,14h-13c-0.199,0.001-0.396-0.039-0.578-0.117
+                                        c-0.18-0.076-0.344-0.185-0.484-0.32c-0.135-0.141-0.243-0.305-0.319-0.483C0.039,12.896-0.001,12.699,0,12.5v-9
+                                        c-0.001-0.199,0.039-0.396,0.117-0.578c0.075-0.178,0.184-0.34,0.32-0.477c0.139-0.139,0.304-0.25,0.484-0.328
+                                        C1.104,2.039,1.301,1.999,1.5,2H14.5z M4.875,7.039C4.74,7.035,4.609,7.088,4.516,7.187L1,11.086V12.5
+                                        c-0.002,0.133,0.053,0.26,0.148,0.352C1.24,12.947,1.367,13.002,1.5,13h7.711L5.273,7.242C5.229,7.178,5.17,7.127,5.1,7.094
+                                        C5.03,7.058,4.953,7.04,4.875,7.039z M1.5,3C1.367,2.999,1.24,3.052,1.148,3.148C1.053,3.24,0.998,3.367,1,3.5v6.094L3.8,6.5
+                                        c0.132-0.148,0.295-0.266,0.478-0.344C4.689,5.985,5.155,6.001,5.555,6.2c0.219,0.104,0.406,0.267,0.539,0.469L10.422,13H14.5
+                                        c0.274-0.004,0.496-0.226,0.5-0.5v-9c0.002-0.133-0.053-0.26-0.148-0.352C14.76,3.052,14.633,2.999,14.5,3H1.5z M11.5,4.5
+                                        c0.266-0.002,0.529,0.051,0.773,0.156c0.482,0.202,0.867,0.586,1.069,1.07C13.448,5.97,13.502,6.234,13.5,6.5
+                                        c0.001,0.267-0.055,0.53-0.164,0.773c-0.101,0.24-0.246,0.457-0.43,0.641c-0.184,0.181-0.397,0.327-0.633,0.43
+                                        C12.029,8.449,11.766,8.502,11.5,8.5c-0.266,0.001-0.529-0.052-0.773-0.156c-0.475-0.214-0.855-0.595-1.069-1.07
+                                        C9.553,7.029,9.499,6.766,9.5,6.5C9.498,6.234,9.551,5.971,9.656,5.727c0.104-0.236,0.248-0.45,0.43-0.633
+                                        c0.184-0.183,0.401-0.329,0.641-0.43C10.971,4.555,11.233,4.499,11.5,4.5z M11.5,5.5c-0.135-0.001-0.268,0.025-0.391,0.078
+                                        c-0.12,0.052-0.229,0.126-0.32,0.219c-0.09,0.09-0.161,0.196-0.211,0.312C10.525,6.232,10.498,6.366,10.5,6.5
+                                        c0,0.134,0.025,0.267,0.078,0.391c0.097,0.242,0.289,0.434,0.531,0.531C11.232,7.474,11.365,7.5,11.5,7.5
+                                        c0.135,0.001,0.268-0.025,0.391-0.078c0.117-0.05,0.224-0.121,0.313-0.211c0.093-0.092,0.167-0.2,0.219-0.32
+                                        c0.104-0.25,0.104-0.531,0-0.781c-0.097-0.242-0.288-0.434-0.53-0.531C11.768,5.526,11.635,5.499,11.5,5.5z"/>
+                                </g>
+                            </svg>
+                            <input type="file" name="option_image" class="d-none" accept="image/*" id="option-image-1"/>
                         </div>
-                        <input type="text" class="form-control in-t" placeholder="Option" aria-label="Recipient's username" aria-describedby="basic-addon2" id="option-1">
-                        <div class="input-group-append check-opt">
-                            <span class="input-group-text input-tpt" style="cursor: pointer;">
-                                <i class="fa fa-check check-me-title"  data-toggle="tooltip" data-placement="bottom" title="${checkMeKey}" aria-hidden="true"></i>
+                        <input type="text" class="form-control in-t opt-cls pl--32" placeholder="${optionKey}" aria-label="Recipient's username" aria-describedby="basic-addon2" id="option-1">
+                        <div class="input-group-append check-opt check-me-title" title="${checkMeKey}">
+                            <span class="input-group-text input-tpt cursor-pointer">
+                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                                    <rect x="22.695" y="-6" fill="none" width="16" height="16"/>
+                                    <path id="Path_594" d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
+                                        c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
+                                        l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
+                                        c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z"/>
+                                </svg>
                             </span>
                         </div>
-                        <div class="input-group-append">
-                            <span class="input-group-text remove-option input-tpt" style="cursor: pointer;">
-                                <svg viewBox="-40 0 427 427.00131" xmlns="http://www.w3.org/2000/svg" class="gt gs">
-                                    <path
-                                        d="m232.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                    <path
-                                        d="m114.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
-                                    <path
-                                        d="m28.398438 127.121094v246.378906c0 14.5625 5.339843 28.238281 14.667968 38.050781 9.285156 9.839844 22.207032 15.425781 35.730469 15.449219h189.203125c13.527344-.023438 26.449219-5.609375 35.730469-15.449219 9.328125-9.8125 14.667969-23.488281 14.667969-38.050781v-246.378906c18.542968-4.921875 30.558593-22.835938 28.078124-41.863282-2.484374-19.023437-18.691406-33.253906-37.878906-33.257812h-51.199218v-12.5c.058593-10.511719-4.097657-20.605469-11.539063-28.03125-7.441406-7.421875-17.550781-11.5546875-28.0625-11.46875h-88.796875c-10.511719-.0859375-20.621094 4.046875-28.0625 11.46875-7.441406 7.425781-11.597656 17.519531-11.539062 28.03125v12.5h-51.199219c-19.1875.003906-35.394531 14.234375-37.878907 33.257812-2.480468 19.027344 9.535157 36.941407 28.078126 41.863282zm239.601562 279.878906h-189.203125c-17.097656 0-30.398437-14.6875-30.398437-33.5v-245.5h250v245.5c0 18.8125-13.300782 33.5-30.398438 33.5zm-158.601562-367.5c-.066407-5.207031 1.980468-10.21875 5.675781-13.894531 3.691406-3.675781 8.714843-5.695313 13.925781-5.605469h88.796875c5.210937-.089844 10.234375 1.929688 13.925781 5.605469 3.695313 3.671875 5.742188 8.6875 5.675782 13.894531v12.5h-128zm-71.199219 32.5h270.398437c9.941406 0 18 8.058594 18 18s-8.058594 18-18 18h-270.398437c-9.941407 0-18-8.058594-18-18s8.058593-18 18-18zm0 0" />
-                                    <path
-                                        d="m173.398438 154.703125c-5.523438 0-10 4.476563-10 10v189c0 5.519531 4.476562 10 10 10 5.523437 0 10-4.480469 10-10v-189c0-5.523437-4.476563-10-10-10zm0 0" />
+                        <div class="input-group-append input-tpt trash-ic cursor-pointer">
+                            <span class="remove-option" >
+                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                                    <rect x="-1.352" y="1.773" fill="none" width="16" height="16"/>
+                                    <rect fill="none" width="16" height="16"/>
+                                    <path id="Path_586" d="M11.502,4.001c0.197-0.001,0.392,0.041,0.57,0.125c0.355,0.16,0.64,0.444,0.8,0.8
+                                        c0.083,0.179,0.126,0.373,0.125,0.57v8.554c0.009,0.294-0.079,0.582-0.25,0.82c-0.177,0.228-0.4,0.414-0.656,0.547
+                                        c-0.286,0.148-0.591,0.259-0.905,0.328c-0.338,0.077-0.68,0.136-1.023,0.172c-0.339,0.036-0.664,0.06-0.977,0.069
+                                        c-0.313,0.011-0.58,0.014-0.8,0.009h-0.9c-0.354,0.005-0.73-0.005-1.133-0.031c-0.4-0.026-0.801-0.075-1.199-0.147
+                                        c-0.368-0.064-0.728-0.172-1.07-0.32c-0.299-0.132-0.564-0.326-0.781-0.57c-0.203-0.245-0.31-0.557-0.3-0.875v-8.55
+                                        C3,5.305,3.04,5.111,3.119,4.931c0.079-0.178,0.19-0.339,0.327-0.477c0.138-0.139,0.3-0.25,0.478-0.328
+                                        C4.105,4.042,4.303,4,4.502,4.001H11.502z M7.002,13.001h-1v-6h1V13.001z M4.502,5.001c-0.274,0.004-0.496,0.226-0.5,0.5v8.554
+                                        c0.004,0.154,0.083,0.297,0.211,0.383c0.164,0.116,0.346,0.203,0.539,0.258c0.243,0.072,0.491,0.127,0.742,0.164
+                                        c0.271,0.042,0.533,0.073,0.789,0.095c0.255,0.021,0.488,0.034,0.699,0.039c0.219,0.005,0.379,0.007,0.48,0.007h1.078
+                                        c0.109,0,0.268-0.002,0.476-0.008c0.209-0.006,0.442-0.019,0.7-0.039c0.261-0.021,0.524-0.049,0.789-0.086
+                                        c0.249-0.037,0.493-0.092,0.733-0.164c0.196-0.059,0.381-0.148,0.548-0.266c0.13-0.085,0.209-0.229,0.211-0.383V5.501
+                                        c-0.004-0.274-0.226-0.496-0.5-0.5H4.502z M10.002,13.001h-1v-6h1V13.001z M8.002,0.001c0.215,0.002,0.43,0.025,0.641,0.07
+                                        C8.87,0.11,9.088,0.185,9.291,0.291c0.197,0.094,0.37,0.231,0.508,0.4c0.139,0.172,0.209,0.389,0.2,0.609v0.702h3
+                                        c0.276,0.002,0.499,0.227,0.497,0.503c-0.001,0.131-0.053,0.256-0.145,0.349c-0.092,0.095-0.218,0.148-0.35,0.148h-10
+                                        C2.87,3.003,2.743,2.949,2.651,2.854c-0.193-0.19-0.196-0.501-0.006-0.694c0.002-0.002,0.004-0.004,0.006-0.006
+                                        C2.742,2.056,2.87,2.001,3.002,2.001h3v-0.7C5.995,1.079,6.069,0.861,6.21,0.689c0.136-0.168,0.307-0.304,0.5-0.4
+                                        c0.205-0.104,0.425-0.178,0.651-0.218C7.573,0.027,7.788,0.004,8.002,0.001z M8.002,1.001c-0.084,0.001-0.167,0.006-0.25,0.016
+                                        c-0.102,0.005-0.202,0.021-0.3,0.047C7.36,1.085,7.271,1.116,7.186,1.159C7.11,1.194,7.045,1.251,7,1.322v0.679h2v-0.7
+                                        c-0.054-0.064-0.123-0.115-0.2-0.148C8.715,1.111,8.625,1.08,8.534,1.06C8.444,1.039,8.352,1.025,8.26,1.021
+                                        C8.174,1.009,8.088,1.003,8.002,1.001z"/>
                                 </svg>
                             </span>
                         </div>
@@ -1091,21 +1821,22 @@ let option_section = `<div style="display: none;" id="option-section">
         </div>
     </div>`;
 
-// Setting Section
-let setting_section = `<div style="display:none" id="setting">
-        <div class="container pt-4 setting-section">
+/**
+ * Setting Section
+ */
+let settingSection = `<div style="display:none" id="setting">
+        <div class="container setting-section">
             <div class="row">
                 <div class="col-sm-12">
-                    <label><strong class="due-by-key">${dueByKey}</strong></label>
+                    <label class="mb--8"><strong class="due-by-key bold">${dueByKey}</strong></label>
                 </div>
                 <div class="clearfix"></div>
-                <div class="col-1"></div>
-                <div class="col-5">
+                <div class="col-6 pr--4">
                     <div class="input-group date form_date" data-date="1979-09-16T05:25:07Z" data-date-format="M dd, yyyy" data-link-field="dtp_input1">
                         <input class="form-control in-t" size="16" name="expiry_date" type="text" value="" readonly>
                     </div>
                 </div>
-                <div class="col-5">
+                <div class="col-6 pl--4">
                     <div class="input-group date form_time" data-date="" data-date-format="hh:ii" data-link-field="dtp_input3" data-link-format="hh:ii">
                         <input class="form-control in-t" name="expiry_time" size="16" type="text" value="" readonly>
                         <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
@@ -1113,56 +1844,55 @@ let setting_section = `<div style="display:none" id="setting">
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div class="col-12">
-                    <label><strong class="result-visible-key">${resultVisibleToKey}</strong></label>
-                </div>
-                <div class="clearfix"></div>
-                <div class="col-1"></div>
-                <div class="col-11">
-                    <div class="custom-radio-outer">
-                        <label class="custom-radio">
-                            <input type="radio" name="visible_to" class="visible-to" value="Everyone" checked>
-                            <span class="radio-block"></span> <span class="everyone-key">${everyoneKey}</span>
-                        </label>
+                <div class="d-none">
+                    <div class="col-12">
+                        <label><strong class="result-visible-key">${resultVisibleToKey}</strong></label>
                     </div>
-                    <div class="custom-radio-outer">
-                        <label class="custom-radio">
-                            <input type="radio" name="visible_to" class="visible-to" value="Only me"><span
-                                class="radio-block"></span> <span class="onlyme-key">${onlyMeKey}</span>
-                        </label>
+                    <div class="clearfix"></div>
+                    <div class="col-12">
+                        <div class="custom-radio-outer">
+                            <label class="custom-radio">
+                                <input type="radio" name="visible_to" class="visible-to" value="Everyone" >
+                                <span class="radio-block"></span> <span class="everyone-key">${everyoneKey}</span>
+                            </label>
+                        </div>
+                        <div class="custom-radio-outer">
+                            <label class="custom-radio">
+                                <input type="radio" name="visible_to" class="visible-to" value="Only me" checked><span
+                                    class="radio-block"></span> <span class="onlyme-key">${onlyMeKey}</span>
+                            </label>
+                        </div>
                     </div>
+                    <div class="clearfix"></div>
                 </div>
-                <div class="clearfix"></div>
-                <div class="col-12">
-                    <div class="input-group mb-2 form-check custom-check-outer">
+                <div class="col-12 mt--32">
+                    <div class="input-group form-check custom-check-outer">
                         <label class="custom-check form-check-label">
-                            <input type="checkbox" name="show_correct_answer" id="show-correct-answer" value="Yes" checked/>
+                            <input type="checkbox" name="show_correctAnswer" id="show-correct-answer" value="Yes" checked/>
                             <span class="checkmark"></span>
+                            <strong class="show-correct-key">${showCorrectAnswerKey}</strong>
+                            <br>
+                            <span class="answer-cannot-change-key sub-text mt--4 d-block">${answerCannotChangeKey}</span>
                         </label>
-                        <label><strong class="show-correct-key">${showCorrectAnswerKey}</strong></label>
                     </div>
                 </div>
                 <div class="clearfix"></div>
-                <div class="col-1"></div>
-                <div class="col-11">
-                    <label>
-                        <span class="answer-cannot-change-key">${answerCannotChangeKey}</span>
-                    </label>
-                </div>
             </div>
             <div class="footer">
                 <div class="footer-padd bt">
                     <div class="container ">
                         <div class="row">
                             <div class="col-9">
-                                <a class=" cursur-pointer" id="back">
-                                    <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="back-btn">
-                                        <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
-                                        </path>
-                                        <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
-                                        </path>
-                                    </svg> <span class="back-key">${backKey}</span>
-                                </a>
+                                <div class="d-table">
+                                    <a class=" cursor-pointer" id="back">
+                                        <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="back-btn">
+                                            <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
+                                            </path>
+                                            <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
+                                            </path>
+                                        </svg> <span class="back-key">${backKey}</span>
+                                    </a>
+                                </div>
                             </div>
                             <div class="col-3">
                                 <button class="btn btn-tpt">&nbsp;</button>
@@ -1174,24 +1904,13 @@ let setting_section = `<div style="display:none" id="setting">
         </div>
     </div>`;
 
-//  Modal Section for alerts and confirmations
-let modal_section = `<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title app-black-color" id="exampleModalLongTitle">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
+/**
+ * Variable contains Loader
+ */
+let loader = `<div class="loader-overlay">
+                <div class="loader-outer">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
                 </div>
-                <div class="modal-body app-black-color">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal"><span class="back-key">${backKey}</span></button>
-                    <button type="button" class="btn btn-primary btn-sm" id="save-changes">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>`;
+            </div>`;

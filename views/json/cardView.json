@@ -21,16 +21,6 @@
                 "wrap": true
             },
             {
-                "id": "ResultVisibility",
-                "type": "TextBlock",
-                "text": "${if(equals(action.customProperties[2].value, 'Everyone'), strings.result_everyone, strings.result_creator)}",
-                "maxLines": 2,
-                "wrap": true,
-                "isSubtle": true,
-                "size": "small",
-                "spacing": "none"
-            },
-            {
                 "id": "Questions",
                 "type": "Container",
                 "style": "emphasis",

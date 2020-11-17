@@ -1,6 +1,6 @@
 {
     "tag": "quiz-teams-app",
-    "id": "com.microsoft.sample.quiz",
+    "id": "com.microsoft.sample.quiz.mike06072009",
     "name": "Quiz",
     "$schema": "https://int.actions.office365.com/ActionCommon/jsons/ActionManifest.schema.json",
     "description": "Create Quiz",
@@ -12,22 +12,22 @@
     },
     "icon": "images/appIcon.png",
     "actionModel": "actionModel.json",
-    "version": "1.0.3",
+    "version": "1.0.40",
     "views": {
         "CardView": {
             "sourceLocation": "json/cardView.json"
         },
         "LaunchView": {
             "sourceLocation": "html/createView.html",
-            "header": "Create Quiz"
+            "header": "Create a new quiz"
         },
         "UpdateView": {
             "sourceLocation": "html/updateView.html",
-            "header": "Fill out Quiz"
+            "header": "Attempt quiz"
         },
         "DetailView": {
             "sourceLocation": "html/detailView.html",
-            "header": "Quiz Results view"
+            "header": "Quiz results"
         }
     },
     "localizationInfo": {
@@ -43,8 +43,8 @@
             "full": "Quiz"
         },
         "description": {
-            "short": "Create Quiz",
-            "full": "Create Quiz"
+            "short": "Create a new quiz",
+            "full": "Create a new quiz"
         },
         "icons": {
             "outline": "images/appIcon-32x32.png",

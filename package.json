@@ -8,19 +8,19 @@
         "zip": "cd ./output && bestzip ./ActionPackage.zip *",
         "create": "npm run build && npm run zip && upload-action-package -z ./output/ActionPackage.zip -t ./output/ -e https://int.actions.office365.com",
         "update": "npm run build && npm run zip && upload-action-package -z ./output/ActionPackage.zip -e https://int.actions.office365.com",
-        "inner-loop": "create-inner-loop -p com.microsoft.sample.quiz.mike06072005 -d ./output -e https://int.actions.office365.com",
-        "delete-loop": "delete-inner-loop -p com.microsoft.sample.quiz.mike06072005 -e https://int.actions.office365.com"
+        "inner-loop": "create-inner-loop -p com.microsoft.sample.quiz.mike06072009 -d ./output -e https://int.actions.office365.com",
+        "delete-loop": "delete-inner-loop -p com.microsoft.sample.quiz.mike06072009 -e https://int.actions.office365.com"
     },
     "devDependencies": {
         "@types/react": "16.8.19",
         "@types/react-dom": "16.8.0",
-        "action-package-deploy": "^1.0.17",
+        "action-package-deploy": "^1.0.22",
         "bestzip": "^2.1.6",
         "clean-webpack-plugin": "^3.0.0",
         "copy-webpack-plugin": "5.0.3",
         "crossorigin-webpack-plugin": "0.1.4",
-        "file-loader": "^6.0.0",
-        "html-loader": "^1.1.0",
+        "file-loader": "^6.2.0",
+        "html-loader": "^1.3.2",
         "html-webpack-plugin": "3.2.0",
         "node-sass": "^4.14.1",
         "sass-loader": "7.1.0",
@@ -30,9 +30,8 @@
         "webpack-cli": "^3.3.12"
     },
     "dependencies": {
-        "@fluentui/react-northstar": "^0.51.0",
-        "@microsoft/m365-action-sdk": "https://static.actions.office365.com/sdk/v1.0.1/microsoft-m365-action-sdk.tgz",
-        "action-package-deploy": "^1.0.17",
+        "@fluentui/react-northstar": "^0.51.2",
+        "@microsoft/m365-action-sdk": "https://int.static.actions.office365.com/sdk/v1.0.7/microsoft-m365-action-sdk.tgz",
         "babel-polyfill": "6.26.0",
         "bestzip": "^2.1.5",
         "clean-webpack-plugin": "^3.0.0",
@@ -47,6 +46,6 @@
         "recyclerlistview": "3.0.0",
         "satcheljs": "4.0.1",
         "style-loader": "0.21.0",
-        "uuid": "^8.0.0"
+        "uuid": "^8.3.1"
     }
 }
