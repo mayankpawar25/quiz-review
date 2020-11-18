@@ -479,7 +479,7 @@ function createQuestionView() {
         console.log('question.options: ');
         console.log(question.options);
 
-        //add radio button
+        //add checkbox input
         if (choice_occurance > 1) {
             question.options.forEach((option) => {
                 let displayName = JSON.parse(option.displayName).name;
@@ -493,7 +493,7 @@ function createQuestionView() {
                 $('div.card-box-question:visible > .option-sec').append($radioOption);
             });
         } else {
-            //add checkbox button
+            //add radio input
             question.options.forEach((option) => {
                 let displayName = JSON.parse(option.displayName).name;
                 let attachmentId = JSON.parse(option.displayName).attachmentId;
@@ -567,7 +567,8 @@ function getCheckboxButton(text, name, id, attachmentId) {
                     <label class="custom-check form-check-label d-block">
                         <input type="checkbox" class="radio-block" name="${name}" id="${id}">
                         <span class="checkmark"></span> 
-                        <div class="pr--32 text-justify check-in-div">${text}</p>
+                        <div class="pr--32 text-justify check-in-div">${text}
+                        </div>
                     </label>
                 </div>
             </div>`);
@@ -575,13 +576,15 @@ function getCheckboxButton(text, name, id, attachmentId) {
 
 /* Method handles button text */
 function nextButtonName() {
-    if (parseInt(currentPage) + 1 >= maxQuestionCount) {
+    let currentPage = $('#next').attr('data-next-id');
+    console.log(`${parseInt(currentPage)} >= ${maxQuestionCount}`)
+    if (parseInt(currentPage) >= maxQuestionCount) {
         setTimeout(function() {
-            $('.section-1-footer').find('#next-key').text('Done');
+            $('.section-1-footer').find('.next-key').text('Done');
         }, 100);
     } else {
         setTimeout(function() {
-            $('.section-1-footer').find('#next-Key').text('Next');
+            $('.section-1-footer').find('.next-key').text('Next');
         }, 100);
     }
 }
@@ -616,7 +619,6 @@ $(document).on("click", '#next', function() {
             checkCounter++;
             selectedAnswer.push($.trim($(ele).attr('id')));
             attrName = $(ele).attr('name');
-
             isChecked = true;
         }
     });
@@ -626,7 +628,6 @@ $(document).on("click", '#next', function() {
             checkCounter++;
             selectedAnswer.push($.trim($(ele).attr('id')));
             attrName = $(ele).attr('name');
-
             isChecked = true;
         }
     });
@@ -655,11 +656,12 @@ $(document).on("click", '#next', function() {
         });
 
         let correct_value = correctAnsArr.join();
+        nextButtonName();
         if (actionInstance.customProperties[3].value == 'Yes') {
 
             if ($(this).find('span').attr('class') == 'check-key') {
                 if (correctAnswer == true) {
-                    $('.result-status').html(`<span class="text-success semi-bold">${correctKey}</span>`);
+                    $('div.card-box-question:visible').find('.result-status').html(`<span class="text-success semi-bold">${correctKey}</span>`);
 
                     $('input[type="radio"]:visible, input[type="checkbox"]:visible').each(function(optindex, opt) {
                         if ($(opt).is(':checked')) {
@@ -676,7 +678,7 @@ $(document).on("click", '#next', function() {
                         $(opt).parents("div.card-box").addClass('disabled');
                     });
                 } else {
-                    $('.result-status').html(`<span class="text-danger semi-bold">${incorrectKey}</span>`);
+                    $('div.card-box-question:visible').find('.result-status').html(`<span class="text-danger semi-bold">${incorrectKey}</span>`);
 
                     $('input[type="radio"]:visible, input[type="checkbox"]:visible').each(function(optindex, opt) {
                         $(opt).parents("div.card-box").addClass('disabled');
@@ -691,25 +693,46 @@ $(document).on("click", '#next', function() {
                         console.log(`${ansKey}`)
                         console.log(`${optval}`)
                         if ($(opt).is(':checked') && ansKey.includes(optval)) {
-                            $(opt).parents('label.selector-inp').find('div.check-in-div').append(`
-                                <i class="success-with-img"> 
-                                    <svg version="1.1 " id="Layer_1 " x="0px " y="0px " width="16px " height="16px " viewBox="0 0 16 16 " xml:space="preserve ">
-                                        <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "></rect>
-                                        <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
-                                    </svg> 
-                                </i>`);
+                            if ($(opt).parents('label.selector-inp').length > 0) {
+                                $(opt).parents('label.selector-inp').find('div.check-in-div').append(`
+                                    <i class="success-with-img"> 
+                                        <svg version="1.1 " id="Layer_1 " x="0px " y="0px " width="16px " height="16px " viewBox="0 0 16 16 " xml:space="preserve ">
+                                            <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "></rect>
+                                            <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
+                                        </svg> 
+                                    </i>`);
+                            } else {
+                                $(opt).parents('label.d-block').find('div.check-in-div').append(`
+                                    <i class="success-with-img"> 
+                                        <svg version="1.1 " id="Layer_1 " x="0px " y="0px " width="16px " height="16px " viewBox="0 0 16 16 " xml:space="preserve ">
+                                            <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "></rect>
+                                            <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
+                                        </svg> 
+                                    </i>`);
+                            }
                             // $(opt).parents('.card-box').addClass('alert-success');
                         } else if ($(opt).is(':checked') && ansKey.includes(optval) == false) {
                             $(opt).parents('.card-box').addClass('alert-danger');
                         } else if (ansKey.includes(optval)) {
+                            console.log('correct not selected');
                             // $(opt).parents('.card-box').addClass('alert-success');
-                            $(opt).parents('label.selector-inp').find('div.check-in-div').append(`
-                                <i class="success-with-img"> 
-                                    <svg version="1.1 " id="Layer_1 " x="0px " y="0px " width="16px " height="16px " viewBox="0 0 16 16 " xml:space="preserve ">
-                                        <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "></rect>
-                                        <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
-                                    </svg> 
-                                </i>`);
+                            if ($(opt).parents('label.selector-inp').length > 0) {
+                                $(opt).parents('label.selector-inp').find('div.check-in-div').append(`
+                                    <i class="success-with-img"> 
+                                        <svg version="1.1 " id="Layer_1 " x="0px " y="0px " width="16px " height="16px " viewBox="0 0 16 16 " xml:space="preserve ">
+                                            <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "></rect>
+                                            <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
+                                        </svg> 
+                                    </i>`);
+                            } else {
+                                $(opt).parents('label.d-block').find('div.check-in-div').append(`
+                                    <i class="success-with-img"> 
+                                        <svg version="1.1 " id="Layer_1 " x="0px " y="0px " width="16px " height="16px " viewBox="0 0 16 16 " xml:space="preserve ">
+                                            <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "></rect>
+                                            <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
+                                        </svg> 
+                                    </i>`);
+                            }
                         }
                     });
                 }
@@ -717,7 +740,6 @@ $(document).on("click", '#next', function() {
                 $('.check-key').removeClass('check-key');
             } else {
                 $root.find('.card-box-question').hide();
-
                 if ((parseInt(currentPage) == $root.find('div.card-box-question').length) && (parseInt(currentPage)) < maxQuestionCount) {
                     createQuestionView();
                 } else if (parseInt(currentPage) == maxQuestionCount) {
@@ -741,6 +763,7 @@ $(document).on("click", '#next', function() {
                     Localizer.getString('xofy', parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
                         $('#xofy').text(result);
                         nextButtonName();
+                        console.log('nextButtonName:')
                     });
                     $('#check').attr('data-next-id', (parseInt(currentPage) + 1));
                     $('#next').attr('data-next-id', (parseInt(currentPage) + 1));
@@ -784,6 +807,7 @@ $(document).on("click", '#next', function() {
                 $('#previous').attr('data-prev-id', (parseInt(currentPage) - 1));
                 Localizer.getString('xofy', parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
                     $('#xofy').text(result);
+                    console.log('nextButtonName1');
                     nextButtonName();
                 });
                 $('#check').attr('data-next-id', (parseInt(currentPage) + 1));
@@ -804,7 +828,11 @@ $(document).on("click", '#next', function() {
         }
 
     } else {
-        $('#exampleModalCenter2').find('#exampleModalLongTitle').html(`<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="gt gs mt--4"><g><g><g><path d="M507.113,428.415L287.215,47.541c-6.515-11.285-18.184-18.022-31.215-18.022c-13.031,0-24.7,6.737-31.215,18.022L4.887,428.415c-6.516,11.285-6.516,24.76,0,36.044c6.515,11.285,18.184,18.022,31.215,18.022h439.796c13.031,0,24.7-6.737,31.215-18.022C513.629,453.175,513.629,439.7,507.113,428.415z M481.101,449.441c-0.647,1.122-2.186,3.004-5.202,3.004H36.102c-3.018,0-4.556-1.881-5.202-3.004c-0.647-1.121-1.509-3.394,0-6.007L250.797,62.559c1.509-2.613,3.907-3.004,5.202-3.004c1.296,0,3.694,0.39,5.202,3.004L481.1,443.434C482.61,446.047,481.748,448.32,481.101,449.441z"/><rect x="240.987" y="166.095" width="30.037" height="160.197" /><circle cx="256.005" cy="376.354" r="20.025" /></g></g></g > <g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg > <span class="note-key">${noteKey}</span>`);
+        $('.choice-required-err').remove();
+        $('.card-box-question:visible').append(`<p class="mt--32 text-danger choice-required-err"><font>${choiceAnyChoiceKey}</font></p>`);
+
+
+        /* $('#exampleModalCenter2').find('#exampleModalLongTitle').html(`<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" class="gt gs mt--4"><g><g><g><path d="M507.113,428.415L287.215,47.541c-6.515-11.285-18.184-18.022-31.215-18.022c-13.031,0-24.7,6.737-31.215,18.022L4.887,428.415c-6.516,11.285-6.516,24.76,0,36.044c6.515,11.285,18.184,18.022,31.215,18.022h439.796c13.031,0,24.7-6.737,31.215-18.022C513.629,453.175,513.629,439.7,507.113,428.415z M481.101,449.441c-0.647,1.122-2.186,3.004-5.202,3.004H36.102c-3.018,0-4.556-1.881-5.202-3.004c-0.647-1.121-1.509-3.394,0-6.007L250.797,62.559c1.509-2.613,3.907-3.004,5.202-3.004c1.296,0,3.694,0.39,5.202,3.004L481.1,443.434C482.61,446.047,481.748,448.32,481.101,449.441z"/><rect x="240.987" y="166.095" width="30.037" height="160.197" /><circle cx="256.005" cy="376.354" r="20.025" /></g></g></g > <g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg > <span class="note-key">${noteKey}</span>`);
         $('#exampleModalCenter2').find('.modal-body').html(`<label>${choiceAnyChoiceKey}<label>`);
         $('#exampleModalCenter2').find('.modal-footer').html(`<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">${continueKey}</button>`);
         $('#exampleModalCenter2').find('#save-changes').hide();
@@ -812,7 +840,7 @@ $(document).on("click", '#next', function() {
 
         $("#exampleModalCenter2").on("hidden.bs.modal", function() {
             $('#next').removeClass('disabled');
-        });
+        }); */
     }
 });
 
@@ -875,6 +903,7 @@ $(document).on("click", '#previous', function() {
     Localizer.getString('xofy', parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
         $('#xofy').text(result);
         nextButtonName();
+        console.log('nextButtonName3');
     });
 
     if (currentPage <= 0) {
@@ -961,57 +990,108 @@ function summarySection() {
                     let optImage = $(opt_val).find('.opt-image').attr('src');
 
                     if ($.inArray(opt_id, correctAnswer[count]) !== -1) {
-                        $cardBoxDiv.addClass('alert-success');
                         if ($(opt_val).find('input').prop('checked') == true) {
-                            $cardBoxDiv.append(`
-                                <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
-                                    <label class="custom-check form-check-label d-block font-14">
-                                        <span class="checkmark selected"></span>
-                                        <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
-                                            <i class="success-with-img">
-                                                <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px"
-                                                    height="16px" viewBox="0 0 16 16" xml:space="preserve">
-                                                    <rect x="22.695" y="-6" fill="none" width="16" height="16">
-                                                    </rect>
-                                                    <path id="Path_594"
-                                                        d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
-                                                        c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
-                                                        l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
-                                                        c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z">
-                                                    </path>
-                                                </svg>
-                                            </i>
-                                        </div>
-                                    </label>
-                                </div>
-                            `);
+                            if ($(opt_val).hasClass('custom-check')) {
+                                $cardBoxDiv.append(`
+                                    <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
+                                        <label class="custom-check form-check-label d-block font-14">
+                                            <span class="checkmark selected"></span>
+                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                <i class="success-with-img">
+                                                    <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px"
+                                                        height="16px" viewBox="0 0 16 16" xml:space="preserve">
+                                                        <rect x="22.695" y="-6" fill="none" width="16" height="16">
+                                                        </rect>
+                                                        <path id="Path_594"
+                                                            d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
+                                                            c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
+                                                            l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
+                                                            c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z">
+                                                        </path>
+                                                    </svg>
+                                                </i>
+                                            </div>
+                                        </label>
+                                    </div>
+                                `);
+                            } else {
+                                $cardBoxDiv.append(`
+                                    <div class="radio-section custom-radio-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
+                                        <label class="custom-radio d-block font-14">
+                                            <span class="radio-block selected"></span>
+                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                <i class="success-with-img">
+                                                    <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px"
+                                                        height="16px" viewBox="0 0 16 16" xml:space="preserve">
+                                                        <rect x="22.695" y="-6" fill="none" width="16" height="16">
+                                                        </rect>
+                                                        <path id="Path_594"
+                                                            d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
+                                                            c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
+                                                            l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
+                                                            c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z">
+                                                        </path>
+                                                    </svg>
+                                                </i>
+                                            </div>
+                                        </label>
+                                    </div>
+                                `);
+                            }
+                            $cardBoxDiv.addClass('alert-success');
                         } else {
-                            $cardBoxDiv.append(`
-                                    <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
-                                    <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
-                                        <span class="radio-block selected"></span>
-                                        <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
-                                            <i class="success-with-img">
-                                                <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px"
-                                                    height="16px" viewBox="0 0 16 16" xml:space="preserve">
-                                                    <rect x="22.695" y="-6" fill="none" width="16" height="16">
-                                                    </rect>
-                                                    <path id="Path_594"
-                                                        d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
-                                                        c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
-                                                        l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
-                                                        c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z">
-                                                    </path>
-                                                </svg>
-                                            </i>
-                                        </div>
-                                    </label>
-                                </div>
-                            `);
+                            if ($(opt_val).hasClass('custom-check')) {
+                                $cardBoxDiv.append(`
+                                        <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
+                                        <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
+                                            <span class="checkmark"></span>
+                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                <i class="success-with-img">
+                                                    <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px"
+                                                        height="16px" viewBox="0 0 16 16" xml:space="preserve">
+                                                        <rect x="22.695" y="-6" fill="none" width="16" height="16">
+                                                        </rect>
+                                                        <path id="Path_594"
+                                                            d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
+                                                            c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
+                                                            l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
+                                                            c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z">
+                                                        </path>
+                                                    </svg>
+                                                </i>
+                                            </div>
+                                        </label>
+                                    </div>
+                                `);
+                            } else {
+                                $cardBoxDiv.append(`
+                                        <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
+                                        <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
+                                            <span class="radio-block"></span>
+                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                <i class="success-with-img">
+                                                    <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px"
+                                                        height="16px" viewBox="0 0 16 16" xml:space="preserve">
+                                                        <rect x="22.695" y="-6" fill="none" width="16" height="16">
+                                                        </rect>
+                                                        <path id="Path_594"
+                                                            d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
+                                                            c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
+                                                            l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
+                                                            c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z">
+                                                        </path>
+                                                    </svg>
+                                                </i>
+                                            </div>
+                                        </label>
+                                    </div>
+                                `);
+                            }
                         }
                     } else {
                         if ($(opt_val).find('input').prop('checked') == true) {
-                            $cardBoxDiv.append(`
+                            if ($(opt_val).hasClass('custom-check')) {
+                                $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
                                             <span class="checkmark"></span>
@@ -1019,8 +1099,8 @@ function summarySection() {
                                         </label>
                                     </div>
                                 `);
-                        } else {
-                            $cardBoxDiv.append(`
+                            } else {
+                                $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                                             <span class="radio-block"></span>
@@ -1028,6 +1108,27 @@ function summarySection() {
                                         </label>
                                     </div>
                                 `);
+                            }
+                        } else {
+                            if ($(opt_val).hasClass('custom-check')) {
+                                $cardBoxDiv.append(`
+                                    <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="1">
+                                        <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
+                                            <span class="checkmark"></span>
+                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}</div>
+                                        </label>
+                                    </div>
+                                `);
+                            } else {
+                                $cardBoxDiv.append(`
+                                    <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="1">
+                                        <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
+                                            <span class="radio-block"></span>
+                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}</div>
+                                        </label>
+                                    </div>
+                                `);
+                            }
                         }
                     }
                 });
@@ -1045,7 +1146,6 @@ function summarySection() {
                     let opt_id = $(opt_val).find('input').attr('id');
                     if ($.inArray(opt_id, correctAnswer[count]) !== -1) {
                         if ($(opt_val).find('input').prop('checked') == true) {
-                            $cardBoxDiv.addClass('alert-success');
                             if ($(opt_val).hasClass('custom-check')) {
                                 /* Checkbox */
                                 $cardBoxDiv.append(`
@@ -1053,6 +1153,17 @@ function summarySection() {
                                             <label class="custom-check form-check-label d-block font-14">
                                                 <span class="checkmark selected"></span>
                                                 <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                    <i class="success-with-img">
+                                                        <svg version="1.1 " id="Layer_1 " x="0px " y="0px "
+                                                            width="16px " height="16px " viewBox="0 0 16 16 "
+                                                            xml:space="preserve ">
+                                                            <rect x="22.695 " y="-6 " fill="none " width="16 "
+                                                                height="16 "></rect>
+                                                            <path id="Path_594 "
+                                                                d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z ">
+                                                            </path>
+                                                        </svg>
+                                                    </i>
                                                 </div>
                                             </label>
                                         </div>
@@ -1064,19 +1175,30 @@ function summarySection() {
                                             <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                                                 <span class="radio-block selected"></span>
                                                 <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                    <i class="success-with-img">
+                                                        <svg version="1.1 " id="Layer_1 " x="0px " y="0px "
+                                                            width="16px " height="16px " viewBox="0 0 16 16 "
+                                                            xml:space="preserve ">
+                                                            <rect x="22.695 " y="-6 " fill="none " width="16 "
+                                                                height="16 "></rect>
+                                                            <path id="Path_594 "
+                                                                d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z ">
+                                                            </path>
+                                                        </svg>
+                                                    </i>
                                                 </div>
                                             </label>
                                         </div>
                                     `);
                             }
-                        } else {
                             $cardBoxDiv.addClass('alert-success');
+                        } else {
                             if ($(opt_val).hasClass('custom-check')) {
                                 /* checkbox */
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14">
-                                            <span class="checkmark selected"></span>
+                                            <span class="checkmark"></span>
                                             <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
                                                 <i class="success-with-img">
                                                     <svg version="1.1 " id="Layer_1 " x="0px " y="0px "
@@ -1099,7 +1221,7 @@ function summarySection() {
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
-                                            <span class="radio-block "></span>
+                                            <span class="radio-block"></span>
                                             <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
                                                 <i class="success-with-img">
                                                     <svg version="1.1 " id="Layer_1 " x="0px " y="0px "
@@ -1149,8 +1271,8 @@ function summarySection() {
                                 /* checkbox */
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_ind}" columnid="${opt_id}">
-                                            <label class="custom-radio d-block font-14  cursor-pointer selector-inp">
-                                                <span class="radio-block"></span>
+                                            <label class="custom-check form-check-label d-block font-14">
+                                                <span class="checkmark selected"></span>
                                                 <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
                                                 </div>
                                             </label>

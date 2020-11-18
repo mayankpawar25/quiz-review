@@ -145,7 +145,7 @@ $(document).on("click", ".remove-question", function() {
     } else {
         $(this).parents('div.question-container')
             .find("div.input-group:first")
-            .before(`<label class="label-alert d-block question-required-err"><font>${forQuizAtleastOneQuestionKey}</font></label>`);
+            .before(`<label class="label-alert d-block question-required-err"><font class="mb--4 d-block">${forQuizAtleastOneQuestionKey}</font></label>`);
 
         $([document.documentElement, document.body]).animate({
             scrollTop: $(".label-alert.d-block:first").offset().top - 200
@@ -303,6 +303,8 @@ $(document).on("click", "#next", function() {
     });
 
     if (isError == false) {
+        // $('.body-outer').before(loader);
+
         $('#next').prop('disabled', false);
 
         $(".section-1").hide();
@@ -478,6 +480,38 @@ function submitForm() {
     $("label.label-alert").remove();
     $("div.card-box-alert").removeClass("card-box-alert").addClass("card-box");
 
+    $('.question-container:visible').each(function(qind, quest) {
+        let isChecked = false;
+        $(quest).find('#options').find('input[type="checkbox"]').each(function(optind, opt) {
+            if ($(opt).prop('checked') == true) {
+                isChecked = true;
+            }
+        });
+
+        if (isChecked != true) {
+            let questionId = $(quest).attr('id');
+            $("#" + questionId)
+                .find("div.d-flex-ques")
+                .after(`<div class="clearfix"></div>
+                    <label class="label-alert d-block option-required-err text-left pull-left mt--8 mb--16"><font>${selectCorrectChoiceKey}</font></label>
+                    <div class="clearfix"></div>`);
+
+            $("#submit").prop('disabled', false);
+
+
+            $("#" + questionId)
+                .find("div.card-box")
+                .removeClass("card-box")
+                .addClass("card-box-alert");
+            errorText += 'Option check required';
+
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $(".option-required-err:last").offset().top - 200
+            }, 1000);
+        }
+    });
+
+
     $("form")
         .find("input[type='text']")
         .each(function() {
@@ -534,6 +568,7 @@ function submitForm() {
         });
 
     if ($.trim(errorText).length <= 0) {
+        $('.body-outer').before(loader);
         actionSDK
             .executeApi(request)
             .then(function(response) {
@@ -617,7 +652,7 @@ function getQuestionSet() {
     }
 
     if (error == false) {
-        $('.sec1').prepend(loader);
+        $('.body-outer').before(loader);
         return questions;
     } else {
         return false;
@@ -1193,7 +1228,7 @@ async function getTheme(request) {
                     let questionAttachmentData = JSON.parse(e.displayName).attachmentId;
                     $(".section-2").find("div.container.question-container:last").attr('id', 'question' + qcounter);
                     Localizer.getString('question').then(function(result) {
-                        $("#question" + qcounter).find("span.question-number").text(result + ' # ' + qcounter) + '.';
+                        $("#question" + qcounter).find("span.question-number").text(result + ' # ' + qcounter);
                     })
 
                     $('#question' + qcounter).find('#question-title').val(questionTitleData);
@@ -1340,12 +1375,12 @@ let formSection = `<div class="section-1">
                         <label class="quiz-clear semi-bold mb--8 cursor-pointer pull-right theme-color" style="display:none">Clear</label>
                         <div class="relative">
                             <!-- hide this div after img added -->
-                            <div class="photo-box card card-bg card-border max-min-220 upvj cursor-pointer">
+                            <div class="photo-box card-bg card-border max-min-220 upvj cursor-pointer">
                                 <span class="tap-upload-label upload-cover-image-key">${uploadCoverImageKey}</span>
                             </div>
                             <!-- show this div after img added -->
-                            <div class="quiz-updated-img card max-min-220 card-bg card-border cursor-pointer updated-img" style="display:none">
-                                <img src="" id="quiz-img-preview" class="quiz-updated-img card card-bg card-border cursor-pointer">
+                            <div class="quiz-updated-img max-min-220 card-bg card-border cursor-pointer updated-img" style="display:none">
+                                <img src="" id="quiz-img-preview" class="quiz-updated-img card-bg card-border cursor-pointer">
                             </div>
                         </div> 
                     </div>
@@ -1380,8 +1415,8 @@ let section2 = `<div class="section-2 d-none">
                     <div class="card-box quiz-card-section container quiz-preview-sec">
                         <div class="row">
                             <div class="col-12">
-                                <div class="quiz-updated-img card max-min-220 card-bg card-border cover-img cursor-pointer mb--16 updated-img" style="display:none">
-                                    <img src="" id="quiz-title-image" style="display:none" class="quiz-updated-img card card-bg card-border">
+                                <div class="quiz-updated-img max-min-220 card-bg card-border cover-img cursor-pointer mb--16 updated-img" style="display:none">
+                                    <img src="" id="quiz-title-image" style="display:none" class="quiz-updated-img card-bg card-border">
                                     <input type="file" name="quiz_image" class="d-none" id="cover-image" accept="image/*" src="images/px-img.png" />
                                 </div>
                             </div>
@@ -1484,7 +1519,7 @@ let questionsSection = `<div style="display: none;" id="question-section">
             <div class="card-box card-border card-bg">
                 <div class="form-group-question">
                     <div>
-                        <span class="question-number input-group-text mb--8 input-tpt pl-0 strong cursor-pointer">Question # 1.</span>
+                        <span class="question-number input-group-text mb--8 input-tpt pl-0 strong cursor-pointer">Question # 1</span>
                         <span class="input-group-text remove-question remove-option-q input-tpt cursor-pointer" aria-hidden="true">
                             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">

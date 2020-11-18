@@ -1,7 +1,7 @@
 {
     "tag": "quiz-teams-app",
     "id": "com.microsoft.sample.quiz.mike06072009",
-    "name": "Quiz",
+    "name": "Quiz-edog",
     "$schema": "https://int.actions.office365.com/ActionCommon/jsons/ActionManifest.schema.json",
     "description": "Create Quiz",
     "developer": {
@@ -12,7 +12,7 @@
     },
     "icon": "images/appIcon.png",
     "actionModel": "actionModel.json",
-    "version": "1.0.40",
+    "version": "1.0.50",
     "views": {
         "CardView": {
             "sourceLocation": "json/cardView.json"

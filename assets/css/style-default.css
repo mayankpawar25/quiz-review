@@ -1,5 +1,5 @@
 @charset "utf-8";
-:root {
+ :root {
     --main-bg-color: #6264a7;
     --main-bg-color-hover: #4e508a;
     --main-bg-color-1: rgba(98, 100, 167, 0.1);
@@ -533,11 +533,19 @@ label {
     top: 8px;
 }
 
-.card-box .check-in-div i.success-with-img {
+i.success-with-img {
     fill: var(--success-border);
 }
 
 .alert i.success {
+    fill: var(--success-border);
+}
+
+.alert-success i {
+    fill: var(--success-border);
+}
+
+.check-in-div i.success {
     fill: var(--success-border);
 }
 
@@ -1536,7 +1544,7 @@ body::-webkit-scrollbar-thumb:hover {
     border-radius: 40px;
 }
 
-::-webkit-scrollbar {
+ ::-webkit-scrollbar {
     width: 8px;
 }
 
@@ -2116,11 +2124,12 @@ span.file-counter {
 }
 
 .min-max-132 {
-    max-height: 132px;
-    min-height: 132px;
+    max-height: 264px;
+    min-height: 264px;
     overflow: hidden;
-    border-radius: 3px 3px 0px 0px;
+    border-radius: 0px;
     background-color: var(--app-white);
+    padding: 8px;
 }
 
 .min-max-132 img {
@@ -2200,6 +2209,11 @@ div#xofy {
     min-height: 20px;
 }
 
+.quiz-preview-sec {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
 @media screen and (max-width: 576px) {
     body {
         font-size: var(--font-12);
@@ -2241,6 +2255,10 @@ div#xofy {
     .d-flex-alert .pr--8 {
         width: 30%;
         float: left;
+    }
+    .min-max-132 {
+        max-height: 218px;
+        min-height: 218px;
     }
 }
 

@@ -156,7 +156,6 @@ async function createBody() {
     let response = await actionSDK.executeApi(getSubscriptionCount);
 
     let $pcard = $('<div class="progress-section"></div>');
-
     let memberCount = response.memberCount;
     let participationPercentage = 0;
 
@@ -174,38 +173,52 @@ async function createBody() {
         $pcard.append(`<div class="clearfix"></div>`);
     });
 
+
     $("#root").append($pcard);
     await getUserprofile();
 
-    if (Object.keys(ResponderDate).length > 0) {
+    console.log('ResponderDate: ' + JSON.stringify(ResponderDate));
+    console.log('ResponderDateLength: ' + Object.keys(ResponderDate).length);
+    let responderDateLength = Object.keys(ResponderDate).length;
+
+    if (responderDateLength > 0) {
         if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
             console.log('createCreatorQuestionView:');
             createCreatorQuestionView();
-        } else if (myUserId != actionInstance.creatorId) {
-            /* if (myUserId == dataResponse.context.userId) {
-                console.log('createQuestionView:');
-                createQuestionView(myUserId);
-            } else { */
-            console.log('yet to respond:');
-
-            ResponderDate.forEach((responders) => {
-                let name = responders.label;
-                let matches = name.match(/\b(\w)/g); // [D,P,R]
-                let initials = matches.join('').substring(0, 2); // DPR
-                Localizer.getString('you_yet_respond').then(function(result) {
-
-                    $('div.progress-section').after(`<div class="d-flex cursor-pointer getresult" id="${responders.value2}">
-                                <div class="avtar">
-                                    ${initials}
-                                </div>
-                                <div class="avtar-txt">${result}</div>
-                            </div>
-                        `);
-                    $('div.progress-section').after(`<hr class="small">`);
-                });
+        } else if (myUserId == dataResponse.context.userId && myUserId != actionInstance.creatorId) {
+            let isResponded = false;
+            ResponderDate.forEach((responder) => {
+                if (responder.value2 == myUserId) {
+                    createQuestionView(myUserId);
+                    isResponded = true;
+                }
             });
-            // }
+
+            if (isResponded == false) {
+                actionNonResponders.forEach((nonresponders) => {
+                    if (nonresponders.value2 == myUserId) {
+                        let name = nonresponders.label;
+                        let matches = name.match(/\b(\w)/g); // [D,P,R]
+                        let initials = matches.join('').substring(0, 2); // DPR
+                        Localizer.getString('you_yet_respond').then(function(result) {
+                            $('div.progress-section').after(`<div class="d-flex cursor-pointer getresult" id="${nonresponders.value2}">
+                                        <div class="avtar">
+                                            ${initials}
+                                        </div>
+                                        <div class="avtar-txt">${result}</div>
+                                    </div>
+                                `);
+                            $('div.progress-section').after(`<hr class="small">`);
+                            $('div#' + nonresponders.value2).after(`<hr class="small">`);
+                        });
+
+
+                    }
+                });
+            }
+
         } else {
+
             ResponderDate.forEach((responder) => {
                 if (responder.value2 == myUserId) {
                     console.log('createReponderQuestionView2:');
@@ -216,7 +229,9 @@ async function createBody() {
     } else {
         actionNonResponders.forEach((nonresponders) => {
             if (nonresponders.value2 == myUserId) {
-                if (dataResponse.context.userId == myUserId) {
+                console.log(`${myUserId} == ${dataResponse.context.userId} && ${myUserId} != ${actionInstance.creatorId}`)
+
+                if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
                     console.log('createCreatorQuestionView2:');
                     createCreatorQuestionView();
                 } else {
@@ -226,7 +241,6 @@ async function createBody() {
                     let matches = name.match(/\b(\w)/g); // [D,P,R]
                     let initials = matches.join('').substring(0, 2); // DPR
                     Localizer.getString('you_yet_respond').then(function(result) {
-                        $('div.progress-section').after(`<hr class="small">`);
                         $('div.progress-section').after(`<div class="d-flex cursor-pointer getresult" id="${nonresponders.value2}">
                                 <div class="avtar">
                                     ${initials}
@@ -234,8 +248,9 @@ async function createBody() {
                                 <div class="avtar-txt">${result}</div>
                             </div>
                         `);
+                        $('div.progress-section').after(`<hr class="small">`);
+                        $('div#' + nonresponders.value2).after(`<hr class="small">`);
                     });
-                    $('div.progress-section').after(`<hr class="small">`);
                 }
             }
         })
@@ -477,7 +492,7 @@ function createReponderQuestionView(userId, responder = '') {
         let name = responder.label;
         let matches = name.match(/\b(\w)/g); // [D,P,R]
         let initials = matches.join('').substring(0, 2); // DPR
-        $('div.progress-section').after(`<hr class="small">`);
+        // $('div.progress-section').after(`<hr class="small">`);
 
         Localizer.getString('you_responded').then(function(result) {
             $('div.progress-section').after(`<div class="d-flex cursor-pointer getresult" data-attr="home" id="${myUserId}">
@@ -488,6 +503,7 @@ function createReponderQuestionView(userId, responder = '') {
                 </div>
                 <hr class="small">`);
             $('div.progress-section').after(`<hr class="small">`);
+            $('div#' + myUserId).after(`<hr class="small">`);
         });
     }
 
@@ -578,7 +594,7 @@ function createReponderQuestionView(userId, responder = '') {
                 );
                 $cardDiv.append($radioOption);
 
-                if (answerIs == 'correct') {
+                if (answerIs.toLowerCase() == 'correct') {
                     optAnsArr[optind] = answerIs;
                 } else {
                     optAnsArr[optind] = 'incorrect';
@@ -913,7 +929,7 @@ function createQuestionView(userId) {
                 );
                 $blankDiv.append($radioOption);
 
-                if (answerIs == 'correct') {
+                if (answerIs.toLowerCase() == 'correct') {
                     optAnsArr[optind] = answerIs;
                 } else {
                     optAnsArr[optind] = 'incorrect';
@@ -928,7 +944,8 @@ function createQuestionView(userId) {
             if (optAnsArr.includes('incorrect') != true) {
                 score++;
             }
-            $("div.question-content:first").append($questionDiv);
+            // $("div.question-content:first").append($questionDiv);
+            $("div#root").append($questionDiv);
         });
 
     });
@@ -937,7 +954,7 @@ function createQuestionView(userId) {
     let scorePercentage = Math.round((score / total) * 100);
 
     Localizer.getString("score", ":").then(function(result) {
-        $("#root > div:first").after(`<div class="d-flex"><p class="semi-bold pr--8">${result} ${scorePercentage}%</p></div>`);
+        $("#root > div.progress-section").after(`<div class="d-flex"><p class="semi-bold pr--8">${result} ${scorePercentage}%</p></div>`);
     });
 }
 
@@ -960,15 +977,16 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
                 <div class="radio-section custom-radio-outer" id="${id} " columnid="3 ">
                     <label class="custom-radio d-block font-14">
                         <span class="radio-block selected "></span>
-                        <div class="pr--32 ">${text} </div>
+                        <div class="pr--32 check-in-div">${text} 
+                            <i class="success-with-img"> 
+                                <svg version="1.1 " id="Layer_1 "  x="0px " y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
+                                    <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
+                                    <path id="Path_594 "  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "/>
+                                </svg> 
+                            </i> 
+                        </div>
                     </label>
                 </div>
-                <i class="success-with-img"> 
-                    <svg version="1.1 " id="Layer_1 "  x="0px " y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
-                        <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
-                        <path id="Path_594 "  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "/>
-                    </svg> 
-                </i> 
             </div>`
         );
         if (answerIs == "") {
@@ -977,18 +995,19 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
     } else if (($.trim(userResponse) != $.trim(id) && $.trim(correctAnswer) == $.trim(id))) {
         console.log(` asdasdsa2: ${$.trim(userResponse)}, ${$.trim(id)}, ${$.trim(correctAnswer)}`);
         /* If User Response is incorrect and not answered */
-        $oDiv.append(`<div class="card-box card-bg card-border mb--8 alert-success">
+        $oDiv.append(`<div class="card-box card-bg card-border mb--8">
                 <div class="radio-section custom-radio-outer" id="${id}">
                     <label class="custom-radio d-block selected font-14  "> 
                         <span class="radio-block"></span>${text} 
+                        <i class="success-with-img"> 
+                            <svg version="1.1 " id="Layer_1 "  x="0px " y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
+                                <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
+                                <path id="Path_594 "  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "/>
+                            </svg> 
+                        </i> 
                     </label>
                 </div>
-                <i class="success-with-img"> 
-                    <svg version="1.1 " id="Layer_1 "  x="0px " y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
-                        <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
-                        <path id="Path_594 "  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "/>
-                    </svg> 
-                </i> 
+                
             </div>`);
     } else if (($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) != $.trim(id))) {
         console.log(` asdasdsa3: ${$.trim(userResponse)}, ${$.trim(id)}, ${$.trim(correctAnswer)}`);
@@ -1044,16 +1063,17 @@ function getOptionsCreator(text, optId, ind, result, attachmentId) {
                 <div class="radio-section custom-radio-outer " id="${optId}" columnid="${ind}">
                     <label class="custom-radio d-block font-14 cursor-pointer ">
                         <span class="radio-block"></span>
-                        <div class="pr--32 ">${text}</div>
+                        <div class="pr--32 check-in-div">${text}
+                            <i class="success"> 
+                                <svg version="1.1 " id="Layer_1"  x="0px" y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
+                                <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
+                                <path id="Path_594 "  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
+                                        c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "/>
+                                </svg> 
+                            </i>
+                        </div>
                     </label>
                 </div>
-                <i class="success"> 
-                    <svg version="1.1 " id="Layer_1"  x="0px" y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
-                    <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
-                    <path id="Path_594 "  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
-                            c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "/>
-                    </svg> 
-                </i>
             `);
     } else {
         $oDiv.append(`
