@@ -1,4 +1,3 @@
-import * as actionSDK from "@microsoft/m365-action-sdk";
 import { Localizer, ActionHelper } from '../common/ActionSdkHelper';
 
 let request;
@@ -38,6 +37,9 @@ let selectCorrectChoiceKey = '';
 let addQuestionKey = '';
 let uploadCoverImageKey = '';
 
+
+
+/* ******************************** Events ************************************** */
 /** 
  * @event Click for add Question Section
  */
@@ -194,7 +196,7 @@ $(document).on("click", ".add-options", function() {
 });
 
 /** 
- * Click Event for remove the Option
+ * @event Click for remove the Option
  */
 $(document).on("click", ".remove-option", function(eve) {
     $(this).parents("div.question-container").find('.option-required-err').remove();
@@ -245,7 +247,7 @@ $(document).on("click", ".remove-option", function(eve) {
 });
 
 /**
- * Click Event for show setting page
+ * @event Click to Load setting page
  */
 $(document).on("click", ".show-setting", function() {
     $(".section-1").hide();
@@ -254,7 +256,7 @@ $(document).on("click", ".show-setting", function() {
 });
 
 /**
- * Click Event for Submit Quiz
+ * @event Click to Submit Quiz
  */
 $(document).on("click", "#submit", function() {
     $("#submit").prop('disabled', true);
@@ -262,7 +264,7 @@ $(document).on("click", "#submit", function() {
 });
 
 /**
- * Change Event on quiz title
+ * @event Change on quiz title
  */
 $(document).on("change", "#quiz-title", function() {
     if ($('#quiz-title').val().length > 0) {
@@ -273,7 +275,7 @@ $(document).on("change", "#quiz-title", function() {
 });
 
 /**
- * Event when click on clear button on training section
+ * @event Click on clear button on training section
  */
 $(document).on('click', '.quiz-clear', function() {
     $('.error-msg').remove();
@@ -285,7 +287,7 @@ $(document).on('click', '.quiz-clear', function() {
 });
 
 /**
- * Click Event for next section at Quiz title and description page
+ * @event Click for next section at Quiz title and description page
  */
 $(document).on("click", "#next", function() {
     let isError = false;
@@ -329,7 +331,7 @@ $(document).on("click", "#next", function() {
 });
 
 /**
- * Click event for back button
+ * @event Click event for back button
  */
 $(document).on("click", "#back", function() {
     $(".section-1").show();
@@ -340,7 +342,7 @@ $(document).on("click", "#back", function() {
 });
 
 /**
- * Event to back button on section 2
+ * @event Event to back button on section 2
  */
 $(document).on("click", "#back-section2", function() {
     $(".section-2").hide();
@@ -352,7 +354,7 @@ $(document).on("click", "#back-section2", function() {
 });
 
 /**
- * Change event for setting inputs
+ * @event Change event for setting inputs
  */
 $(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], .visible-to, #show-correct-answer", function() {
     $('.invalid-date-err').remove();
@@ -377,7 +379,7 @@ $(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], 
 });
 
 /**
- * Click event for correct answer inputs
+ * @event Click event for correct answer inputs
  */
 $(document).on('click', '.check-me-title', function() {
     if ($(this).parents('div.col-12').find('input[type="checkbox"]').prop('checked') == false) {
@@ -390,7 +392,7 @@ $(document).on('click', '.check-me-title', function() {
 })
 
 /**
- * Event when click on class then open hidden file
+ * @event Event when click on class then open hidden file
  */
 $(document).on('click', '.upvj', function(event) {
     event.preventDefault();
@@ -402,7 +404,7 @@ $(document).on('click', '.upvj', function(event) {
 })
 
 /**
- * Event to show trash on focusin at input
+ * @event Event to show trash on focusin at input
  */
 $(document).on('focusin', '.option-div, .input-group-tpt, .input-group-tpt > input[type="text"], .remove-option', function() {
     $('.remove-option').hide();
@@ -412,7 +414,7 @@ $(document).on('focusin', '.option-div, .input-group-tpt, .input-group-tpt > inp
 });
 
 /**
- * Event to hide trash on focusout at input
+ * @event Event to hide trash on focusout at input
  */
 $(document).on('focusout', '.option-div, .input-group-tpt, .input-group-tpt > input[type="text"], .remove-option', function() {
     setTimeout(() => {
@@ -421,7 +423,7 @@ $(document).on('focusout', '.option-div, .input-group-tpt, .input-group-tpt > in
 });
 
 /**
- * Event to show trash on focusin at input
+ * @event Event to show trash on focusin at input
  */
 $(document).on('hover', '.remove-option', function() {
     $(this).show();
@@ -429,7 +431,7 @@ $(document).on('hover', '.remove-option', function() {
 
 
 /**
- * Event when quiz cover image changes
+ * @event Event when quiz cover image changes
  */
 $(document).on('change', '#cover-image', function() {
     $('.error-msg').remove();
@@ -443,7 +445,7 @@ $(document).on('change', '#cover-image', function() {
 });
 
 /**
- * Event when question cover image changes
+ * @event Event when question cover image changes
  */
 $(document).on('click', '.question-image, .option-image', function() {
     $(this).parents('.input-group').find('input[type="file"]').click();
@@ -451,7 +453,7 @@ $(document).on('click', '.question-image, .option-image', function() {
 
 
 /**
- * Event when question cover image changes
+ * @event Event when question cover image changes
  */
 $(document).on('change', 'input[name="question_image"]', function() {
     readURL(this, $(this).parents('div.form-group-question').find('.question-preview-image'));
@@ -460,7 +462,7 @@ $(document).on('change', 'input[name="question_image"]', function() {
 });
 
 /**
- * Event when option cover image changes
+ * @event Event when option cover image changes
  */
 $(document).on('change', 'input[name="option_image"]', function() {
     readURL(this, $(this).parents('div.row').find('.option-preview-image'));
@@ -469,6 +471,7 @@ $(document).on('change', 'input[name="option_image"]', function() {
 });
 
 
+/* ****************************** Method ************************************* */
 /**
  * @description Method for quiz data and submit the datas
  */
@@ -569,7 +572,7 @@ function submitForm() {
 
     if ($.trim(errorText).length <= 0) {
         $('.body-outer').before(loader);
-        actionSDK
+        ActionHelper
             .executeApi(request)
             .then(function(response) {
                 uploadImages().then(function() {
@@ -594,7 +597,7 @@ function getQuestionSet() {
     questions = new Array();
     let error = false;
     for (let i = 1; i <= questionCount; i++) {
-        let optionType = actionSDK.ActionDataColumnValueType.SingleOption;
+        let optionType = ActionHelper.getColumnType('singleselect');
         let option = [];
         let isSelected = 0;
         let questionAttachmentId = $("#question" + i).find('textarea#question-attachment-id').length > 0 ? $("#question" + i).find('textarea#question-attachment-id').val() : '';
@@ -614,9 +617,9 @@ function getQuestionSet() {
                 }
 
                 if ($("#question" + i).find("input[type=checkbox]:checked").length > 1) {
-                    optionType = actionSDK.ActionDataColumnValueType.MultiOption;
+                    optionType = ActionHelper.getColumnType('multiselect');
                 } else {
-                    optionType = actionSDK.ActionDataColumnValueType.SingleOption;
+                    optionType = ActionHelper.getColumnType('singleselect');
                 }
                 let optDisplayData = JSON.stringify({ name: optTitle, attachmentId: optionAttachmentId });
                 option.push({ name: optId, displayName: optDisplayData });
@@ -717,7 +720,6 @@ function uploadImages() {
                     ActionHelper.executeApi(attachmentRequest)
                         .then(function(response) {
                             imageCounter++;
-                            console.log(response);
                             if ($('#quiz-attachment-id').length > 0) {
                                 $('#quiz-attachment-id').val(response.attachmentId);
                             } else {
@@ -833,16 +835,16 @@ function createAction(actionPackageId) {
         customProperties: properties,
         dataTables: [{
             name: "TestDataSet",
-            itemsVisibility: actionSDK.Visibility.All,
-            rowsVisibility: actionSDK.Visibility.All,
+            itemsVisibility: ActionHelper.visibility(),
+            rowsVisibility: ActionHelper.visibility(),
             itemsEditable: false,
             canUserAddMultipleItems: false,
             dataColumns: questionsSet,
         }, ],
     };
 
-    let request = new actionSDK.CreateAction.Request(action);
-    actionSDK
+    let request = ActionHelper.createAction(action);
+    ActionHelper
         .executeApi(request)
         .then(function(response) {
             console.info("CreateAction - Response: " + JSON.stringify(response));
@@ -867,7 +869,7 @@ function generateGUID() {
  * Initiate Method
  */
 $(document).ready(function() {
-    request = new actionSDK.GetContext.Request();
+    request = ActionHelper.getContextRequest();
     getStringKeys();
     getTheme(request);
 });
@@ -1029,7 +1031,7 @@ async function getStringKeys() {
  * @param request context request
  */
 async function getTheme(request) {
-    let response = await actionSDK.executeApi(request);
+    let response = await ActionHelper.executeApi(request);
     let context = response.context;
     lastSession = context.lastSessionData;
     let theme = context.theme;
@@ -1047,9 +1049,6 @@ async function getTheme(request) {
 
     /* If Edit back the quiz */
     if (lastSession != null) {
-
-        console.log("lastsession: " + JSON.stringify(lastSession));
-
         let ddtt = ((lastSession.action.customProperties[1].value).split('T'));
         let dt = ddtt[0].split('-');
         weekDateFormat = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
@@ -1151,14 +1150,13 @@ async function getTheme(request) {
         orientation: 'top'
     };
     dateInput.datepicker(options);
-    await actionSDK.executeApi(new actionSDK.HideLoadingIndicator.Request());
+    await ActionHelper.hideLoader();
 
     if (lastSession != null) {
         setTimeout(() => {
             let option = $("div#option-section .option-div").clone();
             lastSession.action.dataTables[0].dataColumns.forEach((e, ind) => {
                 let correctAnsArr = JSON.parse(lastSession.action.customProperties[5].value);
-                console.log("ind: " + ind);
                 if (ind == 0) {
                     let questionTitleData = JSON.parse(e.displayName).name;
                     let questionAttachmentData = JSON.parse(e.displayName).attachmentId;
@@ -1220,7 +1218,6 @@ async function getTheme(request) {
                     });
                 } else {
                     let qcounter = ind + 1;
-                    console.log('qcounter: ' + qcounter);
                     $(".section-2").find('#add-questions').parents("div.container").before($('#question-section').html());
 
                     let ocounter = 0;
@@ -1358,7 +1355,7 @@ function readURL(input, elem) {
 
 /********************************************   HTML Sections  ***********************************************************/
 /**
- * Quiz Landing Page
+ * @description Quiz Landing Page
  */
 let formSection = `<div class="section-1">
             <div class="container">
@@ -1409,7 +1406,7 @@ let formSection = `<div class="section-1">
         </div>`;
 
 /**
- * Section2 Question Landing page
+ * @description Section2 Question Landing page
  */
 let section2 = `<div class="section-2 d-none">
                     <div class="card-box quiz-card-section container quiz-preview-sec">
@@ -1460,59 +1457,8 @@ let section2 = `<div class="section-2 d-none">
                     </div>
                 </div>`;
 
-let section21 = `<div class="section-2 d-none">
-                    <div class="card-box card-bg card-border quiz-card-section">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="img-thumbnail" style="display:none">
-                                    <img src="" id="quiz-title-image" style="display:none">
-                                    <input type="file" name="quiz_image" placeholder="Upload Cover Image" class="in-t form-control" id="cover-image" accept="image/*" src="images/px-img.png" style="width:100%; height: 180px; display:none"/>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <h4 id="quiz-title-content"></h4>
-                                <p class="mb0 text-justify" id="quiz-description-content"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="container pb-5">
-                        <div class="form-group pb-5">
-                            <button type="button" class="btn btn-primary btn-sm" id="add-questions"> <svg role="presentation"
-                                    focusable="false" viewBox="8 8 16 16" class="cc gs gt wh gv">
-                                    <path class="ui-icon__outline cc"
-                                        d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
-                                    </path>
-                                    <path class="ui-icon__filled gr"
-                                        d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
-                                    </path>
-                                </svg> Add Question</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer section-2-footer d-none">
-                    <div class="footer-padd bt">
-                        <div class="container ">
-                            <div class="row">
-                                <div class="col-9">
-                                    <a class=" cursor-pointer" id="back-section2">
-                                        <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="gt ki gs">
-                                            <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
-                                            </path>
-                                            <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
-                                            </path>
-                                        </svg> Back
-                                    </a>
-                                </div>
-                                <div class="col-3 text-right"> 
-                                    <button type="button" class="btn btn-primary btn-sm pull-right" id="submit"> <span class="next-key">${nextKey}</span></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-
 /** 
- * Question Section
+ * @description Question Section
  */
 let questionsSection = `<div style="display: none;" id="question-section">
         <div class="container question-container" id="question1">
@@ -1768,8 +1714,9 @@ let questionsSection = `<div style="display: none;" id="question-section">
         </div>
         <div class="clearfix"></div>
     </div>`;
+
 /**
- * Option Section
+ * @description Option Section
  */
 let optionSection = `<div style="display: none;" id="option-section">
         <div class="option-div">
@@ -1857,7 +1804,7 @@ let optionSection = `<div style="display: none;" id="option-section">
     </div>`;
 
 /**
- * Setting Section
+ * @description Setting Section
  */
 let settingSection = `<div style="display:none" id="setting">
         <div class="container setting-section">
@@ -1940,7 +1887,7 @@ let settingSection = `<div style="display:none" id="setting">
     </div>`;
 
 /**
- * Variable contains Loader
+ * @description Variable contains Loader
  */
 let loader = `<div class="loader-overlay">
                 <div class="loader-outer">

@@ -1,4 +1,3 @@
-import * as actionSDK from "@microsoft/m365-action-sdk";
 import { ActionHelper, Localizer } from '../common/ActionSdkHelper';
 
 let actionContext = null;
@@ -12,9 +11,10 @@ let myUserId = "";
 let score = 0;
 let total = 0;
 let answerIs = "";
-let request = new actionSDK.GetContext.Request();
+let request = ActionHelper.getContextRequest();
 let dataResponse = '';
 let actionId = '';
+let root = document.getElementById("root");
 
 let dueByKey = '';
 let expiredOnKey = '';
@@ -25,15 +25,66 @@ let youKey = '';
 let questionKey = '';
 let scoreKey = '';
 
-/* Initiate Method */
+/* ********************************* Events ******************************************** */
+
+/**
+ * @event Click Event for rerender the landing page
+ */
+$(document).on("click", ".back", function() {
+    createBody();
+});
+
+/**
+ * @event Click Event for back to responder and non responder page
+ */
+$(document).on("click", ".back1", function() {
+    let userId = $(this).attr("userid-data");
+    create_responder_nonresponders();
+});
+
+/**
+ * @event Click Event for responder page
+ */
+$(document).on("click", "#show-responders", function() {
+    create_responder_nonresponders();
+});
+
+/**
+ * @event Click event fetching result of responders 
+ */
+$(document).on("click", ".getresult", function() {
+    let userId = $(this).attr("id");
+    $("#root").html("");
+    head();
+    $("#root").append($(".question-content").clone());
+    createQuestionView(userId);
+
+    if ($(this).attr('data-attr') !== undefined) {
+        footer2();
+    } else {
+        footer(userId);
+    }
+});
+
+
+/* ********************************* Methods ******************************************** */
+
+/**
+ * @description Initiate Method
+ */
 $(document).ready(function() {
     OnPageLoad();
 });
 
-/* Calling method  for theme selection based on teams theme */
+/**
+ * @description Calling method  for theme selection based on teams theme
+ * @param request context request
+ */
 getTheme(request);
 
-/* Async method for fetching localization strings */
+/**
+ * @description Async method for fetching localization strings
+ */
 async function getStringKeys() {
     Localizer.getString('dueBy').then(function(result) {
         dueByKey = result;
@@ -75,28 +126,28 @@ async function getStringKeys() {
     });
 }
 
-/* 
- * @desc Method to select theme based on the teams theme  
+/**
+ * @description Method to select theme based on the teams theme  
  * @param request context request
  */
 async function getTheme(request) {
-    dataResponse = await actionSDK.executeApi(request);
+    dataResponse = await ActionHelper.executeApi(request);
     let context = dataResponse.context;
     $("form.section-1").show();
     let theme = context.theme;
     $("link#theme").attr("href", "css/style-" + theme + ".css");
     getStringKeys();
 
-    await actionSDK.executeApi(new actionSDK.HideLoadingIndicator.Request());
+    ActionHelper.hideLoader();
 
 }
 
-let root = document.getElementById("root");
-
-/* Method loads the landing page */
+/**
+ * @description Method loads the landing page
+ */
 function OnPageLoad() {
-    actionSDK
-        .executeApi(new actionSDK.GetContext.Request())
+    ActionHelper
+        .executeApi(request)
         .then(function(response) {
             console.info("GetContext - Response: " + JSON.stringify(response));
             actionContext = response.context;
@@ -108,25 +159,24 @@ function OnPageLoad() {
         });
 }
 
-/* 
- * @desc Method to get data rows  
+/**
+ * @description Method to get data rows  
  * @param request context action id
  */
 function getDataRows(actionId) {
-    let getActionRequest = new actionSDK.GetAction.Request(actionId);
-    let getSummaryRequest = new actionSDK.GetActionDataRowsSummary.Request(
+    let getActionRequest = ActionHelper.getActionRequest(actionId);
+    let getSummaryRequest = ActionHelper.getDataRowSummary(
         actionId,
         true
     );
-    let getDataRowsRequest = new actionSDK.GetActionDataRows.Request(actionId);
-    let batchRequest = new actionSDK.BaseApi.BatchRequest([
+    let getDataRowsRequest = ActionHelper.requestDataRows(actionId);
+    let batchRequest = ActionHelper.batchRequest([
         getActionRequest,
         getSummaryRequest,
         getDataRowsRequest,
     ]);
 
-    actionSDK
-        .executeBatchApi(batchRequest)
+    ActionHelper.executeBatchApi(batchRequest)
         .then(function(batchResponse) {
             console.info("BatchResponse: " + JSON.stringify(batchResponse));
             actionInstance = batchResponse.responses[0].action;
@@ -140,20 +190,21 @@ function getDataRows(actionId) {
         });
 }
 
-/* Method for creating the response view structure and initialize value */
+/**
+ * @description Method for creating the response view structure and initialize value
+ */
 async function createBody() {
     let getSubscriptionCount = "";
     $("#root").html("");
 
-    console.log('actionInstance: ' + JSON.stringify(actionInstance));
     /*  Head Section  */
     head();
 
     /*  Person Responded X of Y Responses  */
-    getSubscriptionCount = new actionSDK.GetSubscriptionMemberCount.Request(
+    getSubscriptionCount = ActionHelper.getSubscriptionMemberCount(
         actionContext.subscription
     );
-    let response = await actionSDK.executeApi(getSubscriptionCount);
+    let response = await ActionHelper.executeApi(getSubscriptionCount);
 
     let $pcard = $('<div class="progress-section"></div>');
     let memberCount = response.memberCount;
@@ -176,14 +227,9 @@ async function createBody() {
 
     $("#root").append($pcard);
     await getUserprofile();
-
-    console.log('ResponderDate: ' + JSON.stringify(ResponderDate));
-    console.log('ResponderDateLength: ' + Object.keys(ResponderDate).length);
     let responderDateLength = Object.keys(ResponderDate).length;
-
     if (responderDateLength > 0) {
         if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
-            console.log('createCreatorQuestionView:');
             createCreatorQuestionView();
         } else if (myUserId == dataResponse.context.userId && myUserId != actionInstance.creatorId) {
             let isResponded = false;
@@ -221,7 +267,6 @@ async function createBody() {
 
             ResponderDate.forEach((responder) => {
                 if (responder.value2 == myUserId) {
-                    console.log('createReponderQuestionView2:');
                     createReponderQuestionView(myUserId, responder);
                 }
             });
@@ -229,14 +274,9 @@ async function createBody() {
     } else {
         actionNonResponders.forEach((nonresponders) => {
             if (nonresponders.value2 == myUserId) {
-                console.log(`${myUserId} == ${dataResponse.context.userId} && ${myUserId} != ${actionInstance.creatorId}`)
-
                 if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
-                    console.log('createCreatorQuestionView2:');
                     createCreatorQuestionView();
                 } else {
-                    console.log('yet to respond2:');
-
                     let name = nonresponders.label;
                     let matches = name.match(/\b(\w)/g); // [D,P,R]
                     let initials = matches.join('').substring(0, 2); // DPR
@@ -259,7 +299,9 @@ async function createBody() {
     return true;
 }
 
-/* Method for creating head section for title, progress bar, dueby */
+/**
+ * @description Method for creating head section for title, progress bar, dueby
+ */
 function head() {
     let title = actionInstance.displayName;
     let description = actionInstance.customProperties[0]["value"];
@@ -279,7 +321,9 @@ function head() {
     $("#root").append($card);
 }
 
-/* Method for fetch responder user details */
+/**
+ * @description Method for fetch responder user details
+ */
 async function getUserprofile() {
     let memberIds = [];
     ResponderDate = [];
@@ -287,11 +331,11 @@ async function getUserprofile() {
     if (actionDataRowsLength > 0) {
         for (let i = 0; i < actionDataRowsLength; i++) {
             memberIds.push(actionDataRows[i].creatorId);
-            let requestResponders = new actionSDK.GetSubscriptionMembers.Request(
+            let requestResponders = ActionHelper.getSusbscriptionMembers(
                 actionContext.subscription, [actionDataRows[i].creatorId]
             ); // ids of responders
 
-            let responseResponders = await actionSDK.executeApi(requestResponders);
+            let responseResponders = await ActionHelper.executeApi(requestResponders);
             let perUserProfile = responseResponders.members;
             ResponderDate.push({
                 label: perUserProfile[0].displayName,
@@ -302,11 +346,11 @@ async function getUserprofile() {
     }
 
     myUserId = actionContext.userId;
-    let requestNonResponders = new actionSDK.GetActionSubscriptionNonParticipants.Request(
+    let requestNonResponders = ActionHelper.getSubscriptionNonParticipants(
         actionContext.actionId,
         actionContext.subscription.id
     );
-    let responseNonResponders = await actionSDK.executeApi(requestNonResponders);
+    let responseNonResponders = await ActionHelper.executeApi(requestNonResponders);
     let tempresponse = responseNonResponders.nonParticipants;
     if (tempresponse != null) {
         for (let i = 0; i < tempresponse.length; i++) {
@@ -318,7 +362,9 @@ async function getUserprofile() {
     }
 }
 
-/* Method for fetch list of responders */
+/**
+ * @description Method for fetch list of responders
+ */
 function getResponders() {
     $("table#responder-table tbody").html("");
 
@@ -368,41 +414,39 @@ function getResponders() {
  * @description Calculate the score
  * @param userId String Identifier
  */
-
 function scoreCalculate(userId) {
     let total = 0;
     let score = 0;
     actionInstance.dataTables.forEach((dataTable) => {
         total = Object.keys(dataTable.dataColumns).length;
-
         dataTable.dataColumns.forEach((question, ind) => {
-            question.options.forEach((option) => {
-                /* User Responded */
+            let correctAnswerCounter = 0;
+            let resResult = [];
+            question.options.forEach((option, iii) => {
+                let userResponse = [];
+                let userResponseAnswer = "";
                 for (let i = 0; i < actionDataRowsLength; i++) {
-                    if (actionDataRows[i].creatorId == userId) {
-                        let userResponse = actionDataRows[i].columnValues;
-                        let userResponseLength = Object.keys(userResponse).length;
+                    userResponse = actionDataRows[i].columnValues;
+                    let userResponseLength = Object.keys(userResponse).length;
 
-                        let userResponseAnswer = [];
-                        for (let j = 1; j <= userResponseLength; j++) {
-                            if (isJson(userResponse[j])) {
-                                let userResponseAns = JSON.parse(userResponse[j]);
-                                let userResponseAnsLen = userResponseAns.length;
-                                if (userResponseAnsLen > 1) {
-                                    for (let k = 0; k < userResponseAnsLen; k++) {
-                                        if (userResponseAns[k] == option.name) {
-                                            userResponseAnswer = userResponseAns[k];
-                                        } else {
-                                            continue;
-                                        }
+                    for (let j = 1; j <= userResponseLength; j++) {
+                        if (isJson(userResponse[j])) {
+                            let userResponseAns = JSON.parse(userResponse[j]);
+                            let userResponseAnsLen = userResponseAns.length;
+                            if (userResponseAnsLen > 1) {
+                                for (let k = 0; k < userResponseAnsLen; k++) {
+                                    if (userResponseAns[k] == option.name) {
+                                        userResponseAnswer = userResponseAns[k];
+                                    } else {
+                                        continue;
                                     }
-                                } else {
-                                    userResponseAnswer = userResponseAns;
                                 }
                             } else {
-                                if (userResponse[j] == option.name) {
-                                    userResponseAnswer = userResponse[j];
-                                }
+                                userResponseAnswer = userResponseAns;
+                            }
+                        } else {
+                            if (userResponse[j] == option.name) {
+                                userResponseAnswer = userResponse[j];
                             }
                         }
                     }
@@ -417,14 +461,38 @@ function scoreCalculate(userId) {
                 for (let j = 0; j < correctResponseLength; j++) {
                     let correctResponseAns = correctResponse[j];
                     let correctResponseAnsLen = correctResponseAns.length;
+
                     for (let k = 0; k < correctResponseAnsLen; k++) {
                         if (correctResponseAns[k] == option.name) {
                             correctAnswer = correctResponseAns[k];
+                            correctAnswerCounter++;
                         }
                     }
                 }
+
+                resResult[iii] = 'false';
+                if (correctAnswer.length > 0 && userResponseAnswer.length > 0 && correctAnswer == userResponseAnswer) {
+                    if (correctResponseLength == correctAnswerCounter) {
+                        resResult[iii] = 'true';
+                    } else {
+                        resResult[iii] = 'false';
+                    }
+                }
+
+                let optName = JSON.parse(option.displayName).name;
+                let attachmentId = JSON.parse(option.displayName).attachmentId;
+                let optId = option.name;
+                let $radioOption = '';
+                let result = '';
+                for (let j = 0; j < correctResponseLength; j++) {
+                    let correctResponseAns = correctResponse[j];
+                    if (correctResponseAns.includes(option.name)) {
+                        result = 'correct';
+                    }
+                }
+                $radioOption = getOptionsCreator(optName, optId, ind, result, attachmentId);
             });
-            if (answerIs == "Correct") {
+            if (resResult.includes('true') == true) {
                 score++;
             }
         });
@@ -432,7 +500,9 @@ function scoreCalculate(userId) {
     return Math.round((score / total) * 100);
 }
 
-/* Method for fetch list of non-responders in the channel */
+/**
+ * @description Method for fetch list of non-responders in the channel
+ */
 function getNonresponders() {
     $("table#non-responder-table tbody").html("");
 
@@ -463,23 +533,8 @@ function getNonresponders() {
     }
 }
 
-/* Click evet fetching result of responders */
-$(document).on("click", ".getresult", function() {
-    let userId = $(this).attr("id");
-    $("#root").html("");
-    head();
-    $("#root").append($(".question-content").clone());
-    createQuestionView(userId);
-
-    if ($(this).attr('data-attr') !== undefined) {
-        footer2();
-    } else {
-        footer(userId);
-    }
-});
-
-/* 
- * @desc Method to creat4e responder correct and incorrect quiz responses  
+/**
+ * @description Method to creat4e responder correct and incorrect quiz responses  
  * @param userId contains user id for identifications
  * @param responder contains responders
  */
@@ -492,7 +547,6 @@ function createReponderQuestionView(userId, responder = '') {
         let name = responder.label;
         let matches = name.match(/\b(\w)/g); // [D,P,R]
         let initials = matches.join('').substring(0, 2); // DPR
-        // $('div.progress-section').after(`<hr class="small">`);
 
         Localizer.getString('you_responded').then(function(result) {
             $('div.progress-section').after(`<div class="d-flex cursor-pointer getresult" data-attr="home" id="${myUserId}">
@@ -516,7 +570,6 @@ function createReponderQuestionView(userId, responder = '') {
             let $questionContentDiv = $('<div class="question-content"></div>');
             let $rowdDiv = $('<div class="mt--32"></div>');
             let $dflexDiv = $('<div class="d-table mb--4"></div>');
-            // let $qDiv = $('<div class="col-sm-12"></div>');
             $questionContentDiv.append($rowdDiv);
             $questionContentDiv.append($dflexDiv);
             let count = ind + 1;
@@ -537,8 +590,6 @@ function createReponderQuestionView(userId, responder = '') {
                 /* User Responded */
                 let userResponse = [];
                 let userResponseAnswer = "";
-                console.log('actionDataRows1: ');
-                console.log(actionDataRows);
                 for (let i = 0; i < actionDataRowsLength; i++) {
                     if (actionDataRows[i].creatorId == userId) {
                         userResponse = actionDataRows[i].columnValues;
@@ -601,13 +652,7 @@ function createReponderQuestionView(userId, responder = '') {
                 }
             });
             $cardDiv.find("#status-" + question.name).html(`<span class="${answerIs == 'Correct' ? 'text-success' : 'text-danger'}">${answerIs == 'Correct' ? correctKey : incorrectKey}</span>`);
-
-            /* if (answerIs == "Correct") {
-                score++;
-            } */
-            console.log('optAnsArr: ');
-            console.log(optAnsArr);
-            if (optAnsArr.includes('incorrect') != false) {
+            if (optAnsArr.includes('incorrect') == false) {
                 score++;
             }
             $("#root").append($cardDiv);
@@ -621,8 +666,8 @@ function createReponderQuestionView(userId, responder = '') {
     });
 }
 
-/* 
- * @desc Method to create responder correct and incorrect quiz responses  
+/**
+ * @description Method to create responder correct and incorrect quiz responses  
  */
 function createCreatorQuestionView() {
     total = 0;
@@ -640,8 +685,6 @@ function createCreatorQuestionView() {
             </div>
             <hr class="small">
         `);
-
-        console.log(result);
     });
 
     actionInstance.dataTables.forEach((dataTable) => {
@@ -665,7 +708,6 @@ function createCreatorQuestionView() {
             $dflexDiv.append(`<label class="float-right " id="status-${question.name}"> </label>`);
             $mtDiv.append($dflexDiv);
             let $blankQDiv = $(`<div class=""></div>`);
-            // $mtDiv.append(`<div class="semi-bold font-14 mb--16 ">${JSON.parse(question.displayName).name}</div>`);
             $mtDiv.append($blankQDiv);
             $blankQDiv.append(`
                     <div class="semi-bold font-14 mb--16 ">${JSON.parse(question.displayName).name}</div>
@@ -673,7 +715,6 @@ function createCreatorQuestionView() {
 
 
             if (attachmentId.length > 0) {
-                console.log('actionInstance:' + JSON.stringify(actionId));
                 let req = ActionHelper.getAttachmentInfo("", attachmentId);
                 ActionHelper.executeApi(req).then(function(response) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
@@ -693,8 +734,6 @@ function createCreatorQuestionView() {
                 let $cardDiv = $('<div class="card-box card-bg card-border mb--8 "></div>');
                 let userResponse = [];
                 let userResponseAnswer = "";
-                console.log('actionDataRows2: ');
-                console.log(actionDataRows);
                 for (let i = 0; i < actionDataRowsLength; i++) {
                     userResponse = actionDataRows[i].columnValues;
                     let userResponseLength = Object.keys(userResponse).length;
@@ -730,12 +769,9 @@ function createCreatorQuestionView() {
                 let correctAnswer = "";
                 for (let j = 0; j < correctResponseLength; j++) {
                     let correctResponseAns = correctResponse[j];
-                    console.log('correctResponseAns: ' + JSON.stringify(correctResponseAns));
-
                     let correctResponseAnsLen = correctResponseAns.length;
 
                     for (let k = 0; k < correctResponseAnsLen; k++) {
-                        console.log(`${correctResponseAns[k]} == ${option.name}`)
                         if (correctResponseAns[k] == option.name) {
                             correctAnswer = correctResponseAns[k];
                             correctAnswerCounter++;
@@ -743,12 +779,8 @@ function createCreatorQuestionView() {
                     }
                 }
 
-                console.log(`${correctAnswer} == ${userResponseAnswer}`);
                 resResult[iii] = 'false';
-
                 if (correctAnswer.length > 0 && userResponseAnswer.length > 0 && correctAnswer == userResponseAnswer) {
-                    console.log(`sadasd:`);
-                    console.log(`${correctResponseLength} == ${correctAnswerCounter}`);
                     if (correctResponseLength == correctAnswerCounter) {
                         resResult[iii] = 'true';
                     } else {
@@ -759,23 +791,6 @@ function createCreatorQuestionView() {
                 let optName = JSON.parse(option.displayName).name;
                 let attachmentId = JSON.parse(option.displayName).attachmentId;
                 let optId = option.name;
-
-                let correctAnswerData = JSON.parse(actionInstance.customProperties[5].value);
-                // let anscorr = [];
-                /* if (correctAnswerData != undefined) {
-                    console.log('correctAnswerData: ' + correctAnswerData);
-                    console.log('correctAnswerData: ' + correctAnswerData[0]);
-                    if (correctAnswerData.indexOf(',') > -1) {
-                        anscorr = correctAnswerData.split(',');
-                        console.log('anscorr if: ' + anscorr);
-                    } else {
-                        anscorr.push(correctAnswerData);
-                        console.log('anscorr else: ' + anscorr);
-                    }
-                } */
-                console.log(`${correctAnswerData}.includes(${optId})`)
-                console.log(correctAnswerData.includes(optId))
-
                 let $radioOption = '';
                 let result = '';
                 for (let j = 0; j < correctResponseLength; j++) {
@@ -793,26 +808,21 @@ function createCreatorQuestionView() {
                 $quesContDiv.append($cardDiv);
             });
 
-            console.log('resResult: ');
-            console.log(resResult);
-            if (resResult.includes('false') == false) {
+            if (resResult.includes('true') == true) {
                 correctCounter++;
             }
 
             if (actionDataRowsLength == 0) {
                 $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">0% Correct</div>`);
             } else {
-                console.log(actionDataRows);
-                console.log(`${(correctCounter * 100)} / ${actionDataRowsLength}% Correct`);
                 $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">${(correctCounter * 100) / actionDataRowsLength}% Correct</span>`);
             }
         });
     });
-    // $("#root").append('<div class="ht-100"></div>');
 }
 
-/* 
- * @desc Method for Question view based on user id  
+/**
+ * @description Method for Question view based on user id  
  * @param user id String contains userId
  */
 function createQuestionView(userId) {
@@ -846,14 +856,10 @@ function createQuestionView(userId) {
                     <div class="semi-bold font-14 mb--16 ">${JSON.parse(question.displayName).name}</div>
             `);
 
-
-            console.log('attachmentId: ' + attachmentId);
             if (attachmentId.length > 0) {
-                console.log('actionInstance:' + JSON.stringify(actionId));
                 let req = ActionHelper.getAttachmentInfo("", attachmentId);
                 ActionHelper.executeApi(req).then(function(response) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
-                        // $dtableDiv.append();
                         $mtDiv.find('d-table').after(`
                             <div class="quiz-updated-img cover-img max-min-220 mb--8">
                                 <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive question-template-image">
@@ -928,7 +934,6 @@ function createQuestionView(userId) {
                     optAttachmentId
                 );
                 $blankDiv.append($radioOption);
-
                 if (answerIs.toLowerCase() == 'correct') {
                     optAnsArr[optind] = answerIs;
                 } else {
@@ -937,19 +942,13 @@ function createQuestionView(userId) {
                 $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold ${answerIs == 'Correct' ? 'text-success' : 'text-danger'}">${answerIs}</span>`);
             });
 
-            /* if (answerIs == "Correct") {
-                score++;
-            } */
-            console.log('optAnsArr: ' + optAnsArr);
             if (optAnsArr.includes('incorrect') != true) {
                 score++;
             }
-            // $("div.question-content:first").append($questionDiv);
             $("div#root").append($questionDiv);
         });
 
     });
-    // $("div.question-content:first").append('<div class="ht-100"></div>');
 
     let scorePercentage = Math.round((score / total) * 100);
 
@@ -971,7 +970,6 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
     let $oDiv = $('<div class=""></div>');
     /*  If answer is correct  and answered */
     if ($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) == $.trim(id)) {
-        console.log(` asdasdsa1: ${$.trim(userResponse)}, ${$.trim(id)}, ${$.trim(correctAnswer)}`);
         $oDiv.append(
             `<div class="card-box card-bg card-border alert-success mb--8">
                 <div class="radio-section custom-radio-outer" id="${id} " columnid="3 ">
@@ -993,7 +991,6 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
             answerIs = "Correct";
         }
     } else if (($.trim(userResponse) != $.trim(id) && $.trim(correctAnswer) == $.trim(id))) {
-        console.log(` asdasdsa2: ${$.trim(userResponse)}, ${$.trim(id)}, ${$.trim(correctAnswer)}`);
         /* If User Response is incorrect and not answered */
         $oDiv.append(`<div class="card-box card-bg card-border mb--8">
                 <div class="radio-section custom-radio-outer" id="${id}">
@@ -1006,11 +1003,9 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
                             </svg> 
                         </i> 
                     </label>
-                </div>
-                
+                </div>         
             </div>`);
     } else if (($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) != $.trim(id))) {
-        console.log(` asdasdsa3: ${$.trim(userResponse)}, ${$.trim(id)}, ${$.trim(correctAnswer)}`);
         /* If User Response is correct and answered incorrect */
         $oDiv.append(`<div class="card-box card-bg card-border alert-danger mb--8">
                 <div class="radio-section custom-radio-outer" id="${id}">
@@ -1019,8 +1014,8 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
                     </label>
                 </div>
             </div>`);
+        answerIs = "Incorrect";
     } else {
-        console.log(` asdasdsa4: ${$.trim(userResponse)}, ${$.trim(id)}, ${$.trim(correctAnswer)}`);
         $oDiv.append(`<div class="card-box card-bg card-border mb--8 ">
                 <div class=" radio-section custom-radio-outer " id="${id}" columnid="3 ">
                     <label class="custom-radio d-block font-14"> 
@@ -1046,8 +1041,8 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
     return $oDiv;
 }
 
-/* 
- * @desc Method for Question view based on user id  
+/**
+ * @description Method for Question view based on user id  
  * @param text String contains correct and incorrect message
  * @param name String contains option name
  * @param id String contains option id
@@ -1102,8 +1097,8 @@ function getOptionsCreator(text, optId, ind, result, attachmentId) {
 }
 
 
-/* 
- * @desc Method to return the input is json object   
+/**
+ * @description Method to return the input is json object   
  * @param str object contains json values
  */
 function isJson(str) {
@@ -1115,8 +1110,8 @@ function isJson(str) {
     return true;
 }
 
-/* 
- * @desc Method for creating footer based on user id  
+/**
+ * @description Method for creating footer based on user id  
  * @param userId String contains user identifier to load footer based on that
  */
 function footer(userId) {
@@ -1142,7 +1137,9 @@ function footer(userId) {
         </div>`);
 }
 
-/* Method for footer for return back to landing page  */
+/**
+ * @description Method for footer for return back to landing page
+ */
 function footer1() {
     $("#root > div.card-box").append(
         `<div class="footer">
@@ -1167,7 +1164,9 @@ function footer1() {
     );
 }
 
-/* Method for footer for return back for internal pages  */
+/**
+ * @description Method for footer for return back for internal pages
+ */
 function footer2() {
     $("div.question-content").append(
         `<div class="footer">
@@ -1192,23 +1191,9 @@ function footer2() {
     );
 }
 
-/* Click Event for rerender the landing page  */
-$(document).on("click", ".back", function() {
-    createBody();
-});
-
-/* Click Event for back to responder and non responder page */
-$(document).on("click", ".back1", function() {
-    let userId = $(this).attr("userid-data");
-    create_responder_nonresponders();
-});
-
-/* Click Event for responder page */
-$(document).on("click", "#show-responders", function() {
-    create_responder_nonresponders();
-});
-
-/* Click Event for non responder page */
+/**
+ * @description Click Event for non responder page 
+ */
 function create_responder_nonresponders() {
     if (actionInstance.customProperties[2].value == "Only me") {
         if (actionContext.userId == actionInstance.creatorId) {
@@ -1227,7 +1212,6 @@ function create_responder_nonresponders() {
             /*  Add Non-reponders  */
             getNonresponders();
         } else {
-            // alert("Visible to sender only");
             return false;
         }
     } else {
