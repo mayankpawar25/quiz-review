@@ -339,11 +339,11 @@ function head() {
 
     let $card = $('<div class=""></div>');
     let $title_sec = $(`<h4 class="mb--8">${title}</h4>`);
-    let $description_sec = $(`<p class="mb--8 text-justify text-break">${description}</p>`);
+    let $description_sec = $(`<p class="mb--8 text-justify text-break font-12">${description}</p>`);
 
     let current_timestamp = new Date().getTime();
 
-    let $date_sec = $(`<p class="semi-bold mb--16">${actionInstance.expiryTime > current_timestamp ? dueByKey+' ' : expiredOnKey+' '} ${dueby}</p>`);
+    let $date_sec = $(`<p class="semi-bold mb--16 font-12">${actionInstance.expiryTime > current_timestamp ? dueByKey+' ' : expiredOnKey+' '} ${dueby}</p>`);
 
     $card.append($title_sec);
     $card.append($description_sec);
@@ -425,7 +425,7 @@ function getResponders() {
                             <div class="avtar-txt">${name}</div>
                         </div>
                     </td>
-                    <td  class="text-right">
+                    <td  class="text-right date-text">
                         ${date}
                         <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="right-carate">
                             <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
@@ -654,6 +654,8 @@ function createReponderQuestionView(userId, responder = '') {
                     optAnsArr[optind] = 'incorrect';
                 }
             });
+            console.log('optAnsArr123:');
+            console.log(optAnsArr);
             $cardDiv.find("#status-" + question.name).html(`<span class="${answerIs == 'Correct' ? 'text-success' : 'text-danger'}">${answerIs == 'Correct' ? correctKey : incorrectKey}</span>`);
             if (optAnsArr.includes('incorrect') == false) {
                 score++;
@@ -713,15 +715,15 @@ function createCreatorQuestionView() {
 
             $dflexDiv.append(`<label class="font-12 ">
                     <strong class="question-title semi-bold "> 
-                        <span  class="question-number ">${questionKey} # ${count}</span>
+                        <span  class="question-number font-12 bold">${questionKey} # ${count}</span>
                     </strong>
                 </label>`);
-            $dflexDiv.append(`<label class="float-right " id="status-${question.name}"> </label>`);
+            $dflexDiv.append(`<label class="float-right font-12 bold" id="status-${question.name}"> </label>`);
             $mtDiv.append($dflexDiv);
             let $blankQDiv = $(`<div class=""></div>`);
             $mtDiv.append($blankQDiv);
             $blankQDiv.append(`
-                    <div class="semi-bold font-14 mb--16 ">${question.displayName}</div>
+                    <div class="semi-bold font-16 mb--16">${question.displayName}</div>
             `);
             let questionAttachmentId = question.attachments.length > 0 ? question.attachments[0].id : '';
             if (questionAttachmentId.length > 0) {
@@ -904,38 +906,39 @@ function createQuestionView(userId) {
             let $mtDiv = $(`<div class="mt--32"></div>`);
             let $dtableDiv = $(`<div class="d-table mb--4 "></div>`);
             let count = ind + 1;
-            let attachmentId = question.attachments != "" ? question.attachments[0].id : "";
+            let questionAttachmentId = question.attachments != "" ? question.attachments[0].id : "";
 
             $questionDiv.append($mtDiv);
             $mtDiv.append($dtableDiv);
             $dtableDiv.append(`<label class="font-12">
                     <strong class="question-title semi-bold"> 
-                        <span  class="question-number">${questionKey} # ${count}</span>
+                        <span  class="question-number font-12 bold">${questionKey} # ${count}</span>
                     </strong>
                 </label>`);
 
-            $dtableDiv.append(`<label class="float-right" id="status-${question.name}"></label>`);
+            $dtableDiv.append(`<label class="float-right font-12 bold" id="status-${question.name}"></label>`);
 
             let $blankQDiv = $(`<div class=""></div>`);
             $mtDiv.append($blankQDiv);
             $blankQDiv.append(`
-                    <div class="semi-bold font-14 mb--16 ">${question.displayName}</div>
+                    <div class="semi-bold font-16 mb--16 ">${question.displayName}</div>
             `);
 
-            if (attachmentId.length > 0) {
-                let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
-                ActionHelper.executeApi(req).then(function(response) {
-                        console.info("Attachment - Response: " + JSON.stringify(response));
-                        $mtDiv.find('d-table').after(`
-                            <div class="quiz-updated-img cover-img min-max-132 mb--8">
-                                <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive question-template-image">
+            if (questionAttachmentId.length > 0) {
+                let req = ActionHelper.getAttachmentInfo(actionId, questionAttachmentId);
+                ActionHelper.executeApi(req).then(function (response) {
+                    console.info("Attachment - Response: " + JSON.stringify(response));
+                    $blankQDiv.prepend(`
+                            <div class="option-image-section cover-img min-max-132 mb--8"> 
+                                <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive">
                             </div>`);
-                        getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-template-image`);
-                    })
-                    .catch(function(error) {
-                        console.error("AttachmentAction - Error: " + JSON.stringify(error));
-                    });
+                    getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-image`);
+                })
+                .catch(function (error) {
+                    console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                });
             }
+
 
             let $blankDiv = $(`<div class=" "></div>`);
             $mtDiv.append($blankDiv);
@@ -1080,7 +1083,10 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
         $oDiv.append(`<div class="card-box card-bg card-border alert-danger mb--8">
                 <div class="radio-section custom-radio-outer" id="${id}">
                     <label class="custom-radio d-block selected font-14  "> 
-                        <span class="radio-block selected"></span>${text} 
+                        <span class="radio-block selected"></span>
+                        <div class="pr--32 check-in-div">
+                        ${text}
+                        </div>
                     </label>
                 </div>
             </div>`);
@@ -1093,13 +1099,15 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
         $oDiv.append(`<div class="card-box card-bg card-border mb--8">
                 <div class="radio-section custom-radio-outer" id="${id}">
                     <label class="custom-radio d-block selected font-14">
-                        <span class="radio-block"></span>${text} 
-                        <i class="success-with-img">
-                            <svg version="1.1 " id="Layer_1 "  x="0px " y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
-                                <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
-                                <path id="Path_594 "  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "/>
-                            </svg>
-                        </i>
+                        <span class="radio-block"></span>
+                        <div class="pr--32 check-in-div">${text}
+                            <i class="success-with-img">
+                                <svg version="1.1 " id="Layer_1 "  x="0px " y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
+                                    <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
+                                    <path id="Path_594 "  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "/>
+                                </svg>
+                            </i>
+                         </div>
                     </label>
                 </div>
             </div>`);
@@ -1109,7 +1117,7 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
         $oDiv.append(`<div class="card-box card-bg card-border mb--8 ">
                 <div class=" radio-section custom-radio-outer " id="${id}" columnid="3 ">
                     <label class="custom-radio d-block font-14"> 
-                        <span class="radio-block"></span>${text} 
+                        <span class="radio-block"></span><div class="pr--32 check-in-div">${text}</div>
                     </label>
                 </div>
             </div>`);
@@ -1166,7 +1174,7 @@ function getOptionsCreator(text, optId, ind, result, attachmentId) {
                 <div class="radio-section custom-radio-outer " id="${optId}" columnid="${ind}">
                     <label class="custom-radio d-block font-14 cursor-pointer ">
                         <span class="radio-block"></span>
-                        <div class="pr--32 ">${text}</div>
+                        <div class="pr--32 check-in-div">${text}</div>
                     </label>
                 </div>
             `);

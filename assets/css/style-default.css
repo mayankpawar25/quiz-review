@@ -168,6 +168,9 @@
  .font-14 {
      font-size: var(--font-regular);
  }
+  .font-16 {
+     font-size: var(--font-16);
+ }
  
  .input-group-text {
      padding: 0px;
@@ -566,9 +569,8 @@
  
  .btn-primary:focus {
      color: var(--app-white);
-     background-color: var(--main-bg-color-focus) !important;
-     border-color: var(--main-bg-color-focus) !important;
-     box-shadow: none !important;
+         border-color: transparent;
+    box-shadow: var(--app-black-shadow-3) 0px 0.2rem 0.4rem -0.075rem;
  }
  
  .btn-primary-outline {
@@ -1128,7 +1130,7 @@
  .custom-check-outer {
      display: block;
      position: relative;
-     padding-left: 24px;
+     padding-left: 28px;
      cursor: pointer;
      -webkit-user-select: none;
      -moz-user-select: none;
@@ -1169,6 +1171,7 @@
  
  .custom-check input:checked~.checkmark {
      background-color: var(--main-bg-color);
+     border: none;
  }
  
  .custom-check input:checked~.selected {
@@ -1190,8 +1193,8 @@
  }
  
  .custom-check .checkmark:after {
-     left: 5px;
-     top: 2px;
+     left: 6px;
+     top: 3px;
      width: 4px;
      height: 8px;
      border: solid var(--app-white);
@@ -1341,6 +1344,7 @@
  
  .avtar-txt {
      line-height: 2.25rem;
+    color: var(--app-black);
  }
  
  .table td {
@@ -1353,6 +1357,10 @@
      width: .5rem;
      height: .5rem;
      transform: rotate(-90deg);
+     margin-top: -3px;
+ }
+ .date-text{
+     color: var(--app-gray-sub-text);
  }
  
  .nav-tabs {
@@ -1361,6 +1369,7 @@
  
  .nav-tabs .nav-item {
      margin-bottom: 0px;
+     font-size: var(--font-12);
  }
  
  .bt {
@@ -1555,10 +1564,11 @@
  }
  
  .date.form_date input {
-     background-image: url(https://www.webcraft.co.in/teams-ic/cal.png);
+     background-image: url(../images/cal.png);
      background-repeat: no-repeat;
      background-position: right 10px top 8px;
      font-size: var(--font-regular);
+     background-size: 16px;
  }
  
  .datetimepicker-hours thead tr th {
@@ -1634,10 +1644,11 @@
  }
  
  .date.form_time input {
-     background-image: url(https://www.webcraft.co.in/teams-ic/time.png);
+     background-image: url(../images/time.png);
      background-repeat: no-repeat;
      background-position: right 10px top 8px;
      font-size: var(--font-regular);
+     background-size: 16px;
  }
  /* .show-setting {
     display: flex;
@@ -2333,6 +2344,7 @@
  
  .check-in-div {
      min-height: 20px;
+    color: var(--app-gray-02);
  }
  
  .quiz-preview-sec {

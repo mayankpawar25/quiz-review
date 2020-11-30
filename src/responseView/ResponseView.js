@@ -636,7 +636,7 @@ function createBody() {
                     $('.quiz-template-image').attr("src", response.attachmentInfo.downloadUrl);
                     $('.quiz-template-image').show();
                     $('.quiz-updated-img').show();
-                    getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
+                    getClassFromDimension(response.attachmentInfo.downloadUrl, '.summary-section .quiz-template-image');
                 })
                 .catch(function(error) {
                     console.error("AttachmentAction - Error7: " + JSON.stringify(error));
@@ -865,7 +865,7 @@ function getCheckboxButton(text, name, id, attachmentId) {
         let req = ActionHelper.getAttachmentInfo(contextActionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
-                $('div.radio-section#' + id + ' .custom-radio').prepend(`
+                $('div.radio-section#' + id + ' .custom-check').prepend(`
                     <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                         <div class="option-image-section updated-img cover-img min-max-132 mb--8">
                             <img src="${response.attachmentInfo.downloadUrl}" class="opt-image img-responsive"/>
@@ -981,6 +981,10 @@ function summarySection() {
                     let opt_id = $(opt_val).find('input').attr('id');
                     let optImage = $(opt_val).find('.opt-image').length > 0 ? $(opt_val).find('.opt-image').attr('src') : '';
 
+
+                    console.log('opt_id:')
+                    console.log(opt_id)
+                    console.log(correctAnswer[count])
                     if ($.inArray(opt_id, correctAnswer[count]) !== -1) {
                         if ($(opt_val).find('input').prop('checked') == true) {
                             if ($(opt_val).hasClass('custom-check')) {
@@ -1125,18 +1129,20 @@ function summarySection() {
                     }
 
                     if (optImage.length > 0) {
-                        if ($cardBoxDiv.find('span.radio-block').length != undefined && $cardBoxDiv.find('span.radio-block').length > 0) {
-                            $cardBoxDiv.find('span.radio-block').before(`
-                                <div class="option-image-section cover-img min-max-132 mb--8">
-                                    <img src="${optImage}" class="opt-image img-responsive" id="question1option1">
-                                </div>
-                            `);
-                        } else {
+                        if ($cardBoxDiv.find('div.custom-radio-outer').length != undefined && $cardBoxDiv.find('div.custom-radio-outer').length > 0) {
                             $cardBoxDiv.find('span.checkmark').before(`
                                 <div class="option-image-section cover-img min-max-132 mb--8">
                                     <img src="${optImage}" class="opt-image img-responsive" id="question1option1">
                                 </div>
                             `);
+                            console.log('checkbox image');
+                        } else {
+                            $cardBoxDiv.find('span.radio-block').before(`
+                                <div class="option-image-section cover-img min-max-132 mb--8">
+                                    <img src="${optImage}" class="opt-image img-responsive" id="question1option1">
+                                </div>
+                            `);
+                            console.log('radio image');
                         }
                     }
                 });
