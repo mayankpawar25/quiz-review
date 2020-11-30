@@ -101,8 +101,18 @@ export class ActionHelper {
      * Method to request upload attachment
      * @param attachment objet identifier
      */
-    static requestAttachmentUplod(attachment) {
+    static requestAttachmentUpload(attachment) {
         return new actionSDK.UploadAttachment.Request(attachment, function(status) {
+            console.log("Status: " + status);
+        });
+    }
+
+    /**
+     * Method to request upload attachment as draft
+     * @param attachment objet identifier
+     */
+    static requestAttachmentUploadDraft(attachment) {
+        return new actionSDK.UploadAttachmentDraft.Request(attachment, function (status) {
             console.log("Status: " + status);
         });
     }
@@ -113,6 +123,14 @@ export class ActionHelper {
      */
     static getAttachmentInfo(actionId, attachmentId) {
         return new actionSDK.GetAttachmentInfo.Request(actionId, attachmentId);
+    }
+
+    /**
+     * Method to get attachment information draft
+     * @param attachmentId string identifier
+     */
+    static getAttachmentInfoDraft(attachmentId) {
+        return new actionSDK.GetAttachmentInfoDraft.Request(attachmentId);
     }
 
     /**

@@ -36,6 +36,7 @@ let questionLeftBlankKey = '';
 let selectCorrectChoiceKey = '';
 let addQuestionKey = '';
 let uploadCoverImageKey = '';
+let attachmentSet = [];
 
 
 
@@ -46,6 +47,9 @@ let uploadCoverImageKey = '';
 $(document).on("click", "#add-questions", function() {
     let questionCounter;
     $(this).parents("div.container").before(questionSection.clone());
+
+    $('.section-2').find('.question-required-err').remove();
+    $('.section-2').find('.confirm-box').remove();
 
     Localizer.getString('option', '').then(function(result) {
         $('.opt-cls').attr('placeholder', result)
@@ -86,12 +90,10 @@ $(document).on("click", "#add-questions", function() {
     questionCount++;
     $('.check-me').text(checkMeKey);
     $('.check-me-title').attr({ "title": checkMeKey });
-    $('.add-options').html(`<svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt tc gv">
-        <path class="ui-icon__outline cc" d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
-        </path>
-        <path class="ui-icon__filled gr" d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
-        </path>
-    </svg> ${addMoreOptionsKey}`);
+    $('.add-options').html(`
+        <svg width="16" height="16" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg"  class="cc gs gt tc gv">
+            <path d="M7.49219 0.5C7.6276 0.5 7.74479 0.549479 7.84375 0.648438C7.94271 0.747396 7.99219 0.864583 7.99219 1V7H13.9922C14.1276 7 14.2448 7.04948 14.3438 7.14844C14.4427 7.2474 14.4922 7.36458 14.4922 7.5C14.4922 7.63542 14.4427 7.7526 14.3438 7.85156C14.2448 7.95052 14.1276 8 13.9922 8H7.99219V14C7.99219 14.1354 7.94271 14.2526 7.84375 14.3516C7.74479 14.4505 7.6276 14.5 7.49219 14.5C7.35677 14.5 7.23958 14.4505 7.14062 14.3516C7.04167 14.2526 6.99219 14.1354 6.99219 14V8H0.992188C0.856771 8 0.739583 7.95052 0.640625 7.85156C0.541667 7.7526 0.492188 7.63542 0.492188 7.5C0.492188 7.36458 0.541667 7.2474 0.640625 7.14844C0.739583 7.04948 0.856771 7 0.992188 7H6.99219V1C6.99219 0.864583 7.04167 0.747396 7.14062 0.648438C7.23958 0.549479 7.35677 0.5 7.49219 0.5Z" fill="#6264A7"/>
+        </svg> ${addMoreOptionsKey}`);
 
 });
 
@@ -146,11 +148,11 @@ $(document).on("click", ".remove-question", function() {
         });
     } else {
         $(this).parents('div.question-container')
-            .find("div.input-group:first")
-            .before(`<label class="label-alert d-block question-required-err"><font class="mb--4 d-block">${forQuizAtleastOneQuestionKey}</font></label>`);
+            .find("div.d-flex-ques")
+            .after(`<label class="text-danger d-block question-required-err"><font class="mb--4 d-block">${forQuizAtleastOneQuestionKey}</font></label>`);
 
         $([document.documentElement, document.body]).animate({
-            scrollTop: $(".label-alert.d-block:first").offset().top - 200
+            scrollTop: $(".text-danger.d-block:first").offset().top - 200
         }, 2000);
     }
 });
@@ -283,6 +285,9 @@ $(document).on('click', '.quiz-clear', function() {
     $('div.section-1 .quiz-updated-img').hide();
     $('div.section-2 .card-box:first #cover-image').val('');
     $('div.section-2 .card-box:first .quiz-updated-img').hide();
+    $('.quiz-updated-img').removeClass('smallfit');
+    $('.quiz-updated-img').removeClass('heightfit');
+    $('.quiz-updated-img').removeClass('widthfit');
     $(this).hide();
 });
 
@@ -291,6 +296,8 @@ $(document).on('click', '.quiz-clear', function() {
  */
 $(document).on("click", "#next", function() {
     let isError = false;
+    $('.section-2').find('.question-required-err').remove();
+    $('.section-2').find('.confirm-box').remove();
 
     $("form").find("input[type='text']").each(function() {
         let element = $(this);
@@ -482,6 +489,8 @@ function submitForm() {
     $("input[type='text']").removeClass("danger");
     $("label.label-alert").remove();
     $("div.card-box-alert").removeClass("card-box-alert").addClass("card-box");
+    $('.section-2').find('.question-required-err').remove();
+    $('.section-2').find('.confirm-box').remove();
 
     $('.question-container:visible').each(function(qind, quest) {
         let isChecked = false;
@@ -580,7 +589,7 @@ function submitForm() {
                 });
             })
             .catch(function(error) {
-                console.error("GetContext - Error: " + JSON.stringify(error));
+                console.error("GetContext - Error1: " + JSON.stringify(error));
             });
     } else {
         $('.required-key').text(requiredKey);
@@ -596,11 +605,13 @@ function getQuestionSet() {
     let questionCount = $("form").find("div.container.question-container").length;
     questions = new Array();
     let error = false;
+    $('.loader-overlay').remove();
     for (let i = 1; i <= questionCount; i++) {
         let optionType = ActionHelper.getColumnType('singleselect');
         let option = [];
         let isSelected = 0;
-        let questionAttachmentId = $("#question" + i).find('textarea#question-attachment-id').length > 0 ? $("#question" + i).find('textarea#question-attachment-id').val() : '';
+        // let questionAttachmentId = $("#question" + i).find('textarea#question-attachment-id').length > 0 ? $("#question" + i).find('textarea#question-attachment-id').val() : '';
+        let questionAttachmentSet = $("#question" + i).find('textarea#question-attachment-set').length > 0 ? JSON.parse($("#question" + i).find('textarea#question-attachment-set').val()) : '';
 
         /* Looping for options */
         $("#question" + i)
@@ -609,7 +620,8 @@ function getQuestionSet() {
                 let count = index + 1;
                 let optId = "question" + i + "option" + count;
                 let optTitle = $("#question" + i).find("#option" + count).val();
-                let optionAttachmentId = $("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-id').length > 0 ? $("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-id').val() : '';
+                // let optionAttachmentId = $("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-id').length > 0 ? $("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-id').val() : '';
+                let optionAttachmentSet = $("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-set').length > 0 ? JSON.parse($("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-set').val()) : '';
 
                 if ($("#question" + i).find("#check" + count).is(":checked")) {
                     // if it is checked
@@ -621,19 +633,44 @@ function getQuestionSet() {
                 } else {
                     optionType = ActionHelper.getColumnType('singleselect');
                 }
-                let optDisplayData = JSON.stringify({ name: optTitle, attachmentId: optionAttachmentId });
-                option.push({ name: optId, displayName: optDisplayData });
+                // let optDisplayData = JSON.stringify({ name: optTitle, attachmentId: optionAttachmentId });
+                if (optionAttachmentSet != "") {
+                    option.push({
+                        name: optId,
+                        displayName: optTitle,
+                        attachments: [optionAttachmentSet]
+                    });
+                } else {
+                    option.push({
+                        name: optId,
+                        displayName: optTitle,
+                        attachments: []
+                    });
+                }
             });
 
 
-        let QuestionDisplayData = JSON.stringify({ name: $("#question" + i).find("#question-title").val(), attachmentId: questionAttachmentId });
-        let val = {
-            name: i.toString(),
-            displayName: QuestionDisplayData,
-            valueType: optionType,
-            allowNullValue: false,
-            options: option,
-        };
+        // let QuestionDisplayData = JSON.stringify({ name: $("#question" + i).find("#question-title").val(), attachmentId: questionAttachmentId });
+        let val = {};
+        if (questionAttachmentSet != "") {
+            val = {
+                name: i.toString(),
+                displayName: $("#question" + i).find("#question-title").val(),
+                valueType: optionType,
+                allowNullValue: false,
+                options: option,
+                attachments: [questionAttachmentSet]
+            };
+        } else {
+            val = {
+                name: i.toString(),
+                displayName: $("#question" + i).find("#question-title").val(),
+                valueType: optionType,
+                allowNullValue: false,
+                options: option,
+                attachments: []
+            };
+        }
 
         if (isSelected == 0) {
             $("#question" + i)
@@ -713,52 +750,65 @@ function uploadImages() {
             let identifier = $(fileData).attr('name');
             let coverImage = $(fileData).get(0).files[0];
             let attachment = ActionHelper.attachmentUpload(coverImage, coverImage['type']);
-            let attachmentRequest = ActionHelper.requestAttachmentUplod(attachment);
-
+            let attachmentRequest = {};
             switch (identifier) {
                 case "quiz_image":
+                    attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
                     ActionHelper.executeApi(attachmentRequest)
                         .then(function(response) {
                             imageCounter++;
-                            if ($('#quiz-attachment-id').length > 0) {
+                            let attachmentData = { 'name': 'quiz-banner', type: 'Image', id: response.attachmentId };
+                            attachmentSet.push(attachmentData);
+                            if ($('#quiz-attachment-set').length > 0) {
                                 $('#quiz-attachment-id').val(response.attachmentId);
+                                $('#quiz-attachment-set').val(JSON.stringify(attachmentData));
                             } else {
                                 $(fileData).after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentId + '</textarea>');
+                                $(fileData).after('<textarea id="quiz-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
                             }
                         })
                         .catch(function(error) {
-                            console.log("GetContext - Error: " + JSON.stringify(error));
+                            console.log("GetContext - Error2: " + JSON.stringify(error));
                         });
                     break;
                 case "question_image":
+                    attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
                     ActionHelper.executeApi(attachmentRequest)
                         .then(function(response) {
                             imageCounter++;
+                            let attachmentData = { 'name': 'question-banner-' + imgIndex, type: 'Image', id: response.attachmentId };
+                            attachmentSet.push(attachmentData);
                             let selector = $(fileData).parents('.question-container').attr('id');
                             if ($('#' + selector).find('#question-attachment-id').length > 0) {
                                 $('#' + selector).find('#question-attachment-id').val(response.attachmentId);
+                                $('#' + selector).find('#question-attachment-set').val(JSON.stringify(attachmentData));
                             } else {
                                 $(fileData).after('<textarea id="question-attachment-id" class="d-none" >' + response.attachmentId + '</textarea>');
+                                $(fileData).after('<textarea id="question-attachment-set" class="d-none" >' + JSON.stringify(attachmentData) + '</textarea>');
                             }
                         })
                         .catch(function(error) {
-                            console.log("GetContext - Error: " + JSON.stringify(error));
+                            console.log("GetContext - Error3: " + JSON.stringify(error));
                         });
                     break;
-
                 default:
+                    attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
                     ActionHelper.executeApi(attachmentRequest)
                         .then(function(response) {
                             imageCounter++;
+                            let attachmentData = { 'name': 'option-banner-' + imgIndex, type: 'Image', id: response.attachmentId };
+                            attachmentSet.push(attachmentData);
                             let selector = $(fileData).parents('.row');
-                            if ($(selector).find('textarea.option-attachment-id').length > 0) {
-                                $(selector).find('textarea.option-attachment-id').val(response.attachmentId);
+                            if ($(selector).find('textarea#option-attachment-id').length > 0) {
+                                $(selector).find('textarea#option-attachment-id').val(response.attachmentId);
+                                $(selector).find('textarea#option-attachment-set').val(JSON.stringify(attachmentData));
                             } else {
                                 $(fileData).after('<textarea id="option-attachment-id" class="d-none" >' + response.attachmentId + '</textarea>');
+                                $(fileData).after('<textarea id="option-attachment-set" class="d-none" >' + JSON.stringify(attachmentData) + '</textarea>');
                             }
                         })
                         .catch(function(error) {
-                            console.log("GetContext - Error: " + JSON.stringify(error));
+                            console.log("GetContext - Error4: " + JSON.stringify(error));
                         });
                     break;
             }
@@ -798,6 +848,7 @@ function createAction(actionPackageId) {
     let questionsSet = getQuestionSet();
     let getcorrectanswers = getCorrectAnswer();
 
+
     if (questionsSet == false) {
         return false;;
     }
@@ -825,6 +876,9 @@ function createAction(actionPackageId) {
         value: quizAttachementId,
     });
     properties.push(getcorrectanswers);
+
+    console.log('attachmentSet: ' + JSON.stringify(attachmentSet));
+
     let action = {
         id: generateGUID(),
         actionPackageId: actionPackageId,
@@ -840,9 +894,11 @@ function createAction(actionPackageId) {
             itemsEditable: false,
             canUserAddMultipleItems: false,
             dataColumns: questionsSet,
-        }, ],
+            attachments: attachmentSet,
+        }],
     };
-
+    console.log('action: ' + JSON.stringify(action));
+    // return ;
     let request = ActionHelper.createAction(action);
     ActionHelper
         .executeApi(request)
@@ -902,12 +958,10 @@ async function getStringKeys() {
 
     Localizer.getString('addMoreOptions').then(function(result) {
         addMoreOptionsKey = result;
-        $('.add-options').html(`<svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt tc gv">
-            <path class="ui-icon__outline cc" d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
-            </path>
-            <path class="ui-icon__filled gr" d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
-            </path>
-        </svg> ${addMoreOptionsKey}`);
+        $('.add-options').html(`
+            <svg width="16" height="16" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg"  class="cc gs gt tc gv">
+                <path d="M7.49219 0.5C7.6276 0.5 7.74479 0.549479 7.84375 0.648438C7.94271 0.747396 7.99219 0.864583 7.99219 1V7H13.9922C14.1276 7 14.2448 7.04948 14.3438 7.14844C14.4427 7.2474 14.4922 7.36458 14.4922 7.5C14.4922 7.63542 14.4427 7.7526 14.3438 7.85156C14.2448 7.95052 14.1276 8 13.9922 8H7.99219V14C7.99219 14.1354 7.94271 14.2526 7.84375 14.3516C7.74479 14.4505 7.6276 14.5 7.49219 14.5C7.35677 14.5 7.23958 14.4505 7.14062 14.3516C7.04167 14.2526 6.99219 14.1354 6.99219 14V8H0.992188C0.856771 8 0.739583 7.95052 0.640625 7.85156C0.541667 7.7526 0.492188 7.63542 0.492188 7.5C0.492188 7.36458 0.541667 7.2474 0.640625 7.14844C0.739583 7.04948 0.856771 7 0.992188 7H6.99219V1C6.99219 0.864583 7.04167 0.747396 7.14062 0.648438C7.23958 0.549479 7.35677 0.5 7.49219 0.5Z" fill="#6264A7"/>
+            </svg> ${addMoreOptionsKey}`);
     });
 
     Localizer.getString('choices').then(function(result) {
@@ -1049,6 +1103,9 @@ async function getTheme(request) {
 
     /* If Edit back the quiz */
     if (lastSession != null) {
+        let actionId = lastSession.action.id;
+        console.log('actionId: ');
+        console.log(actionId);
         let ddtt = ((lastSession.action.customProperties[1].value).split('T'));
         let dt = ddtt[0].split('-');
         weekDateFormat = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
@@ -1071,8 +1128,9 @@ async function getTheme(request) {
 
         /* Quiz Section Attachment Check */
         if (lastSession.action.customProperties[4].value != "") {
+
             // let req = ActionHelper.getAttachmentInfo(lastSession.action.customProperties[4].value);
-            let req = ActionHelper.getAttachmentInfo(null, lastSession.action.customProperties[4].value);
+            let req = ActionHelper.getAttachmentInfo(actionId, lastSession.action.customProperties[4].value);
             ActionHelper.executeApi(req).then(function(response) {
                     // console.info("Attachment - Response: " + JSON.stringify(response));
                     $('#quiz-img-preview, #quiz-title-image').attr("src", response.attachmentInfo.downloadUrl);
@@ -1082,7 +1140,8 @@ async function getTheme(request) {
                     $('#quiz-title-image').show();
                     $('.quiz-updated-img').show();
                     $('.quiz-clear').show();
-                    $('#cover-image').after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentInfo.downloadUrl + '</textarea>');
+                    console.log(response.attachmentInfo);
+                    $('#cover-image').after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                 })
                 .catch(function(error) {
                     console.error("AttachmentAction - Error: " + JSON.stringify(error));
@@ -1153,22 +1212,23 @@ async function getTheme(request) {
     await ActionHelper.hideLoader();
 
     if (lastSession != null) {
+        let actionId = lastSession.action.id;
         setTimeout(() => {
             let option = $("div#option-section .option-div").clone();
             lastSession.action.dataTables[0].dataColumns.forEach((e, ind) => {
                 let correctAnsArr = JSON.parse(lastSession.action.customProperties[5].value);
                 if (ind == 0) {
-                    let questionTitleData = JSON.parse(e.displayName).name;
-                    let questionAttachmentData = JSON.parse(e.displayName).attachmentId;
+                    let questionTitleData = e.displayName;
+                    let questionAttachmentData = e.attachments.length > 0 ? e.attachments[0].id : '';
                     $('#question1').find('#question-title').val(questionTitleData);
 
                     if (questionAttachmentData != "") {
-                        let req = ActionHelper.getAttachmentInfo(null, questionAttachmentData);
+                        let req = ActionHelper.getAttachmentInfo(actionId, questionAttachmentData);
                         ActionHelper.executeApi(req).then(function(response) {
                                 $('#question1').find('.question-preview').show()
                                 $('#question1').find('.question-preview-image').show()
                                 $('#question1').find('.question-preview-image').attr("src", response.attachmentInfo.downloadUrl);
-                                $('#question-image-1').after('<textarea id="question-attachment-id" class="d-none">' + response.attachmentInfo.downloadUrl + '</textarea>');
+                                $('#question-image-1').after('<textarea id="question-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                             })
                             .catch(function(error) {
                                 console.error("AttachmentAction - Error: " + JSON.stringify(error));
@@ -1177,8 +1237,8 @@ async function getTheme(request) {
 
                     e.options.forEach((opt, i) => {
                         let counter = i + 1;
-                        let optionName = JSON.parse(opt.displayName).name;
-                        let optionAttachment = JSON.parse(opt.displayName).attachmentId;
+                        let optionName = opt.displayName;
+                        let optionAttachment = opt.attachments.length > 0 ? opt.attachments[0].id : '';
                         if (i <= 1) {
                             $('#question1').find('#option' + counter).val(optionName);
                         } else {
@@ -1204,12 +1264,12 @@ async function getTheme(request) {
                             }
                         });
                         if (optionAttachment != "") {
-                            let req = ActionHelper.getAttachmentInfo(null, optionAttachment);
+                            let req = ActionHelper.getAttachmentInfo(actionId, optionAttachment);
                             ActionHelper.executeApi(req).then(function(response) {
                                     $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview').show()
                                     $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').show()
                                     $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').attr("src", response.attachmentInfo.downloadUrl);
-                                    $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.downloadUrl + '</textarea>');
+                                    $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                                 })
                                 .catch(function(error) {
                                     console.error("AttachmentAction - Error: " + JSON.stringify(error));
@@ -1221,8 +1281,8 @@ async function getTheme(request) {
                     $(".section-2").find('#add-questions').parents("div.container").before($('#question-section').html());
 
                     let ocounter = 0;
-                    let questionTitleData = JSON.parse(e.displayName).name;
-                    let questionAttachmentData = JSON.parse(e.displayName).attachmentId;
+                    let questionTitleData = e.displayName;
+                    let questionAttachmentData = e.attachments.length > 0 ? e.attachments[0].id : '';
                     $(".section-2").find("div.container.question-container:last").attr('id', 'question' + qcounter);
                     Localizer.getString('question').then(function(result) {
                         $("#question" + qcounter).find("span.question-number").text(result + ' # ' + qcounter);
@@ -1231,12 +1291,12 @@ async function getTheme(request) {
                     $('#question' + qcounter).find('#question-title').val(questionTitleData);
 
                     if (questionAttachmentData != "") {
-                        let req = ActionHelper.getAttachmentInfo(null, questionAttachmentData);
+                        let req = ActionHelper.getAttachmentInfoDraft(questionAttachmentData);
                         ActionHelper.executeApi(req).then(function(response) {
                                 $('#question' + qcounter).find('.question-preview').show()
                                 $('#question' + qcounter).find('.question-preview-image').show()
                                 $('#question' + qcounter).find('.question-preview-image').attr("src", response.attachmentInfo.downloadUrl);
-                                $('#question-image-' + qcounter).after('<textarea id="question-attachment-id" class="d-none">' + response.attachmentInfo.downloadUrl + '</textarea>');
+                                $('#question-image-' + qcounter).after('<textarea id="question-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                             })
                             .catch(function(error) {
                                 console.error("AttachmentAction - Error: " + JSON.stringify(error));
@@ -1250,8 +1310,8 @@ async function getTheme(request) {
                     });
                     e.options.forEach((opt, i) => {
                         ocounter = i + 1;
-                        let optionName = JSON.parse(opt.displayName).name;
-                        let optionAttachment = JSON.parse(opt.displayName).attachmentId;
+                        let optionName = opt.displayName;
+                        let optionAttachment = opt.attachments.length ? opt.attachments[0].id : '';
                         if (i <= 1) {
                             $('#question' + qcounter).find('#option' + ocounter).val(optionName);
                         } else {
@@ -1274,12 +1334,12 @@ async function getTheme(request) {
                         });
 
                         if (optionAttachment != "") {
-                            let req = ActionHelper.getAttachmentInfo(null, optionAttachment);
+                            let req = ActionHelper.getAttachmentInfoDraft(optionAttachment);
                             ActionHelper.executeApi(req).then(function(response) {
                                     $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview').show()
                                     $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').show()
                                     $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').attr("src", response.attachmentInfo.downloadUrl);
-                                    $('#question' + qcounter).find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.downloadUrl + '</textarea>');
+                                    $('#question' + qcounter).find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                                 })
                                 .catch(function(error) {
                                     console.error("AttachmentAction - Error: " + JSON.stringify(error));
@@ -1342,12 +1402,44 @@ function calcDateDiff(start, end) {
  * @param elem object html elem where preview need to show
  */
 function readURL(input, elem) {
+    $(elem).removeClass('heightfit');
+    $(elem).removeClass('widthfit');
+    $(elem).removeClass('smallfit');
     if (input.files && input.files[0]) {
         let reader = new FileReader();
 
         reader.onload = function(e) {
-            $(elem).attr('src', e.target.result);
-        }
+            let image = new Image();
+            image.src = e.target.result;
+
+            image.onload = function() {
+                let imgWidth = this.width;
+                let imgHeight = this.height;
+
+                console.log('dimentions: ');
+                console.log(this.width);
+                console.log(this.height);
+                let divWidth = $(elem).width();
+                let divHeight = $(elem).height();
+                $(elem).attr('src', this.src);
+                console.log($(elem).width());
+                console.log($(elem).height());
+                if (imgHeight > divHeight) {
+                    /* height is greater than width */
+                    $(elem).addClass('heightfit');
+                } else if (imgWidth > divWidth) {
+                    /* width is greater than height */
+                    $(elem).addClass('widthfit');
+                } else {
+                    /* small image */
+                    $(elem).addClass('smallfit');
+                }
+            };
+            /*
+                console.log($(elem)[0].naturalHeight);
+                console.log($(elem)[0].naturalWidth);
+            */
+        };
         reader.readAsDataURL(input.files[0]); // convert to base64 string
     }
 }
@@ -1361,15 +1453,14 @@ let formSection = `<div class="section-1">
             <div class="container">
                 <div id="root">
                     <div class="form-group mb--16">
-                        <input type="Text" placeholder="" class="in-t input-title form-control" id="quiz-title" />
+                        <input type="Text" placeholder="" class="in-t input-title form-control" id="quiz-title" maxlength="1000"/>
                     </div>
-
                     <div class="form-group mb--16">
-                        <textarea class="form-control in-t" id="quiz-description"></textarea>
+                        <textarea class="form-control in-t font-12" id="quiz-description" maxlength="5000"></textarea>
                     </div>
                     <div class="form-group mb0">
-                        <label class="cover-image-label semi-bold mb--8">Cover Image (Optional)</label>
-                        <label class="quiz-clear semi-bold mb--8 cursor-pointer pull-right theme-color" style="display:none">Clear</label>
+                        <label class="cover-image-label semi-bold mb--8 font-12">Cover Image (Optional)</label>
+                        <label class="quiz-clear semi-bold mb--8 cursor-pointer pull-right theme-color font-12" style="display:none">Clear</label>
                         <div class="relative">
                             <!-- hide this div after img added -->
                             <div class="photo-box card-bg card-border max-min-220 upvj cursor-pointer">
@@ -1419,7 +1510,7 @@ let section2 = `<div class="section-2 d-none">
                             </div>
                             <div class="col-12">
                                 <h4 id="quiz-title-content" class="mb--8"></h4>
-                                <p class="text-justify" id="quiz-description-content"></p>
+                                <p class="text-justify font-12" id="quiz-description-content"></p>
                             </div>
                         </div>
                     </div>
@@ -1465,7 +1556,7 @@ let questionsSection = `<div style="display: none;" id="question-section">
             <div class="card-box card-border card-bg">
                 <div class="form-group-question">
                     <div>
-                        <span class="question-number input-group-text mb--8 input-tpt pl-0 strong cursor-pointer">Question # 1</span>
+                        <span class="question-number font-12 bold input-group-text mb--8 input-tpt pl-0 strong cursor-pointer">Question # 1</span>
                         <span class="input-group-text remove-question remove-option-q input-tpt cursor-pointer" aria-hidden="true">
                             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
@@ -1525,7 +1616,7 @@ let questionsSection = `<div style="display: none;" id="question-section">
                             </svg>
                             <input type="file" name="question_image" class="d-none" accept="image/*" id="question-image-1"/>
                         </div>
-                        <input type="text" class="form-control in-t pl--32" placeholder="${questionTitleKey}" aria-label="${questionTitleKey}" aria-describedby="basic-addon2" id="question-title">
+                        <input type="text" class="form-control in-t pl--32" placeholder="${questionTitleKey}" aria-label="${questionTitleKey}" aria-describedby="basic-addon2" id="question-title" maxlength="5000">
                     </div>
                 </div>
                 <div class="d-flex-ques">
@@ -1565,7 +1656,7 @@ let questionsSection = `<div style="display: none;" id="question-section">
                                                 </svg>
                                                 <input type="file" name="option_image" class="d-none" accept="image/*" id="option-image-1"/>
                                             </div>
-                                            <input type="text" class="form-control in-t opt-cls pl--32" placeholder="${optionKey}" aria-label="Option 1" aria-describedby="basic-addon2" id="option1">
+                                            <input type="text" class="form-control in-t opt-cls pl--32" placeholder="${optionKey}" aria-label="Option 1" aria-describedby="basic-addon2" id="option1" maxlength="1000">
                                             <div class="input-group-append check-opt check-me-title"  title="${checkMeKey}">
                                                 <span class="input-group-text input-tpt cursor-pointer">
                                                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
@@ -1647,7 +1738,7 @@ let questionsSection = `<div style="display: none;" id="question-section">
                                                 </svg>
                                                 <input type="file" name="option_image" class="d-none" accept="image/*" id="option-image-2"/>
                                             </div>
-                                            <input type="text" class="form-control in-t opt-cls pl--32" placeholder="${optionKey}" aria-label="Option 2" aria-describedby="basic-addon2" id="option2">
+                                            <input type="text" class="form-control in-t opt-cls pl--32" placeholder="${optionKey}" aria-label="Option 2" aria-describedby="basic-addon2" id="option2" maxlength="1000">
                                             <div class="input-group-append check-opt check-me-title" title="${checkMeKey}">
                                                 <span class="input-group-text input-tpt cursor-pointer">
                                                     <svg version="1.1" id="Layer_1"  x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16"  xml:space="preserve">
@@ -1698,13 +1789,9 @@ let questionsSection = `<div style="display: none;" id="question-section">
                             </div>
                             <div class="">
                                 <button type="button" class="teams-link add-options"> 
-                                    <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt tc gv">
-                                        <path class="ui-icon__outline cc" d="M23.352 16.117c.098.1.148.217.148.352 0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149h-6v6c0 .136-.05.253-.148.351a.48.48 0 0 1-.352.149.477.477 0 0 1-.352-.149.477.477 0 0 1-.148-.351v-6h-6a.477.477 0 0 1-.352-.149.48.48 0 0 1-.148-.351c0-.135.05-.252.148-.352A.481.481 0 0 1 10 15.97h6v-6c0-.135.049-.253.148-.352a.48.48 0 0 1 .352-.148c.135 0 .252.05.352.148.098.1.148.216.148.352v6h6c.135 0 .252.05.352.148z">
-                                        </path>
-                                        <path class="ui-icon__filled gr" d="M23.5 15.969a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078H17v5.5a1.01 1.01 0 0 1-.613.922.971.971 0 0 1-.387.078.965.965 0 0 1-.387-.079.983.983 0 0 1-.535-.535.97.97 0 0 1-.078-.386v-5.5H9.5a.965.965 0 0 1-.387-.078.983.983 0 0 1-.535-.535.972.972 0 0 1-.078-.387 1.002 1.002 0 0 1 1-1H15v-5.5a1.002 1.002 0 0 1 1.387-.922c.122.052.228.124.32.215a.986.986 0 0 1 .293.707v5.5h5.5a.989.989 0 0 1 .707.293c.09.091.162.198.215.32a.984.984 0 0 1 .078.387z">
-                                        </path>
-                                    </svg>  
-                                     ${addMoreOptionsKey}
+                                    <svg width="16" height="16" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg"  class="cc gs gt tc gv">
+                                        <path d="M7.49219 0.5C7.6276 0.5 7.74479 0.549479 7.84375 0.648438C7.94271 0.747396 7.99219 0.864583 7.99219 1V7H13.9922C14.1276 7 14.2448 7.04948 14.3438 7.14844C14.4427 7.2474 14.4922 7.36458 14.4922 7.5C14.4922 7.63542 14.4427 7.7526 14.3438 7.85156C14.2448 7.95052 14.1276 8 13.9922 8H7.99219V14C7.99219 14.1354 7.94271 14.2526 7.84375 14.3516C7.74479 14.4505 7.6276 14.5 7.49219 14.5C7.35677 14.5 7.23958 14.4505 7.14062 14.3516C7.04167 14.2526 6.99219 14.1354 6.99219 14V8H0.992188C0.856771 8 0.739583 7.95052 0.640625 7.85156C0.541667 7.7526 0.492188 7.63542 0.492188 7.5C0.492188 7.36458 0.541667 7.2474 0.640625 7.14844C0.739583 7.04948 0.856771 7 0.992188 7H6.99219V1C6.99219 0.864583 7.04167 0.747396 7.14062 0.648438C7.23958 0.549479 7.35677 0.5 7.49219 0.5Z" fill="#6264A7"/>
+                                    </svg>  ${addMoreOptionsKey}
                                 </button>
                             </div>
                         </div>
@@ -1753,7 +1840,7 @@ let optionSection = `<div style="display: none;" id="option-section">
                             </svg>
                             <input type="file" name="option_image" class="d-none" accept="image/*" id="option-image-1"/>
                         </div>
-                        <input type="text" class="form-control in-t opt-cls pl--32" placeholder="${optionKey}" aria-label="Recipient's username" aria-describedby="basic-addon2" id="option-1">
+                        <input type="text" class="form-control in-t opt-cls pl--32" placeholder="${optionKey}" aria-label="Recipient's username" aria-describedby="basic-addon2" id="option-1" maxlength="1000">
                         <div class="input-group-append check-opt check-me-title" title="${checkMeKey}">
                             <span class="input-group-text input-tpt cursor-pointer">
                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
@@ -1847,13 +1934,12 @@ let settingSection = `<div style="display:none" id="setting">
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <div class="col-12 mt--32">
+                <div class="col-12 mt--24">
                     <div class="input-group form-check custom-check-outer">
                         <label class="custom-check form-check-label">
                             <input type="checkbox" name="show_correctAnswer" id="show-correct-answer" value="Yes" checked/>
                             <span class="checkmark"></span>
-                            <strong class="show-correct-key">${showCorrectAnswerKey}</strong>
-                            <br>
+                            <p class="show-correct-key">${showCorrectAnswerKey}</p>
                             <span class="answer-cannot-change-key sub-text mt--4 d-block">${answerCannotChangeKey}</span>
                         </label>
                     </div>

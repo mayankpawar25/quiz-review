@@ -24,6 +24,7 @@ let backKey = '';
 let youKey = '';
 let questionKey = '';
 let scoreKey = '';
+let closeKey = '';
 
 /* ********************************* Events ******************************************** */
 
@@ -32,6 +33,22 @@ let scoreKey = '';
  */
 $(document).on("click", ".back", function() {
     createBody();
+});
+
+/**
+ * @event Click Event for back to responder and non responder page
+ */
+$(document).on("click", "#closeKey", function() {
+    let closeViewRequest = ActionHelper.closeView();
+
+    ActionHelper
+        .executeApi(closeViewRequest)
+        .then(function(batchResponse) {
+            console.info("BatchResponse: " + JSON.stringify(batchResponse));
+        })
+        .catch(function(error) {
+            console.error("Error3: " + JSON.stringify(error));
+        });
 });
 
 /**
@@ -121,6 +138,10 @@ async function getStringKeys() {
         $('.back-key').text(backKey);
     });
 
+    Localizer.getString('close').then(function(result) {
+        closeKey = result;
+        $('.close-key').text(closeKey);
+    });
     Localizer.getString('you').then(function(result) {
         youKey = result;
     });
@@ -200,6 +221,8 @@ async function createBody() {
     /*  Head Section  */
     head();
 
+    await getUserprofile();
+
     /*  Person Responded X of Y Responses  */
     getSubscriptionCount = ActionHelper.getSubscriptionMemberCount(
         actionContext.subscription
@@ -218,15 +241,23 @@ async function createBody() {
             `<label class="mb--8"><strong classs="semi-bold">${result}</strong></label><div class="progress mb--8"><div class="progress-bar bg-primary" role="progressbar" style="width: ${participationPercentage}%" aria-valuenow="${participationPercentage}" aria-valuemin="0" aria-valuemax="100"></div></div>`
         );
     });
-    Localizer.getString('xofy_people_responded', actionSummary.rowCount, memberCount).then(function(result) {
-        let xofy = result;
-        $pcard.append(`<p class="date-color cursor-pointer under-line mb--24" id="show-responders">${xofy}</p>`);
-        $pcard.append(`<div class="clearfix"></div>`);
-    });
+
+    if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
+        Localizer.getString('xofy_people_responded', actionSummary.rowCount, memberCount).then(function(result) {
+            let xofy = result;
+            $pcard.append(`<p class="date-color cursor-pointer under-line mb--24" id="show-responders">${xofy}</p>`);
+            $pcard.append(`<div class="clearfix"></div>`);
+        });
+    } else {
+        Localizer.getString('xofy_people_responded', actionSummary.rowCount, memberCount).then(function(result) {
+            let xofy = result;
+            $pcard.append(`<p class="date-color mb--24" id="show-responders">${xofy}</p>`);
+            $pcard.append(`<div class="clearfix"></div>`);
+        });
+    }
 
 
     $("#root").append($pcard);
-    await getUserprofile();
     let responderDateLength = Object.keys(ResponderDate).length;
     if (responderDateLength > 0) {
         if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
@@ -247,7 +278,7 @@ async function createBody() {
                         let matches = name.match(/\b(\w)/g); // [D,P,R]
                         let initials = matches.join('').substring(0, 2); // DPR
                         Localizer.getString('you_yet_respond').then(function(result) {
-                            $('div.progress-section').after(`<div class="d-flex cursor-pointer getresult" id="${nonresponders.value2}">
+                            $('div.progress-section').after(`<div class="d-flex cursor-pointer" id="${nonresponders.value2}">
                                         <div class="avtar">
                                             ${initials}
                                         </div>
@@ -262,15 +293,14 @@ async function createBody() {
                     }
                 });
             }
-
         } else {
-
             ResponderDate.forEach((responder) => {
                 if (responder.value2 == myUserId) {
                     createReponderQuestionView(myUserId, responder);
                 }
             });
         }
+
     } else {
         actionNonResponders.forEach((nonresponders) => {
             if (nonresponders.value2 == myUserId) {
@@ -281,7 +311,7 @@ async function createBody() {
                     let matches = name.match(/\b(\w)/g); // [D,P,R]
                     let initials = matches.join('').substring(0, 2); // DPR
                     Localizer.getString('you_yet_respond').then(function(result) {
-                        $('div.progress-section').after(`<div class="d-flex cursor-pointer getresult" id="${nonresponders.value2}">
+                        $('div.progress-section').after(`<div class="d-flex cursor-pointer" id="${nonresponders.value2}">
                                 <div class="avtar">
                                     ${initials}
                                 </div>
@@ -295,7 +325,7 @@ async function createBody() {
             }
         })
     }
-
+    footerClose();
     return true;
 }
 
@@ -308,7 +338,7 @@ function head() {
     let dueby = new Date(actionInstance.expiryTime).toDateString();
 
     let $card = $('<div class=""></div>');
-    let $title_sec = $(`<h4 class="mb---8">${title}</h4>`);
+    let $title_sec = $(`<h4 class="mb--8">${title}</h4>`);
     let $description_sec = $(`<p class="mb--8 text-justify text-break">${description}</p>`);
 
     let current_timestamp = new Date().getTime();
@@ -419,85 +449,51 @@ function scoreCalculate(userId) {
     let score = 0;
     actionInstance.dataTables.forEach((dataTable) => {
         total = Object.keys(dataTable.dataColumns).length;
-        dataTable.dataColumns.forEach((question, ind) => {
-            let correctAnswerCounter = 0;
-            let resResult = [];
-            question.options.forEach((option, iii) => {
-                let userResponse = [];
-                let userResponseAnswer = "";
-                for (let i = 0; i < actionDataRowsLength; i++) {
-                    userResponse = actionDataRows[i].columnValues;
-                    let userResponseLength = Object.keys(userResponse).length;
 
-                    for (let j = 1; j <= userResponseLength; j++) {
-                        if (isJson(userResponse[j])) {
-                            let userResponseAns = JSON.parse(userResponse[j]);
-                            let userResponseAnsLen = userResponseAns.length;
-                            if (userResponseAnsLen > 1) {
-                                for (let k = 0; k < userResponseAnsLen; k++) {
-                                    if (userResponseAns[k] == option.name) {
-                                        userResponseAnswer = userResponseAns[k];
-                                    } else {
-                                        continue;
-                                    }
-                                }
-                            } else {
-                                userResponseAnswer = userResponseAns;
-                            }
+        /* Correct Answer */
+        let correctResponse = JSON.parse(
+            actionInstance.customProperties[5].value
+        );
+
+        for (let i = 0; i < actionDataRowsLength; i++) {
+            if (actionDataRows[i].creatorId == userId) {
+                for (let c = 0; c < correctResponse.length; c++) {
+                    let correctAnsString = '';
+                    let userAnsString = '';
+                    if ($.isArray(correctResponse[c])) {
+                        if (correctResponse[c].length > 1) {
+                            correctAnsString = correctResponse[c].join(',');
                         } else {
-                            if (userResponse[j] == option.name) {
-                                userResponseAnswer = userResponse[j];
-                            }
+                            correctAnsString = correctResponse[c][0];
                         }
-                    }
-                }
-
-                /* Correct Answer */
-                let correctResponse = JSON.parse(
-                    actionInstance.customProperties[5].value
-                );
-                let correctResponseLength = Object.keys(correctResponse).length;
-                let correctAnswer = "";
-                for (let j = 0; j < correctResponseLength; j++) {
-                    let correctResponseAns = correctResponse[j];
-                    let correctResponseAnsLen = correctResponseAns.length;
-
-                    for (let k = 0; k < correctResponseAnsLen; k++) {
-                        if (correctResponseAns[k] == option.name) {
-                            correctAnswer = correctResponseAns[k];
-                            correctAnswerCounter++;
-                        }
-                    }
-                }
-
-                resResult[iii] = 'false';
-                if (correctAnswer.length > 0 && userResponseAnswer.length > 0 && correctAnswer == userResponseAnswer) {
-                    if (correctResponseLength == correctAnswerCounter) {
-                        resResult[iii] = 'true';
                     } else {
-                        resResult[iii] = 'false';
+                        correctAnsString = correctResponse[c];
                     }
-                }
 
-                let optName = JSON.parse(option.displayName).name;
-                let attachmentId = JSON.parse(option.displayName).attachmentId;
-                let optId = option.name;
-                let $radioOption = '';
-                let result = '';
-                for (let j = 0; j < correctResponseLength; j++) {
-                    let correctResponseAns = correctResponse[j];
-                    if (correctResponseAns.includes(option.name)) {
-                        result = 'correct';
+                    if (ActionHelper.isJson(actionDataRows[i].columnValues[c + 1])) {
+                        let responderAnsArr = JSON.parse(actionDataRows[i].columnValues[c + 1]);
+                        if (responderAnsArr.length > 1) {
+                            userAnsString = responderAnsArr.join(',');
+                        } else {
+                            userAnsString = responderAnsArr[0];
+                        }
+                    } else {
+                        userAnsString = actionDataRows[i].columnValues[c + 1];
                     }
+
+                    if (correctAnsString == userAnsString) {
+                        score++;
+                    }
+
                 }
-                $radioOption = getOptionsCreator(optName, optId, ind, result, attachmentId);
-            });
-            if (resResult.includes('true') == true) {
-                score++;
             }
-        });
+        }
     });
-    return Math.round((score / total) * 100);
+    let score_is = (score / total) * 100;
+    if (score_is % 1 != 0) {
+        score_is = score_is.tofixed(2);
+    }
+    return score_is;
 }
 
 /**
@@ -541,6 +537,8 @@ function getNonresponders() {
 function createReponderQuestionView(userId, responder = '') {
     total = 0;
     score = 0;
+    console.log('createReponderQuestionView');
+
     $("div#root > div.question-content").html("");
 
     if (responder != '') {
@@ -575,14 +573,14 @@ function createReponderQuestionView(userId, responder = '') {
             let count = ind + 1;
             let $questionHeading = $(`<label class="font-12"></label>`);
             $questionHeading.append(
-                `<strong class="question-title semi-bold"><span  class="question-number ">Question # ${count}</span></strong></label> </strong>`
+                `<strong class="question-title semi-bold"><span  class="question-number">Question # ${count}</span></strong></label> </strong>`
             );
             $questionHeading.append(`<label class="float-right" id="status-1 "></label>`);
 
             $dflexDiv.append($questionHeading);
 
-            $dflexDiv.append(`<div class=" ">
-                    <div class="semi-bold font-14 mb--16 ">${JSON.parse(question.displayName).name}</div>
+            $dflexDiv.append(`<div class="">
+                    <div class="semi-bold font-14 mb--16 ">${question.displayName}</div>
                 </div>`);
 
             let optAnsArr = [];
@@ -596,7 +594,7 @@ function createReponderQuestionView(userId, responder = '') {
                         let userResponseLength = Object.keys(userResponse).length;
 
                         for (let j = 1; j <= userResponseLength; j++) {
-                            if (isJson(userResponse[j])) {
+                            if (ActionHelper.isJson(userResponse[j])) {
                                 let userResponseAns = JSON.parse(userResponse[j]);
                                 let userResponseAnsLen = userResponseAns.length;
                                 if (userResponseAnsLen > 1) {
@@ -608,7 +606,9 @@ function createReponderQuestionView(userId, responder = '') {
                                         }
                                     }
                                 } else {
-                                    userResponseAnswer = userResponseAns;
+                                    if (userResponseAns[0] == option.name) {
+                                        userResponseAnswer = userResponseAns[0];
+                                    }
                                 }
                             } else {
                                 if (userResponse[j] == option.name) {
@@ -635,13 +635,16 @@ function createReponderQuestionView(userId, responder = '') {
                     }
                 }
 
-                let optName = JSON.parse(option.displayName).name
+                let optName = option.displayName;
+                let optAttachmentId = option.attachments != "" ? option.attachments[0].id : "";
+
                 let $radioOption = getOptions(
                     optName,
                     question.name,
                     option.name,
                     userResponseAnswer,
-                    correctAnswer
+                    correctAnswer,
+                    optAttachmentId
                 );
                 $cardDiv.append($radioOption);
 
@@ -659,7 +662,10 @@ function createReponderQuestionView(userId, responder = '') {
         });
     });
     $("#root").append('<div class="ht-100"></div>');
-    let scorePercentage = Math.round((score / total) * 100);
+    let scorePercentage = (score / total) * 100;
+    if (scorePercentage % 1 != 0) {
+        scorePercentage = scorePercentage.tofixed(2);
+    }
 
     Localizer.getString("score", ":").then(function(result) {
         $("#root > hr.small:last").after(`<div class="d-flex"><p class="semi-bold font-14">${result} ${scorePercentage}%</p></div>`);
@@ -688,17 +694,22 @@ function createCreatorQuestionView() {
     });
 
     actionInstance.dataTables.forEach((dataTable) => {
+        let scoreArray = {};
+        let correctResponse = JSON.parse(
+            actionInstance.customProperties[5].value
+        );
+
         dataTable.dataColumns.forEach((question, ind) => {
             let correctCounter = 0;
             answerIs = "";
-            let $quesContDiv = $(`<div class="question-content"></div>`);
+            let $quesContDiv = $(`<div class="question-content" id="content-${question.name}"></div>`);
             let $mtDiv = $(`<div class="mt--32"></div>`);
             let $dflexDiv = $('<div class="d-table mb--4"></div>');
 
             $quesContDiv.append($mtDiv);
             $('#root').append($quesContDiv);
             let count = ind + 1;
-            let attachmentId = JSON.parse(question.displayName).attachmentId;
+            let attachmentId = question.attachments != "" ? question.attachments[0].id : "";
 
             $dflexDiv.append(`<label class="font-12 ">
                     <strong class="question-title semi-bold "> 
@@ -710,18 +721,33 @@ function createCreatorQuestionView() {
             let $blankQDiv = $(`<div class=""></div>`);
             $mtDiv.append($blankQDiv);
             $blankQDiv.append(`
-                    <div class="semi-bold font-14 mb--16 ">${JSON.parse(question.displayName).name}</div>
+                    <div class="semi-bold font-14 mb--16 ">${question.displayName}</div>
             `);
-
+            let questionAttachmentId = question.attachments.length > 0 ? question.attachments[0].id : '';
+            if (questionAttachmentId.length > 0) {
+                let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
+                ActionHelper.executeApi(req).then(function(response) {
+                        console.info("Attachment - Response: " + JSON.stringify(response));
+                        $blankQDiv.prepend(`
+                            <div class="option-image-section cover-img min-max-132 mb--8"> 
+                                <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive">
+                            </div>`);
+                        getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-image`);
+                    })
+                    .catch(function(error) {
+                        console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                    });
+            }
 
             if (attachmentId.length > 0) {
-                let req = ActionHelper.getAttachmentInfo("", attachmentId);
+                let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
                 ActionHelper.executeApi(req).then(function(response) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $mtDiv.find('d-table').after(`
-                            <div class="quiz-updated-img cover-img max-min-220 mb--8">
+                            <div class="quiz-updated-img cover-img min-max-132 mb--8">
                                 <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive question-template-image">
                             </div>`);
+                        getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-template-image`);
                     })
                     .catch(function(error) {
                         console.error("AttachmentAction - Error: " + JSON.stringify(error));
@@ -729,6 +755,47 @@ function createCreatorQuestionView() {
             }
             let correctAnswerCounter = 0;
             let resResult = [];
+            scoreArray[question.name] = 0;
+
+            /* check for correct answer for each users */
+            for (let i = 0; i < actionDataRowsLength; i++) {
+                console.log('i: ' + i);
+
+                for (let c = 0; c < correctResponse.length; c++) {
+                    let correctAnsString = '';
+                    let userAnsString = '';
+                    if ($.isArray(correctResponse[c])) {
+                        if (correctResponse[c].length > 1) {
+                            correctAnsString = correctResponse[c].join(',');
+                        } else {
+                            correctAnsString = correctResponse[c][0];
+                        }
+                    } else {
+                        correctAnsString = correctResponse[c];
+                    }
+
+                    if (ActionHelper.isJson(actionDataRows[i].columnValues[count])) {
+                        let responderAnsArr = JSON.parse(actionDataRows[i].columnValues[count]);
+                        if (responderAnsArr.length > 1) {
+                            userAnsString = responderAnsArr.join(',');
+                        } else {
+                            userAnsString = responderAnsArr[0];
+                        }
+                    } else {
+                        userAnsString = actionDataRows[i].columnValues[count];
+                    }
+
+                    if (correctAnsString == userAnsString) {
+                        console.log(`${correctAnsString} == ${userAnsString}`);
+                        scoreArray[question.name] = scoreArray[question.name] + 1;
+                    }
+
+                }
+            }
+
+            console.log('scoreArray: ');
+            console.log(scoreArray);
+
             question.options.forEach((option, iii) => {
                 /* User Responded */
                 let $cardDiv = $('<div class="card-box card-bg card-border mb--8 "></div>');
@@ -737,29 +804,40 @@ function createCreatorQuestionView() {
                 for (let i = 0; i < actionDataRowsLength; i++) {
                     userResponse = actionDataRows[i].columnValues;
                     let userResponseLength = Object.keys(userResponse).length;
-
+                    let userResArr = [];
                     for (let j = 1; j <= userResponseLength; j++) {
-                        if (isJson(userResponse[j])) {
+                        if (ActionHelper.isJson(userResponse[j])) {
                             let userResponseAns = JSON.parse(userResponse[j]);
                             let userResponseAnsLen = userResponseAns.length;
                             if (userResponseAnsLen > 1) {
                                 for (let k = 0; k < userResponseAnsLen; k++) {
                                     if (userResponseAns[k] == option.name) {
                                         userResponseAnswer = userResponseAns[k];
-                                    } else {
-                                        continue;
+                                        userResArr.push(userResponseAnswer);
                                     }
                                 }
                             } else {
-                                userResponseAnswer = userResponseAns;
+                                if (userResponseAns[0] == option.name) {
+                                    userResponseAnswer = userResponseAns[0];
+                                    userResArr.push(userResponseAnswer);
+                                }
                             }
                         } else {
                             if (userResponse[j] == option.name) {
                                 userResponseAnswer = userResponse[j];
+                                userResArr.push(userResponseAnswer);
                             }
                         }
+
+
                     }
+
+                    console.log('userResArr: ');
+                    console.log(userResArr);
                 }
+
+                console.log('userResponseAnswer: ');
+                console.log(userResponseAnswer);
 
                 /* Correct Answer */
                 let correctResponse = JSON.parse(
@@ -779,17 +857,8 @@ function createCreatorQuestionView() {
                     }
                 }
 
-                resResult[iii] = 'false';
-                if (correctAnswer.length > 0 && userResponseAnswer.length > 0 && correctAnswer == userResponseAnswer) {
-                    if (correctResponseLength == correctAnswerCounter) {
-                        resResult[iii] = 'true';
-                    } else {
-                        resResult[iii] = 'false';
-                    }
-                }
-
-                let optName = JSON.parse(option.displayName).name;
-                let attachmentId = JSON.parse(option.displayName).attachmentId;
+                let optName = option.displayName;
+                let attachmentId = option.attachments != "" ? option.attachments[0].id : "";
                 let optId = option.name;
                 let $radioOption = '';
                 let result = '';
@@ -802,20 +871,17 @@ function createCreatorQuestionView() {
                 $radioOption = getOptionsCreator(optName, optId, ind, result, attachmentId);
 
                 $cardDiv.append($radioOption);
-                if (result == 'correct')
-                    $cardDiv.addClass("alert-success");
+                /* if (result == 'correct')
+                    $cardDiv.addClass("alert-success"); */
 
                 $quesContDiv.append($cardDiv);
             });
 
-            if (resResult.includes('true') == true) {
-                correctCounter++;
-            }
 
             if (actionDataRowsLength == 0) {
                 $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">0% Correct</div>`);
             } else {
-                $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">${(correctCounter * 100) / actionDataRowsLength}% Correct</span>`);
+                $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">${(scoreArray[question.name] * 100) / actionDataRowsLength}% Correct</span>`);
             }
         });
     });
@@ -834,11 +900,11 @@ function createQuestionView(userId) {
         total = Object.keys(dataTable.dataColumns).length;
         dataTable.dataColumns.forEach((question, ind) => {
             answerIs = "";
-            let $questionDiv = $(`<div class="question-content"></div>`);
+            let $questionDiv = $(`<div class="question-content" id="content-${question.name}"></div>`);
             let $mtDiv = $(`<div class="mt--32"></div>`);
             let $dtableDiv = $(`<div class="d-table mb--4 "></div>`);
             let count = ind + 1;
-            let attachmentId = JSON.parse(question.displayName).attachmentId;
+            let attachmentId = question.attachments != "" ? question.attachments[0].id : "";
 
             $questionDiv.append($mtDiv);
             $mtDiv.append($dtableDiv);
@@ -848,22 +914,23 @@ function createQuestionView(userId) {
                     </strong>
                 </label>`);
 
-            $dtableDiv.append(`<label class="float-right" id="status-${question.name} "></label>`);
+            $dtableDiv.append(`<label class="float-right" id="status-${question.name}"></label>`);
 
             let $blankQDiv = $(`<div class=""></div>`);
             $mtDiv.append($blankQDiv);
             $blankQDiv.append(`
-                    <div class="semi-bold font-14 mb--16 ">${JSON.parse(question.displayName).name}</div>
+                    <div class="semi-bold font-14 mb--16 ">${question.displayName}</div>
             `);
 
             if (attachmentId.length > 0) {
-                let req = ActionHelper.getAttachmentInfo("", attachmentId);
+                let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
                 ActionHelper.executeApi(req).then(function(response) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $mtDiv.find('d-table').after(`
-                            <div class="quiz-updated-img cover-img max-min-220 mb--8">
+                            <div class="quiz-updated-img cover-img min-max-132 mb--8">
                                 <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive question-template-image">
                             </div>`);
+                        getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-template-image`);
                     })
                     .catch(function(error) {
                         console.error("AttachmentAction - Error: " + JSON.stringify(error));
@@ -873,6 +940,7 @@ function createQuestionView(userId) {
             let $blankDiv = $(`<div class=" "></div>`);
             $mtDiv.append($blankDiv);
             let optAnsArr = [];
+            console.log(question.options);
             question.options.forEach((option, optind) => {
                 /* User Responded */
                 let userResponse = [];
@@ -883,8 +951,10 @@ function createQuestionView(userId) {
                         userResponse = actionDataRows[i].columnValues;
                         let userResponseLength = Object.keys(userResponse).length;
 
+                        console.log('userResponse ' + JSON.stringify(userResponse));
+
                         for (let j = 1; j <= userResponseLength; j++) {
-                            if (isJson(userResponse[j])) {
+                            if (ActionHelper.isJson(userResponse[j]) == true) {
                                 let userResponseAns = JSON.parse(userResponse[j]);
                                 let userResponseAnsLen = userResponseAns.length;
                                 if (userResponseAnsLen > 1) {
@@ -896,7 +966,9 @@ function createQuestionView(userId) {
                                         }
                                     }
                                 } else {
-                                    userResponseAnswer = userResponseAns;
+                                    if (userResponseAns[0] == option.name) {
+                                        userResponseAnswer = userResponseAns[0];
+                                    }
                                 }
                             } else {
                                 if (userResponse[j] == option.name) {
@@ -922,8 +994,8 @@ function createQuestionView(userId) {
                     }
                 }
 
-                let optName = JSON.parse(option.displayName).name
-                let optAttachmentId = JSON.parse(option.displayName).attachmentId
+                let optName = option.displayName;
+                let optAttachmentId = option.attachments != 0 ? option.attachments[0].id : "";
 
                 let $radioOption = getOptions(
                     optName,
@@ -933,15 +1005,18 @@ function createQuestionView(userId) {
                     correctAnswer,
                     optAttachmentId
                 );
+
                 $blankDiv.append($radioOption);
                 if (answerIs.toLowerCase() == 'correct') {
                     optAnsArr[optind] = answerIs;
-                } else {
+                } else if (answerIs.toLowerCase() == 'incorrect') {
                     optAnsArr[optind] = 'incorrect';
                 }
                 $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold ${answerIs == 'Correct' ? 'text-success' : 'text-danger'}">${answerIs}</span>`);
             });
 
+            console.log('optAnsArr: ');
+            console.log(optAnsArr);
             if (optAnsArr.includes('incorrect') != true) {
                 score++;
             }
@@ -950,8 +1025,10 @@ function createQuestionView(userId) {
 
     });
 
-    let scorePercentage = Math.round((score / total) * 100);
-
+    let scorePercentage = (score / total) * 100;
+    if (scorePercentage % 1 != 0) {
+        scorePercentage = scorePercentage.tofixed(2);
+    }
     Localizer.getString("score", ":").then(function(result) {
         $("#root > div.progress-section").after(`<div class="d-flex"><p class="semi-bold pr--8">${result} ${scorePercentage}%</p></div>`);
     });
@@ -967,9 +1044,15 @@ function createQuestionView(userId) {
  * @param attachmentId String contains attachment id of option 
  */
 function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
+    console.log('id: ' + id);
+    console.log('userResponse: ' + userResponse);
+    console.log('correctAnswer: ' + correctAnswer);
+
     let $oDiv = $('<div class=""></div>');
     /*  If answer is correct  and answered */
     if ($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) == $.trim(id)) {
+        console.log('  ');
+        console.log('if');
         $oDiv.append(
             `<div class="card-box card-bg card-border alert-success mb--8">
                 <div class="radio-section custom-radio-outer" id="${id} " columnid="3 ">
@@ -990,22 +1073,9 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
         if (answerIs == "") {
             answerIs = "Correct";
         }
-    } else if (($.trim(userResponse) != $.trim(id) && $.trim(correctAnswer) == $.trim(id))) {
-        /* If User Response is incorrect and not answered */
-        $oDiv.append(`<div class="card-box card-bg card-border mb--8">
-                <div class="radio-section custom-radio-outer" id="${id}">
-                    <label class="custom-radio d-block selected font-14  "> 
-                        <span class="radio-block"></span>${text} 
-                        <i class="success-with-img"> 
-                            <svg version="1.1 " id="Layer_1 "  x="0px " y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
-                                <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
-                                <path id="Path_594 "  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "/>
-                            </svg> 
-                        </i> 
-                    </label>
-                </div>         
-            </div>`);
-    } else if (($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) != $.trim(id))) {
+    } else if (($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) != $.trim(userResponse))) {
+        console.log('  ');
+        console.log('else 1');
         /* If User Response is correct and answered incorrect */
         $oDiv.append(`<div class="card-box card-bg card-border alert-danger mb--8">
                 <div class="radio-section custom-radio-outer" id="${id}">
@@ -1015,7 +1085,27 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
                 </div>
             </div>`);
         answerIs = "Incorrect";
+    } else if (($.trim(userResponse) != $.trim(id) && $.trim(correctAnswer) == $.trim(id))) {
+        console.log('  ');
+        console.log('else 2');
+
+        /* If User Response is incorrect and not answered */
+        $oDiv.append(`<div class="card-box card-bg card-border mb--8">
+                <div class="radio-section custom-radio-outer" id="${id}">
+                    <label class="custom-radio d-block selected font-14">
+                        <span class="radio-block"></span>${text} 
+                        <i class="success-with-img">
+                            <svg version="1.1 " id="Layer_1 "  x="0px " y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
+                                <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
+                                <path id="Path_594 "  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "/>
+                            </svg>
+                        </i>
+                    </label>
+                </div>
+            </div>`);
     } else {
+        console.log('  ');
+        console.log('else 3');
         $oDiv.append(`<div class="card-box card-bg card-border mb--8 ">
                 <div class=" radio-section custom-radio-outer " id="${id}" columnid="3 ">
                     <label class="custom-radio d-block font-14"> 
@@ -1026,13 +1116,14 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
     }
 
     if (attachmentId.length > 0) {
-        let req = ActionHelper.getAttachmentInfo("", attachmentId);
+        let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
                 $oDiv.find('label.custom-radio').prepend(`
-                    <div class="option-image-section cover-img max-min-220 mb--8"> 
+                    <div class="option-image-section cover-img min-max-132 mb--8"> 
                         <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive">
                     </div>`);
+                getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} .opt-image:last`);
             })
             .catch(function(error) {
                 console.error("AttachmentAction - Error: " + JSON.stringify(error));
@@ -1081,33 +1172,20 @@ function getOptionsCreator(text, optId, ind, result, attachmentId) {
             `);
     }
     if (attachmentId.length > 0) {
-        let req = ActionHelper.getAttachmentInfo("", attachmentId);
+        let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
                 $oDiv.find('label.custom-radio').prepend(`
-                    <div class="option-image-section cover-img max-min-220 mb--8"> 
+                    <div class="option-image-section cover-img min-max-132 mb--8"> 
                         <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive">
                     </div>`);
+                getClassFromDimension(response.attachmentInfo.downloadUrl, `#${optId} .opt-image`);
             })
             .catch(function(error) {
                 console.error("AttachmentAction - Error: " + JSON.stringify(error));
             });
     }
     return $oDiv;
-}
-
-
-/**
- * @description Method to return the input is json object   
- * @param str object contains json values
- */
-function isJson(str) {
-    try {
-        JSON.parse(str);
-    } catch (e) {
-        return false;
-    }
-    return true;
 }
 
 /**
@@ -1135,6 +1213,25 @@ function footer(userId) {
                 </div>
             </div>
         </div>`);
+}
+
+/**
+ * @description Method for footer for return back to landing page
+ */
+function footerClose() {
+    $("#root").append(
+        `<div class="footer">
+            <div class="footer-padd bt">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 text-right"> 
+                            <button type="button" class="btn btn-primary btn-sm pull-right close-key" id="closeKey"> ${closeKey}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`
+    );
 }
 
 /**
@@ -1230,4 +1327,42 @@ function create_responder_nonresponders() {
         // Add Non-reponders
         getNonresponders();
     }
+}
+
+/**
+ * @description Method to get image dimensions and image div dimensions 
+ * @param imageURL contains image url
+ * @param selector contains image where url placed
+ */
+function getClassFromDimension(imgURL, selector) {
+    let tmpImg = new Image();
+    tmpImg.src = imgURL;
+    let imgWidth = 0;
+    let imgHeight = 0;
+    $(tmpImg).on('load', function() {
+        imgWidth = tmpImg.width;
+        imgHeight = tmpImg.height;
+        console.log('dimensions: ');
+        console.log(imgWidth);
+        console.log(imgHeight);
+
+        let divWidth = Math.round($(selector).width());
+        let divHeight = Math.round($(selector).height());
+        console.log(divWidth);
+        console.log(divHeight);
+        let getClass = '';
+        if (imgHeight > divHeight) {
+            /* height is greater than width */
+            getClass = ('heightfit');
+        } else if (imgWidth > divWidth) {
+            /* width is greater than height */
+            getClass = ('widthfit');
+        } else {
+            /* small image */
+            getClass = ('smallfit');
+        }
+        console.log(getClass);
+        $(selector).addClass(getClass);
+
+    });
 }

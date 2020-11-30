@@ -35,6 +35,7 @@ let backKey = '';
 let checkKey = '';
 let prevKey = '';
 let quizExpiredKey = '';
+let alreadyAttemptedKey = '';
 
 /* ********************************* Events ******************************************** */
 
@@ -120,7 +121,7 @@ $(document).on("click", '#next', function() {
                         if ($(opt).is(':checked')) {
                             let optId = $(opt).attr('id');
                             $(opt).parents('.card-box').addClass('alert-success');
-                            $(`div#${optId}`).find('div.pr--32.text-justify.check-in-div').append(`
+                            $(`div#${optId}`).find('div.pr--32.check-in-div').append(`
                                 <i class="success-with-img"> 
                                     <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" xml:space="preserve">
                                         <rect x="22.695" y="-6" fill="none" width="16" height="16"></rect>
@@ -200,9 +201,10 @@ $(document).on("click", '#next', function() {
                             console.info("BatchResponse: " + JSON.stringify(batchResponse));
                             summarySection();
                         })
-                        .catch(function(error) {
-                            console.log("Error: " + JSON.stringify(error));
-                        });
+                        /* .catch(function(error) {
+                            console.log("Error1: " + JSON.stringify(error));
+                        }) */
+                    ;
 
                 } else {
                     $('#previous').attr('data-prev-id', (parseInt(currentPage) - 1));
@@ -244,7 +246,7 @@ $(document).on("click", '#next', function() {
                         summarySection();
                     })
                     .catch(function(error) {
-                        console.log("Error: " + JSON.stringify(error));
+                        console.log("Error2: " + JSON.stringify(error));
                     });
             } else {
                 $root.find('.card-box-question:nth-child(' + (parseInt(currentPage) + 1) + ')').show();
@@ -357,7 +359,7 @@ $(document).on('click', '.submit-key', function() {
             console.info("BatchResponse: " + JSON.stringify(batchResponse));
         })
         .catch(function(error) {
-            console.error("Error: " + JSON.stringify(error));
+            console.error("Error3: " + JSON.stringify(error));
         });
 });
 
@@ -475,6 +477,11 @@ async function getStringKeys() {
         $('#quiz-expired-key').text(backKey);
     });
 
+    Localizer.getString("alreadyAttempted").then(function(result) {
+        alreadyAttemptedKey = result;
+        $('.already-attempt').html(alreadyAttemptedKey);
+    });
+
 }
 
 /** 
@@ -491,8 +498,8 @@ async function getTheme(request) {
     $('div.section-1').append(`<div class="row"><div class="col-12"><div id="root"></div></div></div>`);
     $('div.section-1 div.row').prepend(`
             <div class="col-12 quiz-img-sec">
-                <div class="quiz-updated-img card max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16" style="display: none">
-                    <img src="" class="image-responsive w-100 quiz-template-image" style="display:none" />
+                <div class="quiz-updated-img max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16" style="display: none">
+                    <img src="" class="image-responsive quiz-template-image" style="display:none" />
                 </div>
             </div>`);
     $root = $("#root")
@@ -526,7 +533,7 @@ function OnPageLoad() {
 
         })
         .catch(function(error) {
-            console.error("GetContext - Error: " + JSON.stringify(error));
+            console.error("GetContext - Error4: " + JSON.stringify(error));
         });
 }
 
@@ -549,7 +556,7 @@ async function getResponderIds(actionId) {
             getActionInstance(actionId);
         })
         .catch(function(error) {
-            console.error("Console log: Error: " + JSON.stringify(error));
+            console.error("Console log: Error5: " + JSON.stringify(error));
         });
 }
 
@@ -565,7 +572,7 @@ function getActionInstance(actionId) {
             createBody();
         })
         .catch(function(error) {
-            console.error("Error: " + JSON.stringify(error));
+            console.error("Error6: " + JSON.stringify(error));
         });
 }
 
@@ -573,7 +580,7 @@ function getActionInstance(actionId) {
  * @description Method for creating the response view structure and initialize value
  */
 function createBody() {
-
+    console.log('actionInstance: ' + JSON.stringify(actionInstance));
     /*  Check Expiry date time  */
     let current_time = new Date().getTime();
     if (actionInstance.expiryTime <= current_time) {
@@ -590,7 +597,7 @@ function createBody() {
 
         let $card = $('<div class=""></div>');
         let $title = $(`<h4 class="mb--8"> ${actionInstance.displayName} </h4>`);
-        let $description = $(`<p class="mb--24 text-justify text-break">${actionInstance.customProperties[0].value}</p>`);
+        let $description = $(`<p class="mb--16 text-justify text-break font-12">${actionInstance.customProperties[0].value}</p>`);
         $card.append($title);
         $card.append($description);
         $root.append($card);
@@ -599,6 +606,7 @@ function createBody() {
         $root.append(textSection1);
 
         if ($.inArray(myUserId, memberIds) > -1) {
+            $('p.text-description').before(`<p class="already-attempt semi-bold mb--16">${alreadyAttemptedKey}</p>`);
             calculateScore();
         } else {
             if (counter > 1) {
@@ -619,14 +627,19 @@ function createBody() {
         getStringKeys();
         if (actionInstance.customProperties[4].value != "") {
 
-            let req = ActionHelper.getAttachmentInfo(null, actionInstance.customProperties[4].value);
+            console.log('contextActionId: ' + contextActionId);
+            console.log('attachmentId: ' + actionInstance.customProperties[4].value);
+            console.log(actionInstance);
+
+            let req = ActionHelper.getAttachmentInfo(contextActionId, actionInstance.customProperties[4].value);
             ActionHelper.executeApi(req).then(function(response) {
                     $('.quiz-template-image').attr("src", response.attachmentInfo.downloadUrl);
                     $('.quiz-template-image').show();
                     $('.quiz-updated-img').show();
+                    getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
                 })
                 .catch(function(error) {
-                    console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                    console.error("AttachmentAction - Error7: " + JSON.stringify(error));
                 });
         }
         return;
@@ -641,74 +654,53 @@ function calculateScore() {
     let score = 0;
     actionInstance.dataTables.forEach((dataTable) => {
         total = Object.keys(dataTable.dataColumns).length;
-        dataTable.dataColumns.forEach((question, ind) => {
-            let ansCorrAnsArr = [];
-            question.options.forEach((option, optind) => {
-                /* User Responded */
-                let userResponse = [];
-                let userResponseAnswer = "";
-                for (let i = 0; i < actionDataRowsLength; i++) {
-                    if (actionDataRows[i].creatorId == myUserId) {
-                        userResponse = actionDataRows[i].columnValues;
-                        let userResponseLength = Object.keys(userResponse).length;
+        /* Correct Answer */
+        let correctResponse = JSON.parse(
+            actionInstance.customProperties[5].value
+        );
 
-                        for (let j = 1; j <= userResponseLength; j++) {
-                            if (ActionHelper.isJson(userResponse[j])) {
-                                let userResponseAns = JSON.parse(userResponse[j]);
-                                let userResponseAnsLen = userResponseAns.length;
-                                if (userResponseAnsLen > 1) {
-                                    for (let k = 0; k < userResponseAnsLen; k++) {
-                                        if (userResponseAns[k] == option.name) {
-                                            userResponseAnswer = userResponseAns[k];
-                                        } else {
-                                            continue;
-                                        }
-                                    }
-                                } else {
-                                    userResponseAnswer = userResponseAns;
-                                }
-                            } else {
-                                if (userResponse[j] == option.name) {
-                                    userResponseAnswer = userResponse[j];
-                                }
-                            }
+        for (let i = 0; i < actionDataRowsLength; i++) {
+            if (actionDataRows[i].creatorId == myUserId) {
+                for (let c = 0; c < correctResponse.length; c++) {
+                    let correctAnsString = '';
+                    let userAnsString = '';
+                    if ($.isArray(correctResponse[c])) {
+                        if (correctResponse[c].length > 1) {
+                            correctAnsString = correctResponse[c].join(',');
+                        } else {
+                            correctAnsString = correctResponse[c][0];
                         }
+                    } else {
+                        correctAnsString = correctResponse[c];
                     }
-                }
-                /* Correct Answer */
-                let correctResponse = JSON.parse(
-                    actionInstance.customProperties[5].value
-                );
-                let correctResponseLength = Object.keys(correctResponse).length;
-                let correctAnswer = "";
-                for (let j = 0; j < correctResponseLength; j++) {
-                    let correctResponseAns = correctResponse[j];
-                    let correctResponseAnsLen = correctResponseAns.length;
-                    for (let k = 0; k < correctResponseAnsLen; k++) {
-                        if (correctResponseAns[k] == option.name) {
-                            correctAnswer = correctResponseAns[k];
+
+                    if (ActionHelper.isJson(actionDataRows[i].columnValues[c + 1])) {
+                        let responderAnsArr = JSON.parse(actionDataRows[i].columnValues[c + 1]);
+                        if (responderAnsArr.length > 1) {
+                            userAnsString = responderAnsArr.join(',');
+                        } else {
+                            userAnsString = responderAnsArr[0];
                         }
+                    } else {
+                        userAnsString = actionDataRows[i].columnValues[c + 1];
                     }
+
+
+                    console.log(`${correctAnsString} == ${userAnsString}`);
+                    if (correctAnsString == userAnsString) {
+                        score++;
+                    }
+
                 }
-
-                let optName = JSON.parse(option.displayName).name
-                let $radioOption = getOptions(
-                    optName,
-                    question.name,
-                    option.name,
-                    userResponseAnswer,
-                    correctAnswer
-                );
-                ansCorrAnsArr[optind] = answerIs;
-            });
-
-            if (ansCorrAnsArr.includes('Incorrect') == false) {
-                score++;
             }
-        });
+        }
+
         let scorePercentage = 0;
         if (score > 0) {
-            scorePercentage = Math.round((score / total) * 100);
+            scorePercentage = (score / total) * 100;
+        }
+        if (scorePercentage % 1 != 0) {
+            scorePercentage = scorePercentage.tofixed(2);
         }
 
         Localizer.getString("score", ":").then(function(result) {
@@ -776,20 +768,21 @@ function createQuestionView() {
             </label>
         `);
 
-        if (JSON.parse(question.displayName).attachmentId != "") {
-            let req = ActionHelper.getAttachmentInfo(null, JSON.parse(question.displayName).attachmentId);
+        if (question.attachments.length > 0) {
+            let req = ActionHelper.getAttachmentInfo(contextActionId, question.attachments[0].id);
             ActionHelper.executeApi(req).then(function(response) {
                     console.info("Attachment - Response: " + JSON.stringify(response));
                     $('#root div.card-box-question:visible .question-template-image').attr("src", response.attachmentInfo.downloadUrl);
                     $('#root div.card-box-question:visible .question-template-image').show();
                     $('#root div.card-box-question:visible .quiz-updated-img').show();
+                    getClassFromDimension(response.attachmentInfo.downloadUrl, '#root div.card-box-question:visible .question-template-image');
                 })
                 .catch(function(error) {
-                    console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                    console.error("AttachmentAction - Error8: " + JSON.stringify(error));
                 });
         }
 
-        $('#root div.card-box-question:visible .question-title').html(`<p class="text-justify">${JSON.parse(question.displayName).name}</p>`);
+        $('#root div.card-box-question:visible .question-title').html(`<p class="">${question.displayName}</p>`);
         let choice_occurance = 0;
         /* Check multichoice or single choice options  */
         if (question.valueType == "SingleOption") {
@@ -801,8 +794,8 @@ function createQuestionView() {
         //add checkbox input
         if (choice_occurance > 1) {
             question.options.forEach((option) => {
-                let displayName = JSON.parse(option.displayName).name;
-                let attachmentId = JSON.parse(option.displayName).attachmentId;
+                let displayName = option.displayName;
+                let attachmentId = option.attachments.length > 0 ? option.attachments[0].id : '';
                 let $radioOption = getCheckboxButton(
                     displayName,
                     question.name,
@@ -814,8 +807,8 @@ function createQuestionView() {
         } else {
             //add radio input
             question.options.forEach((option) => {
-                let displayName = JSON.parse(option.displayName).name;
-                let attachmentId = JSON.parse(option.displayName).attachmentId;
+                let displayName = option.displayName;
+                let attachmentId = option.attachments.length > 0 ? option.attachments[0].id : '';
                 let $radioOption = getRadioButton(
                     displayName,
                     question.name,
@@ -837,15 +830,16 @@ function createQuestionView() {
  */
 function getRadioButton(text, name, id, attachmentId) {
     if (attachmentId != "") {
-        let req = ActionHelper.getAttachmentInfo(null, attachmentId);
+        let req = ActionHelper.getAttachmentInfo(contextActionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
-                $('div.custom-radio-outer#' + id + ' .custom-radio').prepend(`<div class="option-image-section cover-img max-min-220 mb--8">
+                $('div.custom-radio-outer#' + id + ' .custom-radio').prepend(`<div class="option-image-section cover-img min-max-132 mb--8">
                         <img src="${response.attachmentInfo.downloadUrl}" class="opt-image img-responsive"/>
-                    </div>`)
+                    </div>`);
+                getClassFromDimension(response.attachmentInfo.downloadUrl, 'div.custom-radio-outer#' + id + ' .opt-image');
             })
             .catch(function(error) {
-                console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                console.error("AttachmentAction - Error9: " + JSON.stringify(error));
             });
     }
     return $(`<div class="card-box card-bg card-border mb--8">
@@ -853,7 +847,7 @@ function getRadioButton(text, name, id, attachmentId) {
                     <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                         <input type="radio" name="${name}" id="${id}">
                         <span class="radio-block"></span> 
-                        <div class="pr--32 text-justify check-in-div">${text}</div>
+                        <div class="pr--32 check-in-div">${text}</div>
                     </label>
                 </div>
             </div>`);
@@ -868,19 +862,21 @@ function getRadioButton(text, name, id, attachmentId) {
  */
 function getCheckboxButton(text, name, id, attachmentId) {
     if (attachmentId != "") {
-        let req = ActionHelper.getAttachmentInfo(null, attachmentId);
+        let req = ActionHelper.getAttachmentInfo(contextActionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
                 $('div.radio-section#' + id + ' .custom-radio').prepend(`
                     <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
-                        <div class="option-image-section updated-img cover-img max-min-220 mb--8">
+                        <div class="option-image-section updated-img cover-img min-max-132 mb--8">
                             <img src="${response.attachmentInfo.downloadUrl}" class="opt-image img-responsive"/>
                         </div>
                     </label>        
                 `);
+
+                getClassFromDimension(response.attachmentInfo.downloadUrl, 'div.radio-section#' + id + ' .opt-image');
             })
             .catch(function(error) {
-                console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                console.error("AttachmentAction - Error10: " + JSON.stringify(error));
             });
     }
     return $(`<div class="card-box card-bg card-border mb--8">
@@ -888,7 +884,7 @@ function getCheckboxButton(text, name, id, attachmentId) {
                     <label class="custom-check form-check-label d-block">
                         <input type="checkbox" class="radio-block" name="${name}" id="${id}">
                         <span class="checkmark"></span> 
-                        <div class="pr--32 text-justify check-in-div">${text}
+                        <div class="pr--32 check-in-div">${text}
                         </div>
                     </label>
                 </div>
@@ -946,7 +942,7 @@ function summarySection() {
 
             let $fontDiv = $(`<label class="font-12"></label>`);
             $dTablediv.append($fontDiv);
-            let $questionNumberDiv = $(`<strong class="question-number-title semi-bold">
+            let $questionNumberDiv = $(`<strong class="question-number-title bold">
                                                 <label class="font-12">
                                                     <span class="question-number">${questionKey} # ${i+1}</span>
                                                 </label>
@@ -956,14 +952,14 @@ function summarySection() {
             $cardQuestionDiv.append($blankDiv);
             if (imageSrc.length > 0) {
                 $blankDiv.prepend(`
-                    <div class="quiz-updated-img cover-img max-min-220 mb--8">
+                    <div class="quiz-updated-img cover-img min-max-132 mb--8">
                         <img src="${imageSrc}" class="image-responsive question-template-image">
                     </div>
                 `);
             }
             $blankDiv.append(`
                         <div class="semi-bold font-14 mb--16 question-title">
-                            <p class="text-justify">${question}</p>
+                            <p class="">${question}</p>
                         </div>
                     `);
 
@@ -983,7 +979,7 @@ function summarySection() {
                     let $cardBoxDiv = $(`<div class="card-box card-bg card-border mb--8"></div>`);
                     $optionSecDiv.append($cardBoxDiv);
                     let opt_id = $(opt_val).find('input').attr('id');
-                    let optImage = $(opt_val).find('.opt-image').attr('src');
+                    let optImage = $(opt_val).find('.opt-image').length > 0 ? $(opt_val).find('.opt-image').attr('src') : '';
 
                     if ($.inArray(opt_id, correctAnswer[count]) !== -1) {
                         if ($(opt_val).find('input').prop('checked') == true) {
@@ -992,7 +988,7 @@ function summarySection() {
                                     <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14">
                                             <span class="checkmark selected"></span>
-                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                            <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 <i class="success-with-img">
                                                     <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px"
                                                         height="16px" viewBox="0 0 16 16" xml:space="preserve">
@@ -1015,7 +1011,7 @@ function summarySection() {
                                     <div class="radio-section custom-radio-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14">
                                             <span class="radio-block selected"></span>
-                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                            <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 <i class="success-with-img">
                                                     <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px"
                                                         height="16px" viewBox="0 0 16 16" xml:space="preserve">
@@ -1034,14 +1030,14 @@ function summarySection() {
                                     </div>
                                 `);
                             }
-                            $cardBoxDiv.addClass('alert-success');
+                            // $cardBoxDiv.addClass('alert-success');   // If show success box then remove comment
                         } else {
                             if ($(opt_val).hasClass('custom-check')) {
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
                                             <span class="checkmark"></span>
-                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                            <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 <i class="success-with-img">
                                                     <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px"
                                                         height="16px" viewBox="0 0 16 16" xml:space="preserve">
@@ -1064,7 +1060,7 @@ function summarySection() {
                                         <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                                             <span class="radio-block"></span>
-                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                            <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 <i class="success-with-img">
                                                     <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px"
                                                         height="16px" viewBox="0 0 16 16" xml:space="preserve">
@@ -1091,7 +1087,7 @@ function summarySection() {
                                     <div class="radio-section custom-check-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
                                             <span class="checkmark"></span>
-                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}</div>
+                                            <div class="pr--32 check-in-div">${$(opt_val).text()}</div>
                                         </label>
                                     </div>
                                 `);
@@ -1100,7 +1096,7 @@ function summarySection() {
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                                             <span class="radio-block"></span>
-                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}</div>
+                                            <div class="pr--32 check-in-div">${$(opt_val).text()}</div>
                                         </label>
                                     </div>
                                 `);
@@ -1111,7 +1107,7 @@ function summarySection() {
                                     <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="1">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
                                             <span class="checkmark"></span>
-                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}</div>
+                                            <div class="pr--32 check-in-div">${$(opt_val).text()}</div>
                                         </label>
                                     </div>
                                 `);
@@ -1120,11 +1116,27 @@ function summarySection() {
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                                             <span class="radio-block"></span>
-                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}</div>
+                                            <div class="pr--32 check-in-div">${$(opt_val).text()}</div>
                                         </label>
                                     </div>
                                 `);
                             }
+                        }
+                    }
+
+                    if (optImage.length > 0) {
+                        if ($cardBoxDiv.find('span.radio-block').length != undefined && $cardBoxDiv.find('span.radio-block').length > 0) {
+                            $cardBoxDiv.find('span.radio-block').before(`
+                                <div class="option-image-section cover-img min-max-132 mb--8">
+                                    <img src="${optImage}" class="opt-image img-responsive" id="question1option1">
+                                </div>
+                            `);
+                        } else {
+                            $cardBoxDiv.find('span.checkmark').before(`
+                                <div class="option-image-section cover-img min-max-132 mb--8">
+                                    <img src="${optImage}" class="opt-image img-responsive" id="question1option1">
+                                </div>
+                            `);
                         }
                     }
                 });
@@ -1148,7 +1160,7 @@ function summarySection() {
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                             <label class="custom-check form-check-label d-block font-14">
                                                 <span class="checkmark selected"></span>
-                                                <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                     <i class="success-with-img">
                                                         <svg version="1.1 " id="Layer_1 " x="0px " y="0px "
                                                             width="16px " height="16px " viewBox="0 0 16 16 "
@@ -1170,7 +1182,7 @@ function summarySection() {
                                         <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
                                             <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                                                 <span class="radio-block selected"></span>
-                                                <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                     <i class="success-with-img">
                                                         <svg version="1.1 " id="Layer_1 " x="0px " y="0px "
                                                             width="16px " height="16px " viewBox="0 0 16 16 "
@@ -1187,7 +1199,7 @@ function summarySection() {
                                         </div>
                                     `);
                             }
-                            $cardBoxDiv.addClass('alert-success');
+                            // $cardBoxDiv.addClass('alert-success'); // Remove comment if show success box
                         } else {
                             if ($(opt_val).hasClass('custom-check')) {
                                 /* checkbox */
@@ -1195,7 +1207,7 @@ function summarySection() {
                                     <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14">
                                             <span class="checkmark"></span>
-                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                            <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 <i class="success-with-img">
                                                     <svg version="1.1 " id="Layer_1 " x="0px " y="0px "
                                                         width="16px " height="16px " viewBox="0 0 16 16 "
@@ -1218,7 +1230,7 @@ function summarySection() {
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                                             <span class="radio-block"></span>
-                                            <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                            <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 <i class="success-with-img">
                                                     <svg version="1.1 " id="Layer_1 " x="0px " y="0px "
                                                         width="16px " height="16px " viewBox="0 0 16 16 "
@@ -1246,7 +1258,7 @@ function summarySection() {
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_ind}" columnid="${opt_id}">
                                             <label class="custom-check form-check-label d-block font-14">
                                                 <span class="checkmark selected"></span>
-                                                <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 </div>
                                             </label>
                                         </div>
@@ -1256,7 +1268,7 @@ function summarySection() {
                                         <div class="radio-section custom-radio-outer" id="${opt_ind}" columnid="${opt_id}">
                                             <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                                                 <span class="radio-block selected"></span>
-                                                <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 </div>
                                             </label>
                                         </div>
@@ -1269,7 +1281,7 @@ function summarySection() {
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_ind}" columnid="${opt_id}">
                                             <label class="custom-check form-check-label d-block font-14">
                                                 <span class="checkmark selected"></span>
-                                                <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 </div>
                                             </label>
                                         </div>
@@ -1280,7 +1292,7 @@ function summarySection() {
                                         <div class="radio-section custom-radio-outer" id="${opt_ind}" columnid="${opt_id}">
                                             <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
                                                 <span class="radio-block"></span>
-                                                <div class="pr--32 text-justify check-in-div">${$(opt_val).text()}
+                                                <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 </div>
                                             </label>
                                         </div>
@@ -1297,7 +1309,10 @@ function summarySection() {
             }
             count++;
         });
-        let score_is = Math.round((score / correctAnswer.length) * 100);
+        let score_is = (score / correctAnswer.length) * 100;
+        if (score_is % 1 != 0) {
+            score_is = score_is.tofixed(2);
+        }
         Localizer.getString('score', ':').then(function(result) {
             $($mb16Div2).append(`
                         <label>
@@ -1343,7 +1358,7 @@ function generateGUID() {
 }
 
 /**
- * @description Method for fetching the repomse data from creation view 
+ * @description Method for fetching the reponse data from creation view 
  * @param actionId contains context action id
  */
 function getDataRow(actionId) {
@@ -1354,6 +1369,44 @@ function getDataRow(actionId) {
         columnValues: row,
     };
     return data;
+}
+
+/**
+ * @description Method to get image dimensions and image div dimensions 
+ * @param imageURL contains image url
+ * @param selector contains image where url placed
+ */
+function getClassFromDimension(imgURL, selector) {
+    let tmpImg = new Image();
+    tmpImg.src = imgURL;
+    let imgWidth = 0;
+    let imgHeight = 0;
+    $(tmpImg).on('load', function() {
+        imgWidth = tmpImg.width;
+        imgHeight = tmpImg.height;
+        console.log('dimensions: ');
+        console.log(imgWidth);
+        console.log(imgHeight);
+
+        let divWidth = Math.round($(selector).width());
+        let divHeight = Math.round($(selector).height());
+        console.log(divWidth);
+        console.log(divHeight);
+        let getClass = '';
+        if (imgHeight > divHeight) {
+            /* height is greater than width */
+            getClass = ('heightfit');
+        } else if (imgWidth > divWidth) {
+            /* width is greater than height */
+            getClass = ('widthfit');
+        } else {
+            /* small image */
+            getClass = ('smallfit');
+        }
+        console.log(getClass);
+        $(selector).addClass(getClass);
+
+    });
 }
 
 // *********************************************** HTML SECTION ***********************************************
@@ -1368,8 +1421,7 @@ let textSection1 = `<div class="text-counter-ques">
                             </div>
                             <div class="clearfix"></div>
                         </div>
-                        <p class="mb--16 text-description semi-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type
-                            specimen book.</p>
+                        <p class="mb--16 text-description semi-bold font-12"></p>
                     </div>`;
 
 /**
@@ -1393,16 +1445,16 @@ let footerSection1 = `<div class="footer section-1-footer">
 let questionSection = `<div class="card-box-question">
                             <div class="d-table mb--8 pre-none">
                                 <label class="font-12">
-                                    <strong class="question-number-title semi-bold">1. ksklaskdl</strong>
+                                    <strong class="question-number-title bold">1. ksklaskdl</strong>
                                 </label>
                                 <label class="float-right result-status" id="status-1">
                                 </label>
                             </div>
                             <div>
-                                <div class="quiz-updated-img cover-img max-min-220 mb--8" style="display: none">
+                                <div class="quiz-updated-img cover-img min-max-132 mb--8" style="display: none">
                                     <img src="" class="image-responsive question-template-image" style="display: none" />
                                 </div>
-                                <div class="semi-bold font-14 mb--16 question-title"><p class="text-justify">How many days in a week?</p></div>
+                                <div class="semi-bold font-14 mb--16 question-title"><p class="">How many days in a week?</p></div>
                             </div>
                             <div class="option-sec">
                                 
