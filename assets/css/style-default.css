@@ -168,7 +168,8 @@
  .font-14 {
      font-size: var(--font-regular);
  }
-  .font-16 {
+ 
+ .font-16 {
      font-size: var(--font-16);
  }
  
@@ -549,6 +550,10 @@
      color: var(--app-gray-10);
  }
  
+ .question-content {
+     word-break: break-all;
+ }
+ 
  .font-sm {
      font-size: var(--font-regular);
  }
@@ -569,8 +574,8 @@
  
  .btn-primary:focus {
      color: var(--app-white);
-         border-color: transparent;
-    box-shadow: var(--app-black-shadow-3) 0px 0.2rem 0.4rem -0.075rem;
+     border-color: transparent;
+     box-shadow: var(--app-black-shadow-3) 0px 0.2rem 0.4rem -0.075rem;
  }
  
  .btn-primary-outline {
@@ -674,7 +679,7 @@
  
  .alert-danger {
      background-color: var(--danger-bg) !important;
-         border-color: var(--danger-color) !important;
+     border-color: var(--danger-color) !important;
  }
  
  .alert-danger i {
@@ -1344,7 +1349,7 @@
  
  .avtar-txt {
      line-height: 2.25rem;
-    color: var(--app-black);
+     color: var(--app-black);
  }
  
  .table td {
@@ -1359,7 +1364,8 @@
      transform: rotate(-90deg);
      margin-top: -3px;
  }
- .date-text{
+ 
+ .date-text {
      color: var(--app-gray-sub-text);
  }
  
@@ -1660,7 +1666,7 @@
      height: 16px;
      float: left;
      margin-bottom: 12px;
-     margin-top:1px;
+     margin-top: 1px;
  }
  
  body::-webkit-scrollbar {
@@ -1779,9 +1785,11 @@
      width: 100%;
      padding-right: 56px;
  }
- .remove-option svg{
-     fill:var(--app-gray-02)
+ 
+ .remove-option svg {
+     fill: var(--app-gray-02)
  }
+ 
  .check-opt {
      right: 8px !important;
      top: 8px !important;
@@ -1896,7 +1904,7 @@
      text-align: center;
      bottom: 48px;
      color: #6e6e6e;
-    font-size: var(--font-12);
+     font-size: var(--font-12);
  }
  
  .max-min-220 {
@@ -2009,10 +2017,12 @@
      pointer-events: none;
      opacity: 0.5;
  }
- .option-sec  .disabled{
+ 
+ .option-sec .disabled {
      pointer-events: none;
      opacity: 1;
  }
+ 
  .dropdown-toggle::after {
      display: none;
  }
@@ -2344,7 +2354,7 @@
  
  .check-in-div {
      min-height: 20px;
-    color: var(--app-gray-02);
+     color: var(--app-gray-02);
  }
  
  .quiz-preview-sec {
@@ -2375,10 +2385,11 @@
  .question-title {
      font-size: 16px;
  }
+ 
  .heightfit {
-    width: auto;
-    max-height: 264px;
-}
+     width: auto;
+     max-height: 264px;
+ }
  
  @media screen and (max-width: 576px) {
      body {
@@ -2414,9 +2425,8 @@
          left: auto!important;
      }
      .body-outer::before {
-   
-    border-top: none;
-}
+         border-top: none;
+     }
  }
  
  @media screen and (max-width: 480px) {
@@ -2437,10 +2447,10 @@
          max-height: 218px;
          min-height: 218px;
      }
-      .heightfit {
-    width: auto;
-    max-height:218px;
-}
+     .heightfit {
+         width: auto;
+         max-height: 218px;
+     }
  }
  
  @media screen and (max-width: 767px) {

@@ -288,8 +288,6 @@ async function createBody() {
                             $('div.progress-section').after(`<hr class="small">`);
                             $('div#' + nonresponders.value2).after(`<hr class="small">`);
                         });
-
-
                     }
                 });
             }
@@ -926,17 +924,17 @@ function createQuestionView(userId) {
 
             if (questionAttachmentId.length > 0) {
                 let req = ActionHelper.getAttachmentInfo(actionId, questionAttachmentId);
-                ActionHelper.executeApi(req).then(function (response) {
-                    console.info("Attachment - Response: " + JSON.stringify(response));
-                    $blankQDiv.prepend(`
+                ActionHelper.executeApi(req).then(function(response) {
+                        console.info("Attachment - Response: " + JSON.stringify(response));
+                        $blankQDiv.prepend(`
                             <div class="option-image-section cover-img min-max-132 mb--8"> 
                                 <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive">
                             </div>`);
-                    getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-image`);
-                })
-                .catch(function (error) {
-                    console.error("AttachmentAction - Error: " + JSON.stringify(error));
-                });
+                        getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-image`);
+                    })
+                    .catch(function(error) {
+                        console.error("AttachmentAction - Error: " + JSON.stringify(error));
+                    });
             }
 
 
@@ -1111,6 +1109,7 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
                     </label>
                 </div>
             </div>`);
+        answerIs = "Incorrect";
     } else {
         console.log('  ');
         console.log('else 3');

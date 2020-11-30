@@ -636,7 +636,7 @@ function createBody() {
                     $('.quiz-template-image').attr("src", response.attachmentInfo.downloadUrl);
                     $('.quiz-template-image').show();
                     $('.quiz-updated-img').show();
-                    getClassFromDimension(response.attachmentInfo.downloadUrl, '.summary-section .quiz-template-image');
+                    getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
                 })
                 .catch(function(error) {
                     console.error("AttachmentAction - Error7: " + JSON.stringify(error));
@@ -975,19 +975,20 @@ function summarySection() {
                         </label>`);
                 });
 
-                $(val).find('label.custom-radio, label.custom-check').each(function(opt_ind, opt_val) {
+                $(val).find('label.custom-radio', 'label.custom-check').each(function(opt_ind, opt_val) {
                     let $cardBoxDiv = $(`<div class="card-box card-bg card-border mb--8"></div>`);
                     $optionSecDiv.append($cardBoxDiv);
                     let opt_id = $(opt_val).find('input').attr('id');
                     let optImage = $(opt_val).find('.opt-image').length > 0 ? $(opt_val).find('.opt-image').attr('src') : '';
-
 
                     console.log('opt_id:')
                     console.log(opt_id)
                     console.log(correctAnswer[count])
                     if ($.inArray(opt_id, correctAnswer[count]) !== -1) {
                         if ($(opt_val).find('input').prop('checked') == true) {
+                            /* Answer is checked and correct */
                             if ($(opt_val).hasClass('custom-check')) {
+                                console.log('if1:')
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14">
@@ -1011,6 +1012,8 @@ function summarySection() {
                                     </div>
                                 `);
                             } else {
+                                console.log('else1:')
+
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14">
@@ -1036,7 +1039,10 @@ function summarySection() {
                             }
                             // $cardBoxDiv.addClass('alert-success');   // If show success box then remove comment
                         } else {
+                            /* Answer is correct but not checked */
                             if ($(opt_val).hasClass('custom-check')) {
+                                console.log('if2:')
+
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
@@ -1060,6 +1066,8 @@ function summarySection() {
                                     </div>
                                 `);
                             } else {
+                                console.log('else2:')
+
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
@@ -1086,7 +1094,10 @@ function summarySection() {
                         }
                     } else {
                         if ($(opt_val).find('input').prop('checked') == true) {
+                            /* Answer is checked but incorrect */
                             if ($(opt_val).hasClass('custom-check')) {
+                                console.log('if3:')
+
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
@@ -1096,6 +1107,8 @@ function summarySection() {
                                     </div>
                                 `);
                             } else {
+                                console.log('else3:')
+
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
@@ -1106,7 +1119,10 @@ function summarySection() {
                                 `);
                             }
                         } else {
+                            /* If answer is not checked and incorrect */
                             if ($(opt_val).hasClass('custom-check')) {
+                                console.log('if4:')
+
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="1">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
@@ -1116,6 +1132,8 @@ function summarySection() {
                                     </div>
                                 `);
                             } else {
+                                console.log('else4:')
+
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
@@ -1129,21 +1147,12 @@ function summarySection() {
                     }
 
                     if (optImage.length > 0) {
-                        if ($cardBoxDiv.find('div.custom-radio-outer').length != undefined && $cardBoxDiv.find('div.custom-radio-outer').length > 0) {
-                            $cardBoxDiv.find('span.checkmark').before(`
+                        $('.check-in-div:last').before(`
                                 <div class="option-image-section cover-img min-max-132 mb--8">
-                                    <img src="${optImage}" class="opt-image img-responsive" id="question1option1">
+                                    <img src="${optImage}" class="opt-image img-responsive" id="he-${opt_ind}">
                                 </div>
                             `);
-                            console.log('checkbox image');
-                        } else {
-                            $cardBoxDiv.find('span.radio-block').before(`
-                                <div class="option-image-section cover-img min-max-132 mb--8">
-                                    <img src="${optImage}" class="opt-image img-responsive" id="question1option1">
-                                </div>
-                            `);
-                            console.log('radio image');
-                        }
+                        console.log('radio image');
                     }
                 });
 
@@ -1154,14 +1163,19 @@ function summarySection() {
                             <span class="text-danger semi-bold">${result}</span>
                         </label>`);
                 });
-                $(val).find('label.custom-radio, label.custom-check').each(function(opt_ind, opt_val) {
+
+                $(val).find('label.custom-check', 'label.custom-radio').each(function(opt_ind, opt_val) {
                     let $cardBoxDiv = $(`<div class="card-box card-bg card-border mb--8"></div>`);
                     $optionSecDiv.append($cardBoxDiv);
                     let opt_id = $(opt_val).find('input').attr('id');
+                    let optImage = $(opt_val).find('.opt-image').length > 0 ? $(opt_val).find('.opt-image').attr('src') : '';
+
                     if ($.inArray(opt_id, correctAnswer[count]) !== -1) {
                         if ($(opt_val).find('input').prop('checked') == true) {
+                            /* Answer is correct and checked */
                             if ($(opt_val).hasClass('custom-check')) {
                                 /* Checkbox */
+                                console.log('2if1');
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                             <label class="custom-check form-check-label d-block font-14">
@@ -1183,6 +1197,8 @@ function summarySection() {
                                         </div>
                                     `);
                             } else {
+                                console.log('2else1');
+
                                 /* Radio */
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
@@ -1207,8 +1223,11 @@ function summarySection() {
                             }
                             // $cardBoxDiv.addClass('alert-success'); // Remove comment if show success box
                         } else {
+                            /* Answer is correct and unchecked */
+
                             if ($(opt_val).hasClass('custom-check')) {
                                 /* checkbox */
+                                console.log('2if2');
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14">
@@ -1232,6 +1251,7 @@ function summarySection() {
 
                             } else {
                                 /* radio */
+                                console.log('2else2');
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
@@ -1256,9 +1276,10 @@ function summarySection() {
                         }
                     } else {
                         if ($(opt_val).find('input').prop('checked') == true) {
-
+                            /* Answer is incorrect and checked */
                             $cardBoxDiv.addClass('alert-danger');
                             if ($(opt_val).hasClass('custom-check')) {
+                                console.log('2if3');
                                 /* checkbox */
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_ind}" columnid="${opt_id}">
@@ -1270,6 +1291,7 @@ function summarySection() {
                                         </div>
                                     `);
                             } else {
+                                console.log('2else3');
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-radio-outer" id="${opt_ind}" columnid="${opt_id}">
                                             <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
@@ -1281,18 +1303,21 @@ function summarySection() {
                                     `);
                             }
                         } else {
+                            /* Answer is incorrect and not checked */
                             if ($(opt_val).hasClass('custom-check')) {
+                                console.log('2if25');
                                 /* checkbox */
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_ind}" columnid="${opt_id}">
                                             <label class="custom-check form-check-label d-block font-14">
-                                                <span class="checkmark selected"></span>
+                                                <span class="checkmark"></span>
                                                 <div class="pr--32 check-in-div">${$(opt_val).text()}
                                                 </div>
                                             </label>
                                         </div>
                                     `);
                             } else {
+                                console.log('2else5');
                                 /* radio */
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-radio-outer" id="${opt_ind}" columnid="${opt_id}">
@@ -1306,12 +1331,18 @@ function summarySection() {
                             }
                         }
                     }
+
                     /* Option image */
-                    if ($(opt_val).find('.option-image-section').length > 0 && $(opt_val).find('.opt-image').attr('src').length > 0) {
-                        let $imageSection = $(opt_val).find('custom-radio .option-image-section').clone();
-                        $cardBoxDiv.find('.custom-radio').prepend($imageSection);
+                    if (optImage.length > 0) {
+                        $('.check-in-div:last').before(`
+                                <div class="option-image-section cover-img min-max-132 mb--8">
+                                    <img src="${optImage}" class="opt-image img-responsive" id="${opt_ind}">
+                                </div>
+                            `);
+                        console.log('checkbox image');
                     }
                 });
+
             }
             count++;
         });
