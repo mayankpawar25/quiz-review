@@ -92,20 +92,20 @@ $(document).on("click", ".getresult", function() {
     }
 });
 
-$(document).on('click', '#downloadCSV', function(){
+$(document).on('click', '#downloadCSV', function() {
     ActionHelper.downloadCSV(actionId, 'abc.csv');
 });
 
-$(document).on('click', '#downloadImage', function () {
+$(document).on('click', '#downloadImage', function() {
     let bodyContainerDiv = document.getElementsByClassName("container")[0];
     let backgroundColorOfResultsImage = theme;
     console.log(bodyContainerDiv.scrollWidth);
     console.log(bodyContainerDiv.scrollHeight);
     $('.footer').hide();
-    html2canvas(bodyContainerDiv, { 
+    html2canvas(bodyContainerDiv, {
         width: bodyContainerDiv.scrollWidth,
         height: bodyContainerDiv.scrollHeight,
-        backgroundColor: backgroundColorOfResultsImage, 
+        backgroundColor: backgroundColorOfResultsImage,
         useCORS: true,
     }).then((canvas) => {
         let fileName = 'quiz';
@@ -128,32 +128,30 @@ $(document).on('click', '#downloadImage', function () {
 });
 
 
-$(document).on('click', '.change-due-by-event', function(){
+$(document).on('click', '.change-due-by-event', function() {
     $('.change-date').remove();
     $('.close-quiz').remove();
     $('.delete-quiz').remove();
     changeDateSection();
-    
+
     let ddtt = ((actionInstance.customProperties[1].value).split('T'));
     let dt = ddtt[0].split('-');
     let weekDateFormat = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
     let ttTime = (ddtt[1].split('Z')[0]).split(':');
     let currentTime = `${ttTime[0]}:${ttTime[1]}`;
-    
+
     $('.form_date input').val(weekDateFormat);
     $(".form_date").attr({ "data-date": weekDateFormat });
-    $(function () {
-        $('.form_time').datetimepicker({
-            language: 'en',
-            weekStart: 1,
-            todayBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 1,
-            minView: 0,
-            maxView: 1,
-            forceParse: 0
-        });
+    $('.form_time').datetimepicker({
+        language: 'en',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 1,
+        minView: 0,
+        maxView: 1,
+        forceParse: 0
     });
 
     $('.form_time input').val(currentTime);
@@ -167,68 +165,49 @@ $(document).on('click', '.change-due-by-event', function(){
         autoclose: true,
         orientation: 'top'
     };
-    $(function () {
-        dateInput.datepicker(options);
-    });
+    dateInput.datepicker(options);
 
 });
 
-$(document).on('focus', 'input[name="expiry_date"]', function () {
-    $(this).datepicker();
-});
-
-$(document).on('focus', 'input[name="expiry_time"]', function () {
-    $(this).datetimepicker();
-})
-
-$(document).on('click', '.close-quiz-event', function () {
+$(document).on('click', '.close-quiz-event', function() {
     $('.change-date').remove();
     $('.close-quiz').remove();
     $('.delete-quiz').remove();
     closeQuizSection();
 });
 
-$(document).on('click', '.delete-quiz-event', function () {
+$(document).on('click', '.delete-quiz-event', function() {
     $('.change-date').remove();
     $('.close-quiz').remove();
     $('.delete-quiz').remove();
     deleteQuizSection();
 });
 
-$(document).on('click', '.cancel-question-delete', function(){
+$(document).on('click', '.cancel-question-delete', function() {
     $('.change-date').remove();
     $('.close-quiz').remove();
     $('.delete-quiz').remove();
 });
 
-$('.dropdown-menu a').on('click', function (event) {
+$('.dropdown-menu a').on('click', function(event) {
     $(this).parent().toggleClass('open');
 });
 
-$(document).on('click', '#delete-quiz', function(){
+$(document).on('click', '#delete-quiz', function() {
     ActionHelper.deleteActionInstance(actionId);
 });
 
-$(document).on('click', '#change-quiz-question', function () {
-    let weekDate = new Date(new Date().setDate(new Date().getDate()))
-        .toISOString()
-        .split("T")[0];
-    let weekMonth = new Date(weekDate).toLocaleString('default', { month: 'short' });
-    let weekD = new Date(weekDate).getDate();
-    let weekYear = new Date(weekDate).getFullYear();
-    let weekDateFormat = weekMonth + " " + weekD + ", " + weekYear;
-    let currentTime = (("0" + new Date().getHours()).substr(-2)) + ":" + (("0" + new Date().getMinutes()).substr(-2));
-    
-    console.log('weekDateFormat: ');
-    console.log(weekDateFormat);
-    console.log(currentTime);
-    let quizExpireDate = weekDateFormat;
-    let quizExpireTime = currentTime;
-    actionInstance.expiryTime = new Date(quizExpireDate + " " + quizExpireTime).getTime(),
-    ActionHelper.updateActionInstance(actionInstance);
+$(document).on('click', '#change-quiz-question', function() {
+    ActionHelper.closeActionInstance(actionId, actionInstance.version);
 });
 
-
+$(document).on('change', "input[name='expiry_time'], input[name='expiry_date']", function() {
+    $('#change-quiz-date').removeClass('disabled');
+    let quizExpireDate = $("input[name='expiry_date']").val();
+    let quizExpireTime = $("input[name='expiry_time']").val();
+    actionInstance.expiryTime = new Date(quizExpireDate + " " + quizExpireTime).getTime();
+    ActionHelper.updateActionInstance(actionInstance);
+});
 
 /* ********************************* Methods ******************************************** */
 
@@ -292,32 +271,32 @@ async function getStringKeys() {
         youKey = result;
     });
 
-    Localizer.getString('changeDueBy').then(function (result) {
+    Localizer.getString('changeDueBy').then(function(result) {
         changeDueByKey = result
         $('.change-due-by-key').text(changeDueByKey);
     });
 
-    Localizer.getString('closeQuiz').then(function (result) {
+    Localizer.getString('closeQuiz').then(function(result) {
         closeQuizKey = result
         $('.close-quiz-key').text(closeQuizKey);
     });
 
-    Localizer.getString('deleteQuiz').then(function (result) {
+    Localizer.getString('deleteQuiz').then(function(result) {
         deleteQuizKey = result
         $('.delete-quiz-key').text(deleteQuizKey);
     });
 
-    Localizer.getString('download').then(function (result) {
+    Localizer.getString('download').then(function(result) {
         downloadKey = result;
         $('#download-key').html(downloadKey);
     });
 
-    Localizer.getString('downloadImage').then(function(result){
+    Localizer.getString('downloadImage').then(function(result) {
         downloadImageKey = result;
         $('#download-image-key').html(downloadImageKey);
     });
 
-    Localizer.getString('downloadCSV').then(function (result) {
+    Localizer.getString('downloadCSV').then(function(result) {
         downloadCSVKey = result;
         $('#download-csv-key').html(downloadCSVKey);
     });
@@ -399,7 +378,15 @@ async function createBody() {
     if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
         isCreator = true;
         headCreator();
-    }else{
+
+        if (actionInstance.status == 'Closed') {
+            $('.close-quiz-event').remove();
+            $('.change-due-by-event').remove();
+        }
+        if (actionInstance.status == 'Expired') {
+            $('.change-due-by-event').remove();
+        }
+    } else {
         head();
     }
 
@@ -506,7 +493,7 @@ async function createBody() {
 
     if (isCreator == true) {
         footerDownload();
-    }else{
+    } else {
         footerClose();
     }
     return true;
@@ -537,18 +524,18 @@ function head() {
 
     if (actionInstance.customProperties[4].value.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
-        ActionHelper.executeApi(req).then(function (response) {
-            $card.prepend(`
+        ActionHelper.executeApi(req).then(function(response) {
+                $card.prepend(`
                 <div class="quiz-updated-img max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16">
                     <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive quiz-template-image smallfit"  crossorigin="anonymous">
                 </div>
             `);
-            
-            getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
-        })
-        .catch(function (error) {
-            console.error("AttachmentAction - Error7: " + JSON.stringify(error));
-        });
+
+                getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
+            })
+            .catch(function(error) {
+                console.error("AttachmentAction - Error7: " + JSON.stringify(error));
+            });
     }
 }
 
@@ -614,7 +601,8 @@ function headCreator() {
     let $description_sec = $(`<p class="mb--8 text-justify text-break font-12">${description}</p>`);
 
     let current_timestamp = new Date().getTime();
-
+    console.log('current_timestamp:');
+    console.log(current_timestamp);
     let $date_sec = $(`<p class="semi-bold mb--16 font-12">${actionInstance.expiryTime > current_timestamp ? dueByKey + ' ' : expiredOnKey + ' '} ${dueby}</p>`);
 
     $titleDiv.append($title_sec);
@@ -626,16 +614,16 @@ function headCreator() {
 
     if (actionInstance.customProperties[4].value.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
-        ActionHelper.executeApi(req).then(function (response) {
-            $card.prepend(`
+        ActionHelper.executeApi(req).then(function(response) {
+                $card.prepend(`
                 <div class="quiz-updated-img max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16">
                     <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive quiz-template-image smallfit"  crossorigin="anonymous">
                 </div>
             `);
 
-            getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
-        })
-            .catch(function (error) {
+                getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
+            })
+            .catch(function(error) {
                 console.error("AttachmentAction - Error7: " + JSON.stringify(error));
             });
     }
@@ -1544,7 +1532,7 @@ function footerDownload() {
                     <div class="row">
                         <div class="col-12 text-right">
                             <div class="dropdown">
-                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle dd-btn" id="add-content" data-toggle="dropdown" aria-expanded="false" id="downloadImage">
+                                <button type="button" class="btn btn-primary btn-sm  dropdown-toggle dd-btn" id="downloadImage" data-toggle="dropdown" aria-expanded="false">
                                     <span class="span1 add-content-label" id="download-key">${downloadKey}</span>
                                     <span class="span2">
                                         <i data-icon-name="ChevronDown" aria-hidden="true" class="ms-Icon root-43"></i>
@@ -1552,29 +1540,29 @@ function footerDownload() {
                                 </button>
                                 <ul class="dropdown-menu" style="">
                                     <li class="cursur-pointer"  id="downloadImage">
-                                        <a id="add-text">
-                                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-                                        <g>
-                                            <path id="Path_589" fill="" d="M14.5,2c0.201-0.001,0.4,0.038,0.586,0.117c0.361,0.151,0.648,0.438,0.8,0.8
-                                                C15.963,3.102,16.002,3.3,16,3.5v9c0.001,0.199-0.039,0.396-0.117,0.578c-0.077,0.181-0.188,0.346-0.328,0.484
-                                                c-0.137,0.136-0.299,0.244-0.477,0.319C14.896,13.961,14.699,14,14.5,14h-13c-0.199,0.001-0.396-0.039-0.578-0.117
-                                                c-0.18-0.076-0.344-0.185-0.484-0.32c-0.135-0.141-0.243-0.305-0.319-0.483C0.039,12.896-0.001,12.699,0,12.5v-9
-                                                c-0.001-0.199,0.039-0.396,0.117-0.578c0.075-0.178,0.184-0.34,0.32-0.477c0.139-0.139,0.304-0.25,0.484-0.328
-                                                C1.104,2.039,1.301,1.999,1.5,2H14.5z M4.875,7.039C4.74,7.035,4.609,7.088,4.516,7.187L1,11.086V12.5
-                                                c-0.002,0.133,0.053,0.26,0.148,0.352C1.24,12.947,1.367,13.002,1.5,13h7.711L5.273,7.242C5.229,7.178,5.17,7.127,5.1,7.094
-                                                C5.03,7.058,4.953,7.04,4.875,7.039z M1.5,3C1.367,2.999,1.24,3.052,1.148,3.148C1.053,3.24,0.998,3.367,1,3.5v6.094L3.8,6.5
-                                                c0.132-0.148,0.295-0.266,0.478-0.344C4.689,5.985,5.155,6.001,5.555,6.2c0.219,0.104,0.406,0.267,0.539,0.469L10.422,13H14.5
-                                                c0.274-0.004,0.496-0.226,0.5-0.5v-9c0.002-0.133-0.053-0.26-0.148-0.352C14.76,3.052,14.633,2.999,14.5,3H1.5z M11.5,4.5
-                                                c0.266-0.002,0.529,0.051,0.773,0.156c0.482,0.202,0.867,0.586,1.069,1.07C13.448,5.97,13.502,6.234,13.5,6.5
-                                                c0.001,0.267-0.055,0.53-0.164,0.773c-0.101,0.24-0.246,0.457-0.43,0.641c-0.184,0.181-0.397,0.327-0.633,0.43
-                                                C12.029,8.449,11.766,8.502,11.5,8.5c-0.266,0.001-0.529-0.052-0.773-0.156c-0.475-0.214-0.855-0.595-1.069-1.07
-                                                C9.553,7.029,9.499,6.766,9.5,6.5C9.498,6.234,9.551,5.971,9.656,5.727c0.104-0.236,0.248-0.45,0.43-0.633
-                                                c0.184-0.183,0.401-0.329,0.641-0.43C10.971,4.555,11.233,4.499,11.5,4.5z M11.5,5.5c-0.135-0.001-0.268,0.025-0.391,0.078
-                                                c-0.12,0.052-0.229,0.126-0.32,0.219c-0.09,0.09-0.161,0.196-0.211,0.312C10.525,6.232,10.498,6.366,10.5,6.5
-                                                c0,0.134,0.025,0.267,0.078,0.391c0.097,0.242,0.289,0.434,0.531,0.531C11.232,7.474,11.365,7.5,11.5,7.5
-                                                c0.135,0.001,0.268-0.025,0.391-0.078c0.117-0.05,0.224-0.121,0.313-0.211c0.093-0.092,0.167-0.2,0.219-0.32
-                                                c0.104-0.25,0.104-0.531,0-0.781c-0.097-0.242-0.288-0.434-0.53-0.531C11.768,5.526,11.635,5.499,11.5,5.5z"/>
-                                        </g>
+                                    <a id="add-text">
+                                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                                            <g>
+                                                <path id="Path_589" fill="" d="M14.5,2c0.201-0.001,0.4,0.038,0.586,0.117c0.361,0.151,0.648,0.438,0.8,0.8
+                                                    C15.963,3.102,16.002,3.3,16,3.5v9c0.001,0.199-0.039,0.396-0.117,0.578c-0.077,0.181-0.188,0.346-0.328,0.484
+                                                    c-0.137,0.136-0.299,0.244-0.477,0.319C14.896,13.961,14.699,14,14.5,14h-13c-0.199,0.001-0.396-0.039-0.578-0.117
+                                                    c-0.18-0.076-0.344-0.185-0.484-0.32c-0.135-0.141-0.243-0.305-0.319-0.483C0.039,12.896-0.001,12.699,0,12.5v-9
+                                                    c-0.001-0.199,0.039-0.396,0.117-0.578c0.075-0.178,0.184-0.34,0.32-0.477c0.139-0.139,0.304-0.25,0.484-0.328
+                                                    C1.104,2.039,1.301,1.999,1.5,2H14.5z M4.875,7.039C4.74,7.035,4.609,7.088,4.516,7.187L1,11.086V12.5
+                                                    c-0.002,0.133,0.053,0.26,0.148,0.352C1.24,12.947,1.367,13.002,1.5,13h7.711L5.273,7.242C5.229,7.178,5.17,7.127,5.1,7.094
+                                                    C5.03,7.058,4.953,7.04,4.875,7.039z M1.5,3C1.367,2.999,1.24,3.052,1.148,3.148C1.053,3.24,0.998,3.367,1,3.5v6.094L3.8,6.5
+                                                    c0.132-0.148,0.295-0.266,0.478-0.344C4.689,5.985,5.155,6.001,5.555,6.2c0.219,0.104,0.406,0.267,0.539,0.469L10.422,13H14.5
+                                                    c0.274-0.004,0.496-0.226,0.5-0.5v-9c0.002-0.133-0.053-0.26-0.148-0.352C14.76,3.052,14.633,2.999,14.5,3H1.5z M11.5,4.5
+                                                    c0.266-0.002,0.529,0.051,0.773,0.156c0.482,0.202,0.867,0.586,1.069,1.07C13.448,5.97,13.502,6.234,13.5,6.5
+                                                    c0.001,0.267-0.055,0.53-0.164,0.773c-0.101,0.24-0.246,0.457-0.43,0.641c-0.184,0.181-0.397,0.327-0.633,0.43
+                                                    C12.029,8.449,11.766,8.502,11.5,8.5c-0.266,0.001-0.529-0.052-0.773-0.156c-0.475-0.214-0.855-0.595-1.069-1.07
+                                                    C9.553,7.029,9.499,6.766,9.5,6.5C9.498,6.234,9.551,5.971,9.656,5.727c0.104-0.236,0.248-0.45,0.43-0.633
+                                                    c0.184-0.183,0.401-0.329,0.641-0.43C10.971,4.555,11.233,4.499,11.5,4.5z M11.5,5.5c-0.135-0.001-0.268,0.025-0.391,0.078
+                                                    c-0.12,0.052-0.229,0.126-0.32,0.219c-0.09,0.09-0.161,0.196-0.211,0.312C10.525,6.232,10.498,6.366,10.5,6.5
+                                                    c0,0.134,0.025,0.267,0.078,0.391c0.097,0.242,0.289,0.434,0.531,0.531C11.232,7.474,11.365,7.5,11.5,7.5
+                                                    c0.135,0.001,0.268-0.025,0.391-0.078c0.117-0.05,0.224-0.121,0.313-0.211c0.093-0.092,0.167-0.2,0.219-0.32
+                                                    c0.104-0.25,0.104-0.531,0-0.781c-0.097-0.242-0.288-0.434-0.53-0.531C11.768,5.526,11.635,5.499,11.5,5.5z"/>
+                                            </g>
                                         </svg> <span class="text-label" id="download-image-key">${downloadImageKey}</span></a>
                                     </li>
                                     <li class="cursur-pointer" id="downloadCSV">
@@ -1727,7 +1715,7 @@ function getClassFromDimension(imgURL, selector) {
     });
 }
 
-function changeDateSection(){
+function changeDateSection() {
     $('#root .d-table').before(`
         <div class="change-date">
             <div class="card-box card-bg card-border">
@@ -1755,9 +1743,8 @@ function changeDateSection(){
                                 <label class="confirm-box text-danger"> </label>
                             </div>
                             <div class=" pl--8 text-right">
-                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">Cancel</button><button type="button" class="btn btn-primary btn-sm" id="change-quiz-date">Change</button>
+                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">Cancel</button><button type="button" class="btn btn-primary btn-sm disabled" id="change-quiz-date">Change</button>
                             </div>
-
                         </div>
                     </div>
 
@@ -1769,7 +1756,7 @@ function changeDateSection(){
     `);
 }
 
-function closeQuizSection(){
+function closeQuizSection() {
     $('#root .d-table').before(`
         <div class="close-quiz">
             <div class="card-box card-bg card-border">
@@ -1800,7 +1787,7 @@ function closeQuizSection(){
     `);
 }
 
-function deleteQuizSection(){
+function deleteQuizSection() {
     $('#root .d-table').before(`
         <div class="delete-quiz">
             <div class="card-box card-bg card-border">

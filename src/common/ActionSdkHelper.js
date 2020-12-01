@@ -1,4 +1,5 @@
 import * as actionSDK from "@microsoft/m365-action-sdk";
+
 export class Localizer {
     /**
      * Method to get Local string and check contains argument to append or not
@@ -112,7 +113,7 @@ export class ActionHelper {
      * @param attachment objet identifier
      */
     static requestAttachmentUploadDraft(attachment) {
-        return new actionSDK.UploadAttachmentDraft.Request(attachment, function (status) {
+        return new actionSDK.UploadAttachmentDraft.Request(attachment, function(status) {
             console.log("Status: " + status);
         });
     }
@@ -274,24 +275,28 @@ export class ActionHelper {
      * Method to delete action instance
      * @param actionId action instance id
      */
-    static async deleteActionInstance(actionId) {
-        let request = new actionSDK.DeleteAction.Request(actionId);
+    static async deleteActionInstance(actionId, version) {
+        let actionInstanceUpdateInfo = {
+            id: actionId,
+            version: version,
+            status: actionSDK.ActionStatus.Closed,
+        };
+        let request = new actionSDK.UpdateAction.Request(actionInstanceUpdateInfo);
         let response = await actionSDK.executeApi(request);
         if (!response.error) {
-            // Logger.logInfo(`deleteActionInstance success - Request: ${JSON.stringify(request)} Response: ${JSON.stringify(response)}`);
             let closeViewRequest = new actionSDK.CloseView.Request()
 
             actionSDK
                 .executeApi(closeViewRequest)
-                .then(function (batchResponse) {
+                .then(function(batchResponse) {
                     console.info("BatchResponse: " + JSON.stringify(batchResponse));
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.error("Error3: " + JSON.stringify(error));
                 });
-            return { success: true, deleteSuccess: response.success };
+
+            return { success: true, updateSuccess: response.success };
         } else {
-            // Logger.logError(`deleteActionInstance failed, Error: ${response.error.category}, ${response.error.code}, ${response.error.message}`);
             return { success: false, error: response.error };
         }
     }
@@ -308,15 +313,56 @@ export class ActionHelper {
             let closeViewRequest = new actionSDK.CloseView.Request()
             actionSDK
                 .executeApi(closeViewRequest)
-                .then(function (batchResponse) {
+                .then(function(batchResponse) {
                     console.info("BatchResponse: " + JSON.stringify(batchResponse));
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.error("Error3: " + JSON.stringify(error));
                 });
             return { success: true, updateSuccess: response.success };
+        } else {
+            return { success: false, error: response.error };
         }
-        else {
+    }
+
+    static async closeActionInstance(actionId, version) {
+        let actionInstanceUpdateInfo = {
+            id: actionId,
+            version: version,
+            status: actionSDK.ActionStatus.Closed,
+        };
+        let response = {};
+        let request = new actionSDK.UpdateAction.Request(actionInstanceUpdateInfo);
+        await actionSDK.executeApi(request);
+        if (!response.error) {
+            let closeViewRequest = new actionSDK.CloseView.Request()
+            actionSDK
+                .executeApi(closeViewRequest)
+                .then(function(batchResponse) {
+                    console.info("BatchResponse: " + JSON.stringify(batchResponse));
+                })
+                .catch(function(error) {
+                    console.error("Error3: " + JSON.stringify(error));
+                });
+            response = { success: true, updateSuccess: response.success };
+        } else {
+            response = { success: false, error: response.error };
+        }
+        if (response.success == true) {
+            if (response.updateSuccess) {
+                let closeViewRequest = new actionSDK.CloseView.Request()
+                actionSDK
+                    .executeApi(closeViewRequest)
+                    .then(function(batchResponse) {
+                        console.info("BatchResponse: " + JSON.stringify(batchResponse));
+                    })
+                    .catch(function(error) {
+                        console.error("Error3: " + JSON.stringify(error));
+                    });
+            } else {
+                return { success: false, error: response.error };
+            }
+        } else {
             return { success: false, error: response.error };
         }
     }
