@@ -510,18 +510,13 @@
      width: 100%;
  }
  
- .option-image,
- .question-image {
-     fill: var(--app-gray-03);
- }
- 
- .option-image,
- .question-image {
-     fill: var(--app-gray-02);
- }
- 
  .input-group-tpt svg {
      fill: var(--app-gray-10);
+ }
+ 
+ .option-image,
+ .question-image {
+     fill: var(--app-gray-02) !important;
  }
  
  .remove-option-q svg {
@@ -1052,6 +1047,7 @@
      font-size: var(--font-regular);
      font-weight: var(--font-weight-600);
      height: 32px;
+     border-radius: 2px;
  }
  /*custom radio*/
  
@@ -1278,15 +1274,15 @@
  }
  
  .in-t::-webkit-input-placeholder {
-     color: var(--app-gray-sub-text);
+     color: #6e6e6e;
  }
  
  .in-t:-ms-input-placeholder {
-     color: var(--app-gray-sub-text);
+     color: #6e6e6e;
  }
  
  .in-t::placeholder {
-     color: var(--app-gray-sub-text);
+     color: #6e6e6e;
  }
  
  .in-t {
@@ -1661,7 +1657,7 @@
 } */
  
  .show-setting svg {
-     margin-right: 12px;
+     margin-right: 16px;
      width: 16px;
      height: 16px;
      float: left;
@@ -2038,8 +2034,7 @@
  
  .dd-btn .span1 {
      height: 32px;
-     line-height: 32px;
-     padding: 0px 0.75rem;
+     padding: 0px 1.25rem;
  }
  
  .dd-btn .span2 {
@@ -2047,7 +2042,6 @@
      min-width: 2rem;
      text-align: center;
      height: 32px;
-     line-height: 32px;
      border-left: 1px solid var(--buttion-border);
  }
  
@@ -2389,6 +2383,68 @@
  .heightfit {
      width: auto;
      max-height: 264px;
+ }
+ 
+ .btn-plain {
+     padding: 0px;
+     border: none;
+     box-shadow: none;
+     outline: none;
+     width: 16px;
+     margin-left: 16px;
+ }
+ 
+ .btn-plain svg {
+     fill: var(--app-gray-02);
+ }
+ 
+ .btn-plain i {
+     margin-top: -6px;
+ }
+ 
+ .btn-plain:hover,
+ .btn-plain:focus {
+     border: none;
+     box-shadow: none;
+     outline: none;
+ }
+ 
+ .dd-btn .span2 svg {
+     margin-top: 5px;
+ }
+ 
+ .btn-group .dropdown-menu {
+     top: 22px !important;
+     font-size: var(--font-13);
+     font-weight: var(--font-weight-600);
+ }
+ 
+ .show>.btn-primary.dropdown-toggle:focus {
+     box-shadow: none;
+     border-color: transparent;
+ }
+ 
+ .show>.btn-primary.dropdown-toggle {
+     border-color: transparent;
+ }
+ 
+ #status-1 .dropdown-menu {
+     color: var(--app-gray-sub-text);
+     font-size: var(--font-13);
+     font-weight: var(--font-weight-600);
+ }
+ 
+ #status-1 .dropdown-menu svg {
+     margin-top: -2px;
+     margin-right: 8px;
+ }
+ 
+ .dropdown-item.active,
+ .dropdown-item:active {
+     color: #fff;
+     text-decoration: none;
+     background-color: transparent;
+     color: var(--app-gray-sub-text);
  }
  
  @media screen and (max-width: 576px) {

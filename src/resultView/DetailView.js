@@ -1,4 +1,5 @@
 import { ActionHelper, Localizer } from '../common/ActionSdkHelper';
+import * as html2canvas from "html2canvas";
 
 let actionContext = null;
 let actionInstance = null;
@@ -15,6 +16,8 @@ let request = ActionHelper.getContextRequest();
 let dataResponse = '';
 let actionId = '';
 let root = document.getElementById("root");
+let theme = '';
+let isCreator = false;
 
 let dueByKey = '';
 let expiredOnKey = '';
@@ -25,6 +28,12 @@ let youKey = '';
 let questionKey = '';
 let scoreKey = '';
 let closeKey = '';
+let changeDueByKey = '';
+let closeQuizKey = '';
+let deleteQuizKey = '';
+let downloadImageKey = '';
+let downloadCSVKey = '';
+let downloadKey = '';
 
 /* ********************************* Events ******************************************** */
 
@@ -82,6 +91,143 @@ $(document).on("click", ".getresult", function() {
         footer(userId);
     }
 });
+
+$(document).on('click', '#downloadCSV', function(){
+    ActionHelper.downloadCSV(actionId, 'abc.csv');
+});
+
+$(document).on('click', '#downloadImage', function () {
+    let bodyContainerDiv = document.getElementsByClassName("container")[0];
+    let backgroundColorOfResultsImage = theme;
+    console.log(bodyContainerDiv.scrollWidth);
+    console.log(bodyContainerDiv.scrollHeight);
+    $('.footer').hide();
+    html2canvas(bodyContainerDiv, { 
+        width: bodyContainerDiv.scrollWidth,
+        height: bodyContainerDiv.scrollHeight,
+        backgroundColor: backgroundColorOfResultsImage, 
+        useCORS: true,
+    }).then((canvas) => {
+        let fileName = 'quiz';
+        let base64Image = canvas.toDataURL("image/png");
+        if (window.navigator.msSaveBlob) {
+            window.navigator.msSaveBlob(canvas.msToBlob(), fileName);
+        } else {
+            let data = base64Image;
+            if (data && fileName) {
+                let a = document.createElement("a");
+                a.href = data;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+        $('.footer').show();
+    });
+});
+
+
+$(document).on('click', '.change-due-by-event', function(){
+    $('.change-date').remove();
+    $('.close-quiz').remove();
+    $('.delete-quiz').remove();
+    changeDateSection();
+    
+    let ddtt = ((actionInstance.customProperties[1].value).split('T'));
+    let dt = ddtt[0].split('-');
+    let weekDateFormat = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
+    let ttTime = (ddtt[1].split('Z')[0]).split(':');
+    let currentTime = `${ttTime[0]}:${ttTime[1]}`;
+    
+    $('.form_date input').val(weekDateFormat);
+    $(".form_date").attr({ "data-date": weekDateFormat });
+    $(function () {
+        $('.form_time').datetimepicker({
+            language: 'en',
+            weekStart: 1,
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 1,
+            minView: 0,
+            maxView: 1,
+            forceParse: 0
+        });
+    });
+
+    $('.form_time input').val(currentTime);
+
+    let dateInput = $('input[name="expiry_date"]');
+    let container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+    let options = {
+        format: 'M dd, yyyy',
+        container: container,
+        todayHighlight: true,
+        autoclose: true,
+        orientation: 'top'
+    };
+    $(function () {
+        dateInput.datepicker(options);
+    });
+
+});
+
+$(document).on('focus', 'input[name="expiry_date"]', function () {
+    $(this).datepicker();
+});
+
+$(document).on('focus', 'input[name="expiry_time"]', function () {
+    $(this).datetimepicker();
+})
+
+$(document).on('click', '.close-quiz-event', function () {
+    $('.change-date').remove();
+    $('.close-quiz').remove();
+    $('.delete-quiz').remove();
+    closeQuizSection();
+});
+
+$(document).on('click', '.delete-quiz-event', function () {
+    $('.change-date').remove();
+    $('.close-quiz').remove();
+    $('.delete-quiz').remove();
+    deleteQuizSection();
+});
+
+$(document).on('click', '.cancel-question-delete', function(){
+    $('.change-date').remove();
+    $('.close-quiz').remove();
+    $('.delete-quiz').remove();
+});
+
+$('.dropdown-menu a').on('click', function (event) {
+    $(this).parent().toggleClass('open');
+});
+
+$(document).on('click', '#delete-quiz', function(){
+    ActionHelper.deleteActionInstance(actionId);
+});
+
+$(document).on('click', '#change-quiz-question', function () {
+    let weekDate = new Date(new Date().setDate(new Date().getDate()))
+        .toISOString()
+        .split("T")[0];
+    let weekMonth = new Date(weekDate).toLocaleString('default', { month: 'short' });
+    let weekD = new Date(weekDate).getDate();
+    let weekYear = new Date(weekDate).getFullYear();
+    let weekDateFormat = weekMonth + " " + weekD + ", " + weekYear;
+    let currentTime = (("0" + new Date().getHours()).substr(-2)) + ":" + (("0" + new Date().getMinutes()).substr(-2));
+    
+    console.log('weekDateFormat: ');
+    console.log(weekDateFormat);
+    console.log(currentTime);
+    let quizExpireDate = weekDateFormat;
+    let quizExpireTime = currentTime;
+    actionInstance.expiryTime = new Date(quizExpireDate + " " + quizExpireTime).getTime(),
+    ActionHelper.updateActionInstance(actionInstance);
+});
+
 
 
 /* ********************************* Methods ******************************************** */
@@ -145,6 +291,36 @@ async function getStringKeys() {
     Localizer.getString('you').then(function(result) {
         youKey = result;
     });
+
+    Localizer.getString('changeDueBy').then(function (result) {
+        changeDueByKey = result
+        $('.change-due-by-key').text(changeDueByKey);
+    });
+
+    Localizer.getString('closeQuiz').then(function (result) {
+        closeQuizKey = result
+        $('.close-quiz-key').text(closeQuizKey);
+    });
+
+    Localizer.getString('deleteQuiz').then(function (result) {
+        deleteQuizKey = result
+        $('.delete-quiz-key').text(deleteQuizKey);
+    });
+
+    Localizer.getString('download').then(function (result) {
+        downloadKey = result;
+        $('#download-key').html(downloadKey);
+    });
+
+    Localizer.getString('downloadImage').then(function(result){
+        downloadImageKey = result;
+        $('#download-image-key').html(downloadImageKey);
+    });
+
+    Localizer.getString('downloadCSV').then(function (result) {
+        downloadCSVKey = result;
+        $('#download-csv-key').html(downloadCSVKey);
+    });
 }
 
 /**
@@ -155,7 +331,7 @@ async function getTheme(request) {
     dataResponse = await ActionHelper.executeApi(request);
     let context = dataResponse.context;
     $("form.section-1").show();
-    let theme = context.theme;
+    theme = context.theme;
     $("link#theme").attr("href", "css/style-" + theme + ".css");
     getStringKeys();
 
@@ -215,13 +391,17 @@ function getDataRows(actionId) {
  * @description Method for creating the response view structure and initialize value
  */
 async function createBody() {
+    await getUserprofile();
     let getSubscriptionCount = "";
     $("#root").html("");
 
     /*  Head Section  */
-    head();
-
-    await getUserprofile();
+    if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
+        isCreator = true;
+        headCreator();
+    }else{
+        head();
+    }
 
     /*  Person Responded X of Y Responses  */
     getSubscriptionCount = ActionHelper.getSubscriptionMemberCount(
@@ -242,16 +422,16 @@ async function createBody() {
         );
     });
 
-    if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
+    if (isCreator == true) {
         Localizer.getString('xofy_people_responded', actionSummary.rowCount, memberCount).then(function(result) {
             let xofy = result;
-            $pcard.append(`<p class="date-color cursor-pointer under-line mb--24" id="show-responders">${xofy}</p>`);
+            $pcard.append(`<p class="date-color cursor-pointer mb--24"> <span id="show-responders" class="under-line">${xofy}</span><!--<span class="pull-right send-reminder under-line"> Send reminder</span> --></p>`);
             $pcard.append(`<div class="clearfix"></div>`);
         });
     } else {
         Localizer.getString('xofy_people_responded', actionSummary.rowCount, memberCount).then(function(result) {
             let xofy = result;
-            $pcard.append(`<p class="date-color mb--24" id="show-responders">${xofy}</p>`);
+            $pcard.append(`<p class="date-color mb--24"><span id="show-responders">${xofy}</span></p>`);
             $pcard.append(`<div class="clearfix"></div>`);
         });
     }
@@ -323,7 +503,12 @@ async function createBody() {
             }
         })
     }
-    footerClose();
+
+    if (isCreator == true) {
+        footerDownload();
+    }else{
+        footerClose();
+    }
     return true;
 }
 
@@ -336,6 +521,8 @@ function head() {
     let dueby = new Date(actionInstance.expiryTime).toDateString();
 
     let $card = $('<div class=""></div>');
+
+
     let $title_sec = $(`<h4 class="mb--8">${title}</h4>`);
     let $description_sec = $(`<p class="mb--8 text-justify text-break font-12">${description}</p>`);
 
@@ -347,6 +534,111 @@ function head() {
     $card.append($description_sec);
     $card.append($date_sec);
     $("#root").append($card);
+
+    if (actionInstance.customProperties[4].value.length > 0) {
+        let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
+        ActionHelper.executeApi(req).then(function (response) {
+            $card.prepend(`
+                <div class="quiz-updated-img max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16">
+                    <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive quiz-template-image smallfit"  crossorigin="anonymous">
+                </div>
+            `);
+            
+            getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
+        })
+        .catch(function (error) {
+            console.error("AttachmentAction - Error7: " + JSON.stringify(error));
+        });
+    }
+}
+
+/**
+ * @description Method for creating head section for title, progress bar, dueby
+ */
+function headCreator() {
+    let title = actionInstance.displayName;
+    let description = actionInstance.customProperties[0]["value"];
+    let dueby = new Date(actionInstance.expiryTime).toDateString();
+
+    let $card = $('<div class=""></div>');
+
+    let $titleDiv = $(`<div class="d-table mb--8"></div>`);
+    let $title_sec = $(`<label class="font-12 "><h4>${title}</h4></label>`);
+    let $creatorButtons = $(`
+            <label class="float-right font-12 bold" id="status-1"><span class="semi-bold">
+                <div class="threedots dropdown">
+                    <button type="button" class="btn btn-tpt btn-plain dropdown-toggle" data-toggle="dropdown">
+                        <svg role="presentation" focusable="false" viewBox="8 8 16 16" class=""><g class="ui-icon__filled"><circle cx="22" cy="16" r="2"></circle><circle cx="16" cy="16" r="2"></circle><circle cx="10" cy="16" r="2"></circle></g><g class="ui-icon__outline cw"><circle cx="22" cy="16" r="1.5"></circle><circle cx="16" cy="16" r="1.5"></circle><circle cx="10" cy="16" r="1.5"></circle></g></svg>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item change-due-by-event" >
+                            <svg width="16" height="16" viewBox="8 8 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.8203 13.5C14.0599 13.5 14.2995 13.5391 14.5391 13.6172C14.7839 13.6953 15.0026 13.8099 15.1953 13.9609C15.388 14.1068 15.5443 14.2839 15.6641 14.4922C15.7891 14.7005 15.8516 14.9375 15.8516 15.2031C15.8516 15.4375 15.7943 15.6615 15.6797 15.875C15.5651 16.0885 15.4167 16.2682 15.2344 16.4141C15.4167 16.5807 15.5651 16.776 15.6797 17C15.7943 17.224 15.8516 17.4609 15.8516 17.7109C15.8516 17.9766 15.7917 18.2214 15.6719 18.4453C15.5573 18.6641 15.4036 18.8542 15.2109 19.0156C15.0182 19.1771 14.7995 19.3021 14.5547 19.3906C14.3151 19.4792 14.0703 19.5234 13.8203 19.5234C13.513 19.5234 13.2109 19.4714 12.9141 19.3672C12.6224 19.2578 12.3646 19.0938 12.1406 18.875L12.8438 18.1641C12.9792 18.2839 13.1302 18.375 13.2969 18.4375C13.4688 18.4948 13.6432 18.5234 13.8203 18.5234C13.9349 18.5234 14.0521 18.5052 14.1719 18.4688C14.2969 18.4323 14.4089 18.3802 14.5078 18.3125C14.6068 18.2396 14.6875 18.1536 14.75 18.0547C14.8177 17.9557 14.8516 17.8411 14.8516 17.7109C14.8516 17.5495 14.8099 17.4167 14.7266 17.3125C14.6484 17.2083 14.5469 17.125 14.4219 17.0625C14.2969 17 14.1615 16.9583 14.0156 16.9375C13.8698 16.9115 13.7318 16.8984 13.6016 16.8984V15.8984C13.7161 15.8984 13.8438 15.8906 13.9844 15.875C14.1302 15.8594 14.2656 15.8281 14.3906 15.7812C14.5208 15.7292 14.6302 15.6589 14.7188 15.5703C14.8073 15.4766 14.8516 15.3542 14.8516 15.2031C14.8516 15.0781 14.8177 14.9714 14.75 14.8828C14.6823 14.7943 14.5964 14.7214 14.4922 14.6641C14.388 14.6068 14.276 14.5651 14.1562 14.5391C14.0365 14.513 13.9245 14.5 13.8203 14.5C13.6953 14.5 13.5729 14.5234 13.4531 14.5703C13.3385 14.6172 13.2318 14.6771 13.1328 14.75L12.375 14.1016C12.4583 14.0026 12.5573 13.9167 12.6719 13.8438C12.7865 13.7656 12.9062 13.7031 13.0312 13.6562C13.1615 13.6042 13.2943 13.5651 13.4297 13.5391C13.5651 13.513 13.6953 13.5 13.8203 13.5ZM19.4531 19.5H18.4531V15.1406L17.9062 15.4766L17.3828 14.625L19.4531 13.3438V19.5ZM22.9844 11.5C22.9844 11.2969 22.9427 11.1068 22.8594 10.9297C22.7812 10.7474 22.6719 10.5885 22.5312 10.4531C22.3958 10.3125 22.237 10.2031 22.0547 10.125C21.8776 10.0417 21.6875 10 21.4844 10H18.9922V9C18.9922 8.86458 18.9427 8.7474 18.8438 8.64844C18.7448 8.54948 18.6276 8.5 18.4922 8.5C18.3568 8.5 18.2396 8.54948 18.1406 8.64844C18.0417 8.7474 17.9922 8.86458 17.9922 9V10H13.9922V9C13.9922 8.86458 13.9427 8.7474 13.8438 8.64844C13.7448 8.54948 13.6276 8.5 13.4922 8.5C13.3568 8.5 13.2396 8.54948 13.1406 8.64844C13.0417 8.7474 12.9922 8.86458 12.9922 9V10H10.4844C10.2865 10 10.0964 10.0417 9.91406 10.125C9.73177 10.2031 9.57031 10.3125 9.42969 10.4531C9.29427 10.5885 9.1849 10.7474 9.10156 10.9297C9.02344 11.112 8.98438 11.3021 8.98438 11.5V20.9141C8.98438 21.0703 9.00781 21.224 9.05469 21.375C9.10156 21.526 9.17708 21.6615 9.28125 21.7812C9.44271 21.974 9.6849 22.138 10.0078 22.2734C10.3307 22.4036 10.6979 22.5156 11.1094 22.6094C11.526 22.6979 11.9661 22.7682 12.4297 22.8203C12.8984 22.8724 13.3542 22.9115 13.7969 22.9375C14.2396 22.9635 14.6536 22.9818 15.0391 22.9922C15.4245 22.9974 15.7396 23 15.9844 23C16.2344 23 16.5495 22.9974 16.9297 22.9922C17.3151 22.9818 17.7292 22.9635 18.1719 22.9375C18.6146 22.9115 19.0677 22.875 19.5312 22.8281C20 22.776 20.4401 22.7057 20.8516 22.6172C21.2682 22.5234 21.638 22.4089 21.9609 22.2734C22.2839 22.138 22.526 21.974 22.6875 21.7812C22.7917 21.6615 22.8672 21.526 22.9141 21.375C22.9609 21.224 22.9844 21.0703 22.9844 20.9141V11.5ZM21.9844 20.9141C21.9844 21.0391 21.9089 21.151 21.7578 21.25C21.612 21.3438 21.4141 21.4297 21.1641 21.5078C20.9193 21.5807 20.6354 21.6432 20.3125 21.6953C19.9896 21.7474 19.6536 21.7943 19.3047 21.8359C18.9609 21.8724 18.6146 21.901 18.2656 21.9219C17.9167 21.9427 17.5911 21.9609 17.2891 21.9766C16.987 21.987 16.7214 21.9948 16.4922 22C16.263 22 16.0938 22 15.9844 22C15.875 22 15.7057 22 15.4766 22C15.2474 21.9948 14.9818 21.987 14.6797 21.9766C14.3776 21.9609 14.0521 21.9427 13.7031 21.9219C13.3542 21.901 13.0052 21.8724 12.6562 21.8359C12.3125 21.7943 11.9792 21.7474 11.6562 21.6953C11.3333 21.6432 11.0469 21.5807 10.7969 21.5078C10.5521 21.4297 10.3542 21.3438 10.2031 21.25C10.0573 21.151 9.98438 21.0391 9.98438 20.9141V11.5C9.98438 11.3646 10.0339 11.2474 10.1328 11.1484C10.2318 11.0495 10.349 11 10.4844 11H12.9922V12C12.9922 12.1354 13.0417 12.2526 13.1406 12.3516C13.2396 12.4505 13.3568 12.5 13.4922 12.5C13.6276 12.5 13.7448 12.4505 13.8438 12.3516C13.9427 12.2526 13.9922 12.1354 13.9922 12V11H17.9922V12C17.9922 12.1354 18.0417 12.2526 18.1406 12.3516C18.2396 12.4505 18.3568 12.5 18.4922 12.5C18.6276 12.5 18.7448 12.4505 18.8438 12.3516C18.9427 12.2526 18.9922 12.1354 18.9922 12V11H21.4844C21.6198 11 21.737 11.0495 21.8359 11.1484C21.9349 11.2474 21.9844 11.3646 21.9844 11.5V20.9141Z" fill="#484644"/>
+                            </svg><span class="change-due-by-key">${changeDueByKey}</span>
+                        </a>
+                        <a class="dropdown-item close-quiz-event" >
+                            <svg role="presentation" width="16" height="16" focusable="false" viewBox="8 8 16 16" class="ci aig aih cu cv"><path class="ui-icon__outline cw" d="M23 16c0 .64-.084 1.258-.25 1.852a7.03 7.03 0 0 1-1.809 3.09 7.082 7.082 0 0 1-3.09 1.808c-.593.167-1.21.25-1.851.25s-1.258-.083-1.852-.25a7.05 7.05 0 0 1-3.09-1.809 7.044 7.044 0 0 1-1.808-3.09C9.083 17.259 9 16.642 9 16s.083-1.258.25-1.852c.167-.593.403-1.15.71-1.671a7.096 7.096 0 0 1 2.517-2.516 7.01 7.01 0 0 1 1.671-.711C14.742 9.084 15.36 9 16 9s1.258.084 1.852.25a7.027 7.027 0 0 1 3.09 1.809 7.039 7.039 0 0 1 1.809 3.09c.165.593.249 1.21.249 1.851zm-3.21-4.547A5.924 5.924 0 0 0 16 10.078c-.812 0-1.577.156-2.293.469-.716.312-1.344.738-1.883 1.277s-.964 1.167-1.277 1.883A5.671 5.671 0 0 0 10.078 16c0 .693.118 1.365.356 2.016a5.893 5.893 0 0 0 1.02 1.773l8.335-8.336zM21.921 16a5.918 5.918 0 0 0-1.375-3.789l-8.336 8.336a5.871 5.871 0 0 0 1.773 1.02 5.84 5.84 0 0 0 2.016.355c.813 0 1.576-.156 2.293-.469.716-.312 1.344-.738 1.883-1.277s.965-1.166 1.277-1.883A5.67 5.67 0 0 0 21.922 16z"></path><path class="ui-icon__filled" d="M23.5 15.969c0 .687-.09 1.35-.27 1.984a7.556 7.556 0 0 1-1.937 3.309 7.592 7.592 0 0 1-3.309 1.937c-.635.18-1.297.27-1.984.27s-1.35-.09-1.984-.27a7.565 7.565 0 0 1-4.485-3.457 7.553 7.553 0 0 1-.762-1.789c-.18-.635-.269-1.297-.269-1.984s.09-1.349.27-1.985a7.58 7.58 0 0 1 5.246-5.246c.635-.18 1.296-.27 1.984-.27s1.349.09 1.984.27a7.59 7.59 0 0 1 4.485 3.457 7.58 7.58 0 0 1 .761 1.79c.18.635.27 1.296.27 1.984zM18.953 11.5a5.668 5.668 0 0 0-1.418-.66 5.238 5.238 0 0 0-2.95-.035 5.434 5.434 0 0 0-2.359 1.39 5.408 5.408 0 0 0-1.39 2.363 5.215 5.215 0 0 0 .035 2.945c.153.504.373.977.66 1.419l7.422-7.422zm2.406 4.469c0-.52-.077-1.032-.23-1.535a5.664 5.664 0 0 0-.66-1.418l-7.422 7.422c.442.287.915.506 1.418.66a5.2 5.2 0 0 0 2.945.035 5.422 5.422 0 0 0 2.363-1.39 5.432 5.432 0 0 0 1.39-2.363c.13-.457.196-.927.196-1.411z"></path></svg>  
+                            <span class="close-quiz-key">${closeQuizKey}</span>
+                        </a>
+                        <a class="dropdown-item delete-quiz-event" >
+                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                                <rect x="-1.352" y="1.773" fill="none" width="16" height="16"/>
+                                <rect fill="none" width="16" height="16"/>
+                                <path id="Path_586" fill="#484644" d="M11.502,4.001c0.197-0.001,0.392,0.041,0.57,0.125c0.355,0.16,0.64,0.444,0.8,0.8
+                                    c0.083,0.179,0.126,0.373,0.125,0.57v8.554c0.009,0.294-0.079,0.582-0.25,0.82c-0.177,0.228-0.4,0.414-0.656,0.547
+                                    c-0.286,0.148-0.591,0.259-0.905,0.328c-0.338,0.077-0.68,0.136-1.023,0.172c-0.339,0.036-0.664,0.06-0.977,0.069
+                                    c-0.313,0.011-0.58,0.014-0.8,0.009h-0.9c-0.354,0.005-0.73-0.005-1.133-0.031c-0.4-0.026-0.801-0.075-1.199-0.147
+                                    c-0.368-0.064-0.728-0.172-1.07-0.32c-0.299-0.132-0.564-0.326-0.781-0.57c-0.203-0.245-0.31-0.557-0.3-0.875v-8.55
+                                    C3,5.305,3.04,5.111,3.119,4.931c0.079-0.178,0.19-0.339,0.327-0.477c0.138-0.139,0.3-0.25,0.478-0.328
+                                    C4.105,4.042,4.303,4,4.502,4.001H11.502z M7.002,13.001h-1v-6h1V13.001z M4.502,5.001c-0.274,0.004-0.496,0.226-0.5,0.5v8.554
+                                    c0.004,0.154,0.083,0.297,0.211,0.383c0.164,0.116,0.346,0.203,0.539,0.258c0.243,0.072,0.491,0.127,0.742,0.164
+                                    c0.271,0.042,0.533,0.073,0.789,0.095c0.255,0.021,0.488,0.034,0.699,0.039c0.219,0.005,0.379,0.007,0.48,0.007h1.078
+                                    c0.109,0,0.268-0.002,0.476-0.008c0.209-0.006,0.442-0.019,0.7-0.039c0.261-0.021,0.524-0.049,0.789-0.086
+                                    c0.249-0.037,0.493-0.092,0.733-0.164c0.196-0.059,0.381-0.148,0.548-0.266c0.13-0.085,0.209-0.229,0.211-0.383V5.501
+                                    c-0.004-0.274-0.226-0.496-0.5-0.5H4.502z M10.002,13.001h-1v-6h1V13.001z M8.002,0.001c0.215,0.002,0.43,0.025,0.641,0.07
+                                    C8.87,0.11,9.088,0.185,9.291,0.291c0.197,0.094,0.37,0.231,0.508,0.4c0.139,0.172,0.209,0.389,0.2,0.609v0.702h3
+                                    c0.276,0.002,0.499,0.227,0.497,0.503c-0.001,0.131-0.053,0.256-0.145,0.349c-0.092,0.095-0.218,0.148-0.35,0.148h-10
+                                    C2.87,3.003,2.743,2.949,2.651,2.854c-0.193-0.19-0.196-0.501-0.006-0.694c0.002-0.002,0.004-0.004,0.006-0.006
+                                    C2.742,2.056,2.87,2.001,3.002,2.001h3v-0.7C5.995,1.079,6.069,0.861,6.21,0.689c0.136-0.168,0.307-0.304,0.5-0.4
+                                    c0.205-0.104,0.425-0.178,0.651-0.218C7.573,0.027,7.788,0.004,8.002,0.001z M8.002,1.001c-0.084,0.001-0.167,0.006-0.25,0.016
+                                    c-0.102,0.005-0.202,0.021-0.3,0.047C7.36,1.085,7.271,1.116,7.186,1.159C7.11,1.194,7.045,1.251,7,1.322v0.679h2v-0.7
+                                    c-0.054-0.064-0.123-0.115-0.2-0.148C8.715,1.111,8.625,1.08,8.534,1.06C8.444,1.039,8.352,1.025,8.26,1.021
+                                    C8.174,1.009,8.088,1.003,8.002,1.001z"/>
+                            </svg>  
+                            <span class="delete-quiz-key">${deleteQuizKey}</span>
+                        </a>
+                    </div>
+                </div>     
+            </span></label>
+        `);
+    let $description_sec = $(`<p class="mb--8 text-justify text-break font-12">${description}</p>`);
+
+    let current_timestamp = new Date().getTime();
+
+    let $date_sec = $(`<p class="semi-bold mb--16 font-12">${actionInstance.expiryTime > current_timestamp ? dueByKey + ' ' : expiredOnKey + ' '} ${dueby}</p>`);
+
+    $titleDiv.append($title_sec);
+    $titleDiv.append($creatorButtons);
+    $card.append($titleDiv);
+    $card.append($description_sec);
+    $card.append($date_sec);
+    $("#root").append($card);
+
+    if (actionInstance.customProperties[4].value.length > 0) {
+        let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
+        ActionHelper.executeApi(req).then(function (response) {
+            $card.prepend(`
+                <div class="quiz-updated-img max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16">
+                    <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive quiz-template-image smallfit"  crossorigin="anonymous">
+                </div>
+            `);
+
+            getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
+        })
+            .catch(function (error) {
+                console.error("AttachmentAction - Error7: " + JSON.stringify(error));
+            });
+    }
 }
 
 /**
@@ -730,7 +1022,7 @@ function createCreatorQuestionView() {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $blankQDiv.prepend(`
                             <div class="option-image-section cover-img min-max-132 mb--8"> 
-                                <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive">
+                                <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive"  crossorigin="anonymous">
                             </div>`);
                         getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-image`);
                     })
@@ -745,7 +1037,7 @@ function createCreatorQuestionView() {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $mtDiv.find('d-table').after(`
                             <div class="quiz-updated-img cover-img min-max-132 mb--8">
-                                <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive question-template-image">
+                                <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive question-template-image"  crossorigin="anonymous">
                             </div>`);
                         getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-template-image`);
                     })
@@ -928,7 +1220,7 @@ function createQuestionView(userId) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $blankQDiv.prepend(`
                             <div class="option-image-section cover-img min-max-132 mb--8"> 
-                                <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive">
+                                <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive"  crossorigin="anonymous">
                             </div>`);
                         getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-image`);
                     })
@@ -1128,7 +1420,7 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
                 $oDiv.find('label.custom-radio').prepend(`
                     <div class="option-image-section cover-img min-max-132 mb--8"> 
-                        <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive">
+                        <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
                     </div>`);
                 getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} .opt-image:last`);
             })
@@ -1184,7 +1476,7 @@ function getOptionsCreator(text, optId, ind, result, attachmentId) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
                 $oDiv.find('label.custom-radio').prepend(`
                     <div class="option-image-section cover-img min-max-132 mb--8"> 
-                        <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive">
+                        <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
                     </div>`);
                 getClassFromDimension(response.attachmentInfo.downloadUrl, `#${optId} .opt-image`);
             })
@@ -1233,6 +1525,67 @@ function footerClose() {
                     <div class="row">
                         <div class="col-12 text-right"> 
                             <button type="button" class="btn btn-primary btn-sm pull-right close-key" id="closeKey"> ${closeKey}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`
+    );
+}
+
+/**
+ * @description Method for footer with download button
+ */
+function footerDownload() {
+    $("#root").append(
+        `<div class="footer">
+            <div class="footer-padd bt">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 text-right">
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle dd-btn" id="add-content" data-toggle="dropdown" aria-expanded="false" id="downloadImage">
+                                    <span class="span1 add-content-label" id="download-key">${downloadKey}</span>
+                                    <span class="span2">
+                                        <i data-icon-name="ChevronDown" aria-hidden="true" class="ms-Icon root-43"></i>
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu" style="">
+                                    <li class="cursur-pointer"  id="downloadImage">
+                                        <a id="add-text">
+                                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                                        <g>
+                                            <path id="Path_589" fill="" d="M14.5,2c0.201-0.001,0.4,0.038,0.586,0.117c0.361,0.151,0.648,0.438,0.8,0.8
+                                                C15.963,3.102,16.002,3.3,16,3.5v9c0.001,0.199-0.039,0.396-0.117,0.578c-0.077,0.181-0.188,0.346-0.328,0.484
+                                                c-0.137,0.136-0.299,0.244-0.477,0.319C14.896,13.961,14.699,14,14.5,14h-13c-0.199,0.001-0.396-0.039-0.578-0.117
+                                                c-0.18-0.076-0.344-0.185-0.484-0.32c-0.135-0.141-0.243-0.305-0.319-0.483C0.039,12.896-0.001,12.699,0,12.5v-9
+                                                c-0.001-0.199,0.039-0.396,0.117-0.578c0.075-0.178,0.184-0.34,0.32-0.477c0.139-0.139,0.304-0.25,0.484-0.328
+                                                C1.104,2.039,1.301,1.999,1.5,2H14.5z M4.875,7.039C4.74,7.035,4.609,7.088,4.516,7.187L1,11.086V12.5
+                                                c-0.002,0.133,0.053,0.26,0.148,0.352C1.24,12.947,1.367,13.002,1.5,13h7.711L5.273,7.242C5.229,7.178,5.17,7.127,5.1,7.094
+                                                C5.03,7.058,4.953,7.04,4.875,7.039z M1.5,3C1.367,2.999,1.24,3.052,1.148,3.148C1.053,3.24,0.998,3.367,1,3.5v6.094L3.8,6.5
+                                                c0.132-0.148,0.295-0.266,0.478-0.344C4.689,5.985,5.155,6.001,5.555,6.2c0.219,0.104,0.406,0.267,0.539,0.469L10.422,13H14.5
+                                                c0.274-0.004,0.496-0.226,0.5-0.5v-9c0.002-0.133-0.053-0.26-0.148-0.352C14.76,3.052,14.633,2.999,14.5,3H1.5z M11.5,4.5
+                                                c0.266-0.002,0.529,0.051,0.773,0.156c0.482,0.202,0.867,0.586,1.069,1.07C13.448,5.97,13.502,6.234,13.5,6.5
+                                                c0.001,0.267-0.055,0.53-0.164,0.773c-0.101,0.24-0.246,0.457-0.43,0.641c-0.184,0.181-0.397,0.327-0.633,0.43
+                                                C12.029,8.449,11.766,8.502,11.5,8.5c-0.266,0.001-0.529-0.052-0.773-0.156c-0.475-0.214-0.855-0.595-1.069-1.07
+                                                C9.553,7.029,9.499,6.766,9.5,6.5C9.498,6.234,9.551,5.971,9.656,5.727c0.104-0.236,0.248-0.45,0.43-0.633
+                                                c0.184-0.183,0.401-0.329,0.641-0.43C10.971,4.555,11.233,4.499,11.5,4.5z M11.5,5.5c-0.135-0.001-0.268,0.025-0.391,0.078
+                                                c-0.12,0.052-0.229,0.126-0.32,0.219c-0.09,0.09-0.161,0.196-0.211,0.312C10.525,6.232,10.498,6.366,10.5,6.5
+                                                c0,0.134,0.025,0.267,0.078,0.391c0.097,0.242,0.289,0.434,0.531,0.531C11.232,7.474,11.365,7.5,11.5,7.5
+                                                c0.135,0.001,0.268-0.025,0.391-0.078c0.117-0.05,0.224-0.121,0.313-0.211c0.093-0.092,0.167-0.2,0.219-0.32
+                                                c0.104-0.25,0.104-0.531,0-0.781c-0.097-0.242-0.288-0.434-0.53-0.531C11.768,5.526,11.635,5.499,11.5,5.5z"/>
+                                        </g>
+                                        </svg> <span class="text-label" id="download-image-key">${downloadImageKey}</span></a>
+                                    </li>
+                                    <li class="cursur-pointer" id="downloadCSV">
+                                        <a id="add-photo">
+                                            <svg role="presentation" width="16px" height="16px" focusable="false" viewBox="8 8 16 16" class=""><g><path d="M20.5 8H15c-.4 0-.777.156-1.083.463l-3.478 3.968c-.283.283-.439.66-.439 1.06V22.5c0 .827.673 1.5 1.5 1.5h9c.827 0 1.5-.673 1.5-1.5v-13c0-.827-.673-1.5-1.5-1.5zm-6.514 1.9V13h-2.718l2.718-3.1zM21 22.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V14h3.986V9.003c.005 0 .01-.003.014-.003h5.5a.5.5 0 0 1 .5.5v13zm-2.462-6.24a.375.375 0 0 0-.576.48l1.05 1.26-1.05 1.26a.375.375 0 1 0 .576.48l1.25-1.5a.375.375 0 0 0 0-.48l-1.25-1.5zm-4.548-.048a.375.375 0 0 0-.528.048l-1.25 1.5a.375.375 0 0 0 0 .48l1.25 1.5a.374.374 0 1 0 .576-.48L12.988 18l1.05-1.26a.375.375 0 0 0-.048-.528zm3.129-1.568a.374.374 0 0 0-.475.237l-2 6a.375.375 0 1 0 .712.238l2-6a.375.375 0 0 0-.237-.475z"></path></g></svg>
+                                            <span class="photo-label" id="download-csv-key">${downloadCSVKey}</span>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1372,4 +1725,108 @@ function getClassFromDimension(imgURL, selector) {
         $(selector).addClass(getClass);
 
     });
+}
+
+function changeDateSection(){
+    $('#root .d-table').before(`
+        <div class="change-date">
+            <div class="card-box card-bg card-border">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="mb--8"><strong class="due-by-key bold">Change due date</strong></h4>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-6 pr--4">
+                        <div class="input-group date form_date" data-date="1979-09-16T05:25:07Z" data-date-format="M dd, yyyy" data-link-field="dtp_input1">
+                            <input class="form-control in-t" size="16" name="expiry_date" type="text" value="" readonly>
+                        </div>
+                    </div>
+                    <div class="col-6 pl--4">
+                        <div class="input-group date form_time" data-date="" data-date-format="hh:ii" data-link-field="dtp_input3" data-link-format="hh:ii">
+                            <input class="form-control in-t" name="expiry_time" size="16" type="text" value="" readonly>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="d-flex-alert mt--16 mb--8">
+                            <div class="pr--8">
+                                <label class="confirm-box text-danger"> </label>
+                            </div>
+                            <div class=" pl--8 text-right">
+                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">Cancel</button><button type="button" class="btn btn-primary btn-sm" id="change-quiz-date">Change</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                </div>
+            </div>
+        </div>
+    `);
+}
+
+function closeQuizSection(){
+    $('#root .d-table').before(`
+        <div class="close-quiz">
+            <div class="card-box card-bg card-border">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="mb--8"><strong class="due-by-key bold">Close Quiz</strong></h4>
+                    </div>
+                    <div class="clearfix"></div>
+
+
+                    <div class="col-12">
+                        <div class="d-flex-alert mt--16 mb--8">
+                            <div class="pr--8">
+                                <label class="confirm-box text-danger">Are you sure you want to close this survey? </label>
+                            </div>
+                            <div class=" pl--8 text-right">
+                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">Cancel</button><button type="button" class="btn btn-primary btn-sm" id="change-quiz-question">Confirm</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                </div>
+            </div>
+        </div>
+    `);
+}
+
+function deleteQuizSection(){
+    $('#root .d-table').before(`
+        <div class="delete-quiz">
+            <div class="card-box card-bg card-border">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="mb--8"><strong class="due-by-key bold">Delete Quiz</strong></h4>
+                    </div>
+                    <div class="clearfix"></div>
+
+
+                    <div class="col-12">
+                        <div class="d-flex-alert mt--16 mb--8">
+                            <div class="pr--8">
+                                <label class="confirm-box text-danger">Are you sure you want to delete this Quiz? </label>
+                            </div>
+                            <div class=" pl--8 text-right">
+                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">Cancel</button><button type="button" class="btn btn-primary btn-sm" id="delete-quiz">Confirm</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                </div>
+            </div>
+        </div>
+    `);
 }

@@ -258,5 +258,68 @@ export class ActionHelper {
         return true;
     }
 
+    static async downloadCSV(actionId, fileName) {
+        let request = new actionSDK.DownloadActionDataRowsResult.Request(actionId, fileName);
+        try {
+            let response = actionSDK.executeApi(request);
+            // Logger.logInfo(`downloadCSV success - Request: ${JSON.stringify(request)} Response: ${JSON.stringify(response)}`);
+            return { success: true };
+        } catch (error) {
+            Logger.logError(`downloadCSV failed, Error: ${error.category}, ${error.code}, ${error.message}`);
+            return { success: false, error: error };
+        }
+    }
+
+    /**
+     * Method to delete action instance
+     * @param actionId action instance id
+     */
+    static async deleteActionInstance(actionId) {
+        let request = new actionSDK.DeleteAction.Request(actionId);
+        let response = await actionSDK.executeApi(request);
+        if (!response.error) {
+            // Logger.logInfo(`deleteActionInstance success - Request: ${JSON.stringify(request)} Response: ${JSON.stringify(response)}`);
+            let closeViewRequest = new actionSDK.CloseView.Request()
+
+            actionSDK
+                .executeApi(closeViewRequest)
+                .then(function (batchResponse) {
+                    console.info("BatchResponse: " + JSON.stringify(batchResponse));
+                })
+                .catch(function (error) {
+                    console.error("Error3: " + JSON.stringify(error));
+                });
+            return { success: true, deleteSuccess: response.success };
+        } else {
+            // Logger.logError(`deleteActionInstance failed, Error: ${response.error.category}, ${response.error.code}, ${response.error.message}`);
+            return { success: false, error: response.error };
+        }
+    }
+
+
+    /**
+     * Method to update action instance data
+     * @param data object of data we want modify
+     */
+    static async updateActionInstance(actionUpdateInfo) {
+        let request = new actionSDK.UpdateAction.Request(actionUpdateInfo);
+        let response = await actionSDK.executeApi(request);
+        if (!response.error) {
+            let closeViewRequest = new actionSDK.CloseView.Request()
+            actionSDK
+                .executeApi(closeViewRequest)
+                .then(function (batchResponse) {
+                    console.info("BatchResponse: " + JSON.stringify(batchResponse));
+                })
+                .catch(function (error) {
+                    console.error("Error3: " + JSON.stringify(error));
+                });
+            return { success: true, updateSuccess: response.success };
+        }
+        else {
+            return { success: false, error: response.error };
+        }
+    }
+
 }
 Localizer.jsonObject = {};

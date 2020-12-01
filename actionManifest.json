@@ -12,7 +12,7 @@
     },
     "icon": "images/appIcon.png",
     "actionModel": "actionModel.json",
-    "version": "1.0.80",
+    "version": "1.0.82",
     "views": {
         "CardView": {
             "sourceLocation": "json/cardView.json"

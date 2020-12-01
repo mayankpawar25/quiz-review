@@ -565,8 +565,8 @@ function submitForm() {
                     } else {
                         $(this).addClass("danger");
                         $(this)
-                            .parents("div.col-12")
-                            .prepend(
+                            .parents("div.col-12").parents("div.option-div")
+                            .before(
                                 `<label class="label-alert d-block mb--4"><font class="required-key">${requiredKey}</font></label>`
                             );
 
