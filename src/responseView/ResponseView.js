@@ -30,12 +30,14 @@ let yourAnswerIsKey = ''
 let rightAnswerIsKey = '';
 let submitKey = '';
 let quizSummaryKey = '';
+let doneKey = '';
 let nextKey = '';
 let backKey = '';
 let checkKey = '';
 let prevKey = '';
 let quizExpiredKey = '';
 let alreadyAttemptedKey = '';
+let closeKey = '';
 
 /* ********************************* Events ******************************************** */
 
@@ -201,9 +203,9 @@ $(document).on("click", '#next', function() {
                             console.info("BatchResponse: " + JSON.stringify(batchResponse));
                             summarySection();
                         })
-                        /* .catch(function(error) {
+                        .catch(function(error) {
                             console.log("Error1: " + JSON.stringify(error));
-                        }) */
+                        })
                     ;
 
                 } else {
@@ -380,6 +382,14 @@ $(document).on('click', '.submit-form', function() {
     summarySection();
 });
 
+/**
+ * @event Click Event to close
+ */
+$(document).on('click', '#close-event', function(){
+    let closeViewRequest = ActionHelper.closeView()
+    ActionHelper.executeApi(closeViewRequest);
+});
+
 
 /* ********************************* Methods ******************************************** */
 
@@ -457,6 +467,11 @@ async function getStringKeys() {
         $('.next-key').text(nextKey);
     });
 
+    Localizer.getString('done').then(function (result) {
+        doneKey = result;
+        $('.next-key').text(doneKey);
+    });
+
     Localizer.getString('back').then(function(result) {
         backKey = result;
         $('.back-key').text(backKey);
@@ -482,6 +497,10 @@ async function getStringKeys() {
         $('.already-attempt').html(alreadyAttemptedKey);
     });
 
+    Localizer.getString('close').then(function (result) {
+        closeKey = result;
+        $('.close-key').text(closeKey);
+    });
 }
 
 /** 
@@ -580,7 +599,6 @@ function getActionInstance(actionId) {
  * @description Method for creating the response view structure and initialize value
  */
 function createBody() {
-    console.log('actionInstance: ' + JSON.stringify(actionInstance));
     /*  Check Expiry date time  */
     let current_time = new Date().getTime();
     if (actionInstance.expiryTime <= current_time) {
@@ -606,8 +624,9 @@ function createBody() {
         $root.append(textSection1);
 
         if ($.inArray(myUserId, memberIds) > -1) {
-            $('p.text-description').before(`<p class="already-attempt semi-bold mb--16">${alreadyAttemptedKey}</p>`);
+            $('p.text-description').before(`<p class="already-attempt already-attempt semi-bold mb--16 font-12">${alreadyAttemptedKey}</p>`);
             calculateScore();
+            $('.body-outer').after(closeFooter);
         } else {
             if (counter > 1) {
                 Localizer.getString('questions').then(function(result) {
@@ -626,17 +645,11 @@ function createBody() {
         }
         getStringKeys();
         if (actionInstance.customProperties[4].value != "") {
-
-            console.log('contextActionId: ' + contextActionId);
-            console.log('attachmentId: ' + actionInstance.customProperties[4].value);
-            console.log(actionInstance);
-
             let req = ActionHelper.getAttachmentInfo(contextActionId, actionInstance.customProperties[4].value);
             ActionHelper.executeApi(req).then(function(response) {
                     $('.quiz-template-image').attr("src", response.attachmentInfo.downloadUrl);
                     $('.quiz-template-image').show();
                     $('.quiz-updated-img').show();
-                    getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
                 })
                 .catch(function(error) {
                     console.error("AttachmentAction - Error7: " + JSON.stringify(error));
@@ -685,8 +698,6 @@ function calculateScore() {
                         userAnsString = actionDataRows[i].columnValues[c + 1];
                     }
 
-
-                    console.log(`${correctAnsString} == ${userAnsString}`);
                     if (correctAnsString == userAnsString) {
                         score++;
                     }
@@ -898,11 +909,11 @@ function nextButtonName() {
     let currentPage = $('#next').attr('data-next-id');
     if (parseInt(currentPage) >= maxQuestionCount) {
         setTimeout(function() {
-            $('.section-1-footer').find('.next-key').text('Done');
+            $('.section-1-footer').find('.next-key').text(`${doneKey}`);
         }, 100);
     } else {
         setTimeout(function() {
-            $('.section-1-footer').find('.next-key').text('Next');
+            $('.section-1-footer').find('.next-key').text(`${nextKey}`);
         }, 100);
     }
 }
@@ -981,14 +992,10 @@ function summarySection() {
                     let opt_id = $(opt_val).find('input').attr('id');
                     let optImage = $(opt_val).find('.opt-image').length > 0 ? $(opt_val).find('.opt-image').attr('src') : '';
 
-                    console.log('opt_id:')
-                    console.log(opt_id)
-                    console.log(correctAnswer[count])
                     if ($.inArray(opt_id, correctAnswer[count]) !== -1) {
                         if ($(opt_val).find('input').prop('checked') == true) {
                             /* Answer is checked and correct */
                             if ($(opt_val).hasClass('custom-check')) {
-                                console.log('if1:')
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14">
@@ -1012,8 +1019,7 @@ function summarySection() {
                                     </div>
                                 `);
                             } else {
-                                console.log('else1:')
-
+                                
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14">
@@ -1041,8 +1047,7 @@ function summarySection() {
                         } else {
                             /* Answer is correct but not checked */
                             if ($(opt_val).hasClass('custom-check')) {
-                                console.log('if2:')
-
+                               
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
@@ -1066,8 +1071,7 @@ function summarySection() {
                                     </div>
                                 `);
                             } else {
-                                console.log('else2:')
-
+                                
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
@@ -1096,8 +1100,7 @@ function summarySection() {
                         if ($(opt_val).find('input').prop('checked') == true) {
                             /* Answer is checked but incorrect */
                             if ($(opt_val).hasClass('custom-check')) {
-                                console.log('if3:')
-
+                                
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
@@ -1107,7 +1110,6 @@ function summarySection() {
                                     </div>
                                 `);
                             } else {
-                                console.log('else3:')
 
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="1">
@@ -1121,8 +1123,6 @@ function summarySection() {
                         } else {
                             /* If answer is not checked and incorrect */
                             if ($(opt_val).hasClass('custom-check')) {
-                                console.log('if4:')
-
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="1">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
@@ -1132,8 +1132,6 @@ function summarySection() {
                                     </div>
                                 `);
                             } else {
-                                console.log('else4:')
-
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
@@ -1152,7 +1150,6 @@ function summarySection() {
                                     <img src="${optImage}" class="opt-image img-responsive" id="he-${opt_ind}">
                                 </div>
                             `);
-                        console.log('radio image');
                     }
                 });
 
@@ -1175,7 +1172,6 @@ function summarySection() {
                             /* Answer is correct and checked */
                             if ($(opt_val).hasClass('custom-check')) {
                                 /* Checkbox */
-                                console.log('2if1');
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                             <label class="custom-check form-check-label d-block font-14">
@@ -1197,7 +1193,6 @@ function summarySection() {
                                         </div>
                                     `);
                             } else {
-                                console.log('2else1');
 
                                 /* Radio */
                                 $cardBoxDiv.append(`
@@ -1227,7 +1222,6 @@ function summarySection() {
 
                             if ($(opt_val).hasClass('custom-check')) {
                                 /* checkbox */
-                                console.log('2if2');
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14">
@@ -1251,7 +1245,6 @@ function summarySection() {
 
                             } else {
                                 /* radio */
-                                console.log('2else2');
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
@@ -1279,7 +1272,6 @@ function summarySection() {
                             /* Answer is incorrect and checked */
                             $cardBoxDiv.addClass('alert-danger');
                             if ($(opt_val).hasClass('custom-check')) {
-                                console.log('2if3');
                                 /* checkbox */
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_ind}" columnid="${opt_id}">
@@ -1291,7 +1283,6 @@ function summarySection() {
                                         </div>
                                     `);
                             } else {
-                                console.log('2else3');
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-radio-outer" id="${opt_ind}" columnid="${opt_id}">
                                             <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
@@ -1305,7 +1296,6 @@ function summarySection() {
                         } else {
                             /* Answer is incorrect and not checked */
                             if ($(opt_val).hasClass('custom-check')) {
-                                console.log('2if25');
                                 /* checkbox */
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_ind}" columnid="${opt_id}">
@@ -1317,7 +1307,6 @@ function summarySection() {
                                         </div>
                                     `);
                             } else {
-                                console.log('2else5');
                                 /* radio */
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-radio-outer" id="${opt_ind}" columnid="${opt_id}">
@@ -1339,7 +1328,6 @@ function summarySection() {
                                     <img src="${optImage}" class="opt-image img-responsive" id="${opt_ind}">
                                 </div>
                             `);
-                        console.log('checkbox image');
                     }
                 });
 
@@ -1405,6 +1393,10 @@ function getDataRow(actionId) {
         dataTableId: "TestDataSet",
         columnValues: row,
     };
+
+    console.log('row: ');
+    console.log(JSON.stringify(row));
+
     return data;
 }
 
@@ -1421,14 +1413,9 @@ function getClassFromDimension(imgURL, selector) {
     $(tmpImg).on('load', function() {
         imgWidth = tmpImg.width;
         imgHeight = tmpImg.height;
-        console.log('dimensions: ');
-        console.log(imgWidth);
-        console.log(imgHeight);
-
+        
         let divWidth = Math.round($(selector).width());
         let divHeight = Math.round($(selector).height());
-        console.log(divWidth);
-        console.log(divHeight);
         let getClass = '';
         if (imgHeight > divHeight) {
             /* height is greater than width */
@@ -1440,7 +1427,6 @@ function getClassFromDimension(imgURL, selector) {
             /* small image */
             getClass = ('smallfit');
         }
-        console.log(getClass);
         $(selector).addClass(getClass);
 
     });
@@ -1548,3 +1534,19 @@ let summaryFooter = `<div class="footer section-1-footer">
                                 </div>
                             </div>
                         </div>`;
+
+
+
+let closeFooter =  `
+        <div class="footer section-1-footer">
+            <div class="footer-padd bt">
+                <div class="container ">
+                    <div class="row">
+                        <div class="col-4"> </div>
+                        <div class="col-4 text-center"> </div>
+                        <div class="col-4 text-right"> <button type="button" class="btn btn-primary btn-sm pull-right close-key" id="close-event"> ${closeKey}</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;

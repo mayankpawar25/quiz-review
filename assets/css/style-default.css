@@ -1160,6 +1160,7 @@
  
  .checkmark.selected {
      background-color: var(--main-bg-color);
+     border: none;
  }
  
  .custom-check:hover input~.checkmark {
@@ -1303,7 +1304,7 @@
      color: var(--app-gray-02);
      transform: rotate(90deg);
      margin-top: -2px;
-     margin-right: 8px;
+     margin-right: 12px;
  }
  
  .back-key {
@@ -1349,7 +1350,7 @@
  }
  
  .table td {
-     padding: 0.5rem 0.5rem 0.5rem 0;
+     padding: 0.5rem 0 0.5rem 0;
      border-top: 1px solid var(--app-white);
      border-bottom: none;
  }
@@ -1661,7 +1662,7 @@
      width: 16px;
      height: 16px;
      float: left;
-     margin-bottom: 12px;
+     /* margin-bottom: 12px; */
      margin-top: 1px;
  }
  
@@ -2206,6 +2207,7 @@
  
  .footer #back {
      display: table-cell;
+     vertical-align: middle;
  }
  
  .d-table-cell {
@@ -2214,9 +2216,9 @@
  }
  
  .footer .d-table-cell {
-     display: table-cell;
-     vertical-align: top;
-     line-height: 16px;
+     display: table-cell !important;
+     vertical-align: middle;
+     line-height: 13px;
  }
  
  .footer .d-table {
@@ -2292,8 +2294,8 @@
  
  .tpt-btn .next-btn {
      transform: rotate(-90deg);
-     width: 0.65rem;
-     height: 0.65rem;
+     width: 1rem;
+     height: 1rem;
      margin-top: -2px;
      margin-left: 8px;
      color: var(--app-black);
@@ -2411,7 +2413,7 @@
  }
  
  .dd-btn .span2 svg {
-     margin-top: 5px;
+     margin-top: 0px;
  }
  
  .btn-group .dropdown-menu {
@@ -2429,13 +2431,29 @@
      border-color: transparent;
  }
  
- #status-1 .dropdown-menu {
+ .footer .dropdown-menu {
      color: var(--app-gray-sub-text);
      font-size: var(--font-13);
      font-weight: var(--font-weight-600);
  }
  
- #status-1 .dropdown-menu svg {
+ .footer .dropdown-menu.show li a {
+     padding: 0.5rem;
+ }
+ 
+ .threedots .dropdown-menu a {
+     padding: 0.5rem;
+     line-height: 1rem;
+     color: var(--app-gray-sub-text);
+     font-size: var(--font-13);
+     font-weight: var(--font-weight-600);
+ }
+ 
+ .threedots .dropdown-item:hover {
+     background-color: var(--app-white);
+ }
+ 
+ .threedots .dropdown-menu svg {
      margin-top: -2px;
      margin-right: 8px;
  }
@@ -2448,18 +2466,26 @@
      color: var(--app-gray-sub-text);
  }
  
+ .footer .dropdown-menu.show:hover {
+     box-shadow: var(--app-black-shadow-2) -4px -0.8rem 1rem -0.2rem;
+ }
+ 
+ .quiz-updated-img {
+     min-height: 12px;
+ }
+ 
  @media screen and (max-width: 576px) {
-     body {
+     /* body {
          font-size: var(--font-12);
-     }
+     } */
      .body-outer {
          margin-top: 16px;
          padding: 16px 16px 16px 16px;
      }
-     .back-btn {
+     /* .back-btn {
          width: 0.65rem;
          height: 0.65rem;
-     }
+     } */
      .footer {
          left: 0rem;
          right: 0rem;
@@ -2479,7 +2505,7 @@
          right: 16px;
      }
      .datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu {
-         left: auto!important;
+         left: 51% !important;
      }
      .body-outer::before {
          border-top: none;
@@ -2492,12 +2518,12 @@
          width: 100%;
      }
      .d-flex-alert .pl--8 {
-         width: 70%;
+         width: 60%;
          float: left;
          margin-top: 8px;
      }
      .d-flex-alert .pr--8 {
-         width: 30%;
+         width: 40%;
          float: left;
      }
      .min-max-132 {
@@ -2514,5 +2540,17 @@
      .container {
          width: 100%;
          max-width: 100%;
+     }
+ }
+ 
+ @media screen and (max-width: 402px) {
+     .d-flex-alert .pl--8 {
+         width: 60%;
+         float: left;
+         margin-top: 8px;
+     }
+     .d-flex-alert .pr--8 {
+         width: 40%;
+         float: left;
      }
  }

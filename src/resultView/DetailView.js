@@ -92,15 +92,19 @@ $(document).on("click", ".getresult", function() {
     }
 });
 
+/**
+ * @event Click event for download CSV
+ */
 $(document).on('click', '#downloadCSV', function() {
     ActionHelper.downloadCSV(actionId, 'abc.csv');
 });
 
+/**
+ * @event Click event for download image in png
+ */
 $(document).on('click', '#downloadImage', function() {
     let bodyContainerDiv = document.getElementsByClassName("container")[0];
     let backgroundColorOfResultsImage = theme;
-    console.log(bodyContainerDiv.scrollWidth);
-    console.log(bodyContainerDiv.scrollHeight);
     $('.footer').hide();
     html2canvas(bodyContainerDiv, {
         width: bodyContainerDiv.scrollWidth,
@@ -127,11 +131,14 @@ $(document).on('click', '#downloadImage', function() {
     });
 });
 
-
+/**
+ * @event Click event to show change due by date
+ */
 $(document).on('click', '.change-due-by-event', function() {
     $('.change-date').remove();
     $('.close-quiz').remove();
     $('.delete-quiz').remove();
+  
     changeDateSection();
 
     let ddtt = ((actionInstance.customProperties[1].value).split('T'));
@@ -169,6 +176,9 @@ $(document).on('click', '.change-due-by-event', function() {
 
 });
 
+/**
+ * @event Click event to show close quiz
+ */
 $(document).on('click', '.close-quiz-event', function() {
     $('.change-date').remove();
     $('.close-quiz').remove();
@@ -176,6 +186,9 @@ $(document).on('click', '.close-quiz-event', function() {
     closeQuizSection();
 });
 
+/**
+ * @event Click event to show delete quiz
+ */
 $(document).on('click', '.delete-quiz-event', function() {
     $('.change-date').remove();
     $('.close-quiz').remove();
@@ -183,24 +196,39 @@ $(document).on('click', '.delete-quiz-event', function() {
     deleteQuizSection();
 });
 
+/**
+ * @event Click event to close change, close and delete quiz confirm section
+ */
 $(document).on('click', '.cancel-question-delete', function() {
     $('.change-date').remove();
     $('.close-quiz').remove();
     $('.delete-quiz').remove();
 });
 
-$('.dropdown-menu a').on('click', function(event) {
-    $(this).parent().toggleClass('open');
+/**
+ * @event Click event for close dropdown lists
+ */
+$(document).on('click', '.threedots .dropdown-menu a', function(event) {
+    $('.threedots .dropdown-menu').toggleClass('show');
 });
 
+/**
+ * @event Click event for delete quiz
+ */
 $(document).on('click', '#delete-quiz', function() {
     ActionHelper.deleteActionInstance(actionId);
 });
 
+/**
+ * @event Click event for change quiz expiry date
+ */
 $(document).on('click', '#change-quiz-question', function() {
     ActionHelper.closeActionInstance(actionId, actionInstance.version);
 });
 
+/**
+ * @event Change event for expiry date and time
+ */
 $(document).on('change', "input[name='expiry_time'], input[name='expiry_date']", function() {
     $('#change-quiz-date').removeClass('disabled');
     let quizExpireDate = $("input[name='expiry_date']").val();
@@ -530,8 +558,6 @@ function head() {
                     <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive quiz-template-image smallfit"  crossorigin="anonymous">
                 </div>
             `);
-
-                getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
             })
             .catch(function(error) {
                 console.error("AttachmentAction - Error7: " + JSON.stringify(error));
@@ -564,7 +590,19 @@ function headCreator() {
                             </svg><span class="change-due-by-key">${changeDueByKey}</span>
                         </a>
                         <a class="dropdown-item close-quiz-event" >
-                            <svg role="presentation" width="16" height="16" focusable="false" viewBox="8 8 16 16" class="ci aig aih cu cv"><path class="ui-icon__outline cw" d="M23 16c0 .64-.084 1.258-.25 1.852a7.03 7.03 0 0 1-1.809 3.09 7.082 7.082 0 0 1-3.09 1.808c-.593.167-1.21.25-1.851.25s-1.258-.083-1.852-.25a7.05 7.05 0 0 1-3.09-1.809 7.044 7.044 0 0 1-1.808-3.09C9.083 17.259 9 16.642 9 16s.083-1.258.25-1.852c.167-.593.403-1.15.71-1.671a7.096 7.096 0 0 1 2.517-2.516 7.01 7.01 0 0 1 1.671-.711C14.742 9.084 15.36 9 16 9s1.258.084 1.852.25a7.027 7.027 0 0 1 3.09 1.809 7.039 7.039 0 0 1 1.809 3.09c.165.593.249 1.21.249 1.851zm-3.21-4.547A5.924 5.924 0 0 0 16 10.078c-.812 0-1.577.156-2.293.469-.716.312-1.344.738-1.883 1.277s-.964 1.167-1.277 1.883A5.671 5.671 0 0 0 10.078 16c0 .693.118 1.365.356 2.016a5.893 5.893 0 0 0 1.02 1.773l8.335-8.336zM21.921 16a5.918 5.918 0 0 0-1.375-3.789l-8.336 8.336a5.871 5.871 0 0 0 1.773 1.02 5.84 5.84 0 0 0 2.016.355c.813 0 1.576-.156 2.293-.469.716-.312 1.344-.738 1.883-1.277s.965-1.166 1.277-1.883A5.67 5.67 0 0 0 21.922 16z"></path><path class="ui-icon__filled" d="M23.5 15.969c0 .687-.09 1.35-.27 1.984a7.556 7.556 0 0 1-1.937 3.309 7.592 7.592 0 0 1-3.309 1.937c-.635.18-1.297.27-1.984.27s-1.35-.09-1.984-.27a7.565 7.565 0 0 1-4.485-3.457 7.553 7.553 0 0 1-.762-1.789c-.18-.635-.269-1.297-.269-1.984s.09-1.349.27-1.985a7.58 7.58 0 0 1 5.246-5.246c.635-.18 1.296-.27 1.984-.27s1.349.09 1.984.27a7.59 7.59 0 0 1 4.485 3.457 7.58 7.58 0 0 1 .761 1.79c.18.635.27 1.296.27 1.984zM18.953 11.5a5.668 5.668 0 0 0-1.418-.66 5.238 5.238 0 0 0-2.95-.035 5.434 5.434 0 0 0-2.359 1.39 5.408 5.408 0 0 0-1.39 2.363 5.215 5.215 0 0 0 .035 2.945c.153.504.373.977.66 1.419l7.422-7.422zm2.406 4.469c0-.52-.077-1.032-.23-1.535a5.664 5.664 0 0 0-.66-1.418l-7.422 7.422c.442.287.915.506 1.418.66a5.2 5.2 0 0 0 2.945.035 5.422 5.422 0 0 0 2.363-1.39 5.432 5.432 0 0 0 1.39-2.363c.13-.457.196-.927.196-1.411z"></path></svg>  
+                            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<rect fill="none" width="16" height="16"/>
+<path id="Path_1" fill="#484644" d="M8.091,1c0.634-0.002,1.266,0.083,1.876,0.253c0.594,0.165,1.163,0.407,1.694,0.72
+	c1.047,0.626,1.923,1.501,2.548,2.549c0.313,0.53,0.555,1.1,0.721,1.693c0.337,1.228,0.337,2.523,0,3.751
+	c-0.166,0.594-0.408,1.163-0.721,1.694c-0.619,1.052-1.496,1.929-2.548,2.548c-0.531,0.313-1.101,0.555-1.694,0.72
+	c-1.228,0.338-2.523,0.338-3.751,0c-0.593-0.165-1.163-0.407-1.694-0.72c-1.057-0.613-1.936-1.491-2.549-2.548
+	c-0.313-0.531-0.555-1.101-0.72-1.694c-0.337-1.228-0.337-2.523,0-3.751c0.166-0.594,0.407-1.163,0.72-1.693
+	c0.62-1.053,1.497-1.93,2.549-2.549c0.531-0.313,1.1-0.555,1.693-0.72C6.826,1.083,7.457,0.998,8.091,1z M8.091,2.092
+	c-0.8-0.005-1.592,0.157-2.327,0.476c-1.437,0.62-2.582,1.767-3.2,3.205c-0.318,0.73-0.48,1.521-0.475,2.318
+	c-0.001,0.696,0.12,1.388,0.356,2.042c0.239,0.655,0.59,1.265,1.037,1.8l8.444-8.443C10.848,2.594,9.492,2.101,8.091,2.092z
+	 M4.253,12.7c0.536,0.446,1.145,0.798,1.8,1.037c0.655,0.236,1.346,0.356,2.042,0.355c0.797,0.006,1.587-0.156,2.319-0.475
+	c1.438-0.618,2.585-1.763,3.205-3.2c0.318-0.734,0.479-1.526,0.475-2.327c-0.006-1.402-0.499-2.758-1.394-3.838L4.253,12.7z"/>
                             <span class="close-quiz-key">${closeQuizKey}</span>
                         </a>
                         <a class="dropdown-item delete-quiz-event" >
@@ -601,8 +639,6 @@ function headCreator() {
     let $description_sec = $(`<p class="mb--8 text-justify text-break font-12">${description}</p>`);
 
     let current_timestamp = new Date().getTime();
-    console.log('current_timestamp:');
-    console.log(current_timestamp);
     let $date_sec = $(`<p class="semi-bold mb--16 font-12">${actionInstance.expiryTime > current_timestamp ? dueByKey + ' ' : expiredOnKey + ' '} ${dueby}</p>`);
 
     $titleDiv.append($title_sec);
@@ -815,8 +851,7 @@ function getNonresponders() {
 function createReponderQuestionView(userId, responder = '') {
     total = 0;
     score = 0;
-    console.log('createReponderQuestionView');
-
+    
     $("div#root > div.question-content").html("");
 
     if (responder != '') {
@@ -844,7 +879,7 @@ function createReponderQuestionView(userId, responder = '') {
             answerIs = "";
             let $cardDiv = $('<div class="card-box card-bg card-border alert-success mb--8"></div>');
             let $questionContentDiv = $('<div class="question-content"></div>');
-            let $rowdDiv = $('<div class="mt--32"></div>');
+            let $rowdDiv = $('<div class="mt--24"></div>');
             let $dflexDiv = $('<div class="d-table mb--4"></div>');
             $questionContentDiv.append($rowdDiv);
             $questionContentDiv.append($dflexDiv);
@@ -932,8 +967,6 @@ function createReponderQuestionView(userId, responder = '') {
                     optAnsArr[optind] = 'incorrect';
                 }
             });
-            console.log('optAnsArr123:');
-            console.log(optAnsArr);
             $cardDiv.find("#status-" + question.name).html(`<span class="${answerIs == 'Correct' ? 'text-success' : 'text-danger'}">${answerIs == 'Correct' ? correctKey : incorrectKey}</span>`);
             if (optAnsArr.includes('incorrect') == false) {
                 score++;
@@ -983,7 +1016,7 @@ function createCreatorQuestionView() {
             let correctCounter = 0;
             answerIs = "";
             let $quesContDiv = $(`<div class="question-content" id="content-${question.name}"></div>`);
-            let $mtDiv = $(`<div class="mt--32"></div>`);
+            let $mtDiv = $(`<div class="mt--24"></div>`);
             let $dflexDiv = $('<div class="d-table mb--4"></div>');
 
             $quesContDiv.append($mtDiv);
@@ -1039,8 +1072,7 @@ function createCreatorQuestionView() {
 
             /* check for correct answer for each users */
             for (let i = 0; i < actionDataRowsLength; i++) {
-                console.log('i: ' + i);
-
+               
                 for (let c = 0; c < correctResponse.length; c++) {
                     let correctAnsString = '';
                     let userAnsString = '';
@@ -1066,15 +1098,11 @@ function createCreatorQuestionView() {
                     }
 
                     if (correctAnsString == userAnsString) {
-                        console.log(`${correctAnsString} == ${userAnsString}`);
                         scoreArray[question.name] = scoreArray[question.name] + 1;
                     }
 
                 }
             }
-
-            console.log('scoreArray: ');
-            console.log(scoreArray);
 
             question.options.forEach((option, iii) => {
                 /* User Responded */
@@ -1112,12 +1140,7 @@ function createCreatorQuestionView() {
 
                     }
 
-                    console.log('userResArr: ');
-                    console.log(userResArr);
                 }
-
-                console.log('userResponseAnswer: ');
-                console.log(userResponseAnswer);
 
                 /* Correct Answer */
                 let correctResponse = JSON.parse(
@@ -1181,7 +1204,7 @@ function createQuestionView(userId) {
         dataTable.dataColumns.forEach((question, ind) => {
             answerIs = "";
             let $questionDiv = $(`<div class="question-content" id="content-${question.name}"></div>`);
-            let $mtDiv = $(`<div class="mt--32"></div>`);
+            let $mtDiv = $(`<div class="mt--24"></div>`);
             let $dtableDiv = $(`<div class="d-table mb--4 "></div>`);
             let count = ind + 1;
             let questionAttachmentId = question.attachments != "" ? question.attachments[0].id : "";
@@ -1221,7 +1244,6 @@ function createQuestionView(userId) {
             let $blankDiv = $(`<div class=" "></div>`);
             $mtDiv.append($blankDiv);
             let optAnsArr = [];
-            console.log(question.options);
             question.options.forEach((option, optind) => {
                 /* User Responded */
                 let userResponse = [];
@@ -1232,7 +1254,6 @@ function createQuestionView(userId) {
                         userResponse = actionDataRows[i].columnValues;
                         let userResponseLength = Object.keys(userResponse).length;
 
-                        console.log('userResponse ' + JSON.stringify(userResponse));
 
                         for (let j = 1; j <= userResponseLength; j++) {
                             if (ActionHelper.isJson(userResponse[j]) == true) {
@@ -1296,8 +1317,6 @@ function createQuestionView(userId) {
                 $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold ${answerIs == 'Correct' ? 'text-success' : 'text-danger'}">${answerIs}</span>`);
             });
 
-            console.log('optAnsArr: ');
-            console.log(optAnsArr);
             if (optAnsArr.includes('incorrect') != true) {
                 score++;
             }
@@ -1325,15 +1344,9 @@ function createQuestionView(userId) {
  * @param attachmentId String contains attachment id of option 
  */
 function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
-    console.log('id: ' + id);
-    console.log('userResponse: ' + userResponse);
-    console.log('correctAnswer: ' + correctAnswer);
-
     let $oDiv = $('<div class=""></div>');
     /*  If answer is correct  and answered */
     if ($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) == $.trim(id)) {
-        console.log('  ');
-        console.log('if');
         $oDiv.append(
             `<div class="card-box card-bg card-border alert-success mb--8">
                 <div class="radio-section custom-radio-outer" id="${id} " columnid="3 ">
@@ -1355,8 +1368,6 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
             answerIs = "Correct";
         }
     } else if (($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) != $.trim(userResponse))) {
-        console.log('  ');
-        console.log('else 1');
         /* If User Response is correct and answered incorrect */
         $oDiv.append(`<div class="card-box card-bg card-border alert-danger mb--8">
                 <div class="radio-section custom-radio-outer" id="${id}">
@@ -1370,9 +1381,6 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
             </div>`);
         answerIs = "Incorrect";
     } else if (($.trim(userResponse) != $.trim(id) && $.trim(correctAnswer) == $.trim(id))) {
-        console.log('  ');
-        console.log('else 2');
-
         /* If User Response is incorrect and not answered */
         $oDiv.append(`<div class="card-box card-bg card-border mb--8">
                 <div class="radio-section custom-radio-outer" id="${id}">
@@ -1391,8 +1399,6 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
             </div>`);
         answerIs = "Incorrect";
     } else {
-        console.log('  ');
-        console.log('else 3');
         $oDiv.append(`<div class="card-box card-bg card-border mb--8 ">
                 <div class=" radio-section custom-radio-outer " id="${id}" columnid="3 ">
                     <label class="custom-radio d-block font-14"> 
@@ -1531,47 +1537,25 @@ function footerDownload() {
                 <div class="container">
                     <div class="row">
                         <div class="col-12 text-right">
-                            <div class="dropdown">
-                                <button type="button" class="btn btn-primary btn-sm  dropdown-toggle dd-btn" id="downloadImage" data-toggle="dropdown" aria-expanded="false">
-                                    <span class="span1 add-content-label" id="download-key">${downloadKey}</span>
-                                    <span class="span2">
-                                        <i data-icon-name="ChevronDown" aria-hidden="true" class="ms-Icon root-43"></i>
-                                    </span>
+                            <div class="dropdown btn-group">
+                                <button type="button" class="btn btn-primary  dd-btn" id="downloadImage"  data-toggle="dropdown" data-bind="enable: !noResults()">
+                                    <span class="span1 add-content-label" id="download-key">${downloadKey}</span>   
                                 </button>
-                                <ul class="dropdown-menu" style="">
-                                    <li class="cursur-pointer"  id="downloadImage">
+                                <button type="button" class="btn btn-primary   dropdown-toggle dd-btn" data-toggle="dropdown" aria-expanded="false">
+                                        <span class="span2">
+                                        <svg role="presentation" fill="#fff" width="16" height="16" focusable="false" viewBox="8 5 16 16" ><path class="ui-icon__outline cw" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z"></path><path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z"></path></svg>
+                                    </span>    
+                                </button>
+                                <ul class="dropdown-menu" style="top:22px">
+                                    <li class="cursur-pointer" id="downloadImage">
                                     <a id="add-text">
-                                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-                                            <g>
-                                                <path id="Path_589" fill="" d="M14.5,2c0.201-0.001,0.4,0.038,0.586,0.117c0.361,0.151,0.648,0.438,0.8,0.8
-                                                    C15.963,3.102,16.002,3.3,16,3.5v9c0.001,0.199-0.039,0.396-0.117,0.578c-0.077,0.181-0.188,0.346-0.328,0.484
-                                                    c-0.137,0.136-0.299,0.244-0.477,0.319C14.896,13.961,14.699,14,14.5,14h-13c-0.199,0.001-0.396-0.039-0.578-0.117
-                                                    c-0.18-0.076-0.344-0.185-0.484-0.32c-0.135-0.141-0.243-0.305-0.319-0.483C0.039,12.896-0.001,12.699,0,12.5v-9
-                                                    c-0.001-0.199,0.039-0.396,0.117-0.578c0.075-0.178,0.184-0.34,0.32-0.477c0.139-0.139,0.304-0.25,0.484-0.328
-                                                    C1.104,2.039,1.301,1.999,1.5,2H14.5z M4.875,7.039C4.74,7.035,4.609,7.088,4.516,7.187L1,11.086V12.5
-                                                    c-0.002,0.133,0.053,0.26,0.148,0.352C1.24,12.947,1.367,13.002,1.5,13h7.711L5.273,7.242C5.229,7.178,5.17,7.127,5.1,7.094
-                                                    C5.03,7.058,4.953,7.04,4.875,7.039z M1.5,3C1.367,2.999,1.24,3.052,1.148,3.148C1.053,3.24,0.998,3.367,1,3.5v6.094L3.8,6.5
-                                                    c0.132-0.148,0.295-0.266,0.478-0.344C4.689,5.985,5.155,6.001,5.555,6.2c0.219,0.104,0.406,0.267,0.539,0.469L10.422,13H14.5
-                                                    c0.274-0.004,0.496-0.226,0.5-0.5v-9c0.002-0.133-0.053-0.26-0.148-0.352C14.76,3.052,14.633,2.999,14.5,3H1.5z M11.5,4.5
-                                                    c0.266-0.002,0.529,0.051,0.773,0.156c0.482,0.202,0.867,0.586,1.069,1.07C13.448,5.97,13.502,6.234,13.5,6.5
-                                                    c0.001,0.267-0.055,0.53-0.164,0.773c-0.101,0.24-0.246,0.457-0.43,0.641c-0.184,0.181-0.397,0.327-0.633,0.43
-                                                    C12.029,8.449,11.766,8.502,11.5,8.5c-0.266,0.001-0.529-0.052-0.773-0.156c-0.475-0.214-0.855-0.595-1.069-1.07
-                                                    C9.553,7.029,9.499,6.766,9.5,6.5C9.498,6.234,9.551,5.971,9.656,5.727c0.104-0.236,0.248-0.45,0.43-0.633
-                                                    c0.184-0.183,0.401-0.329,0.641-0.43C10.971,4.555,11.233,4.499,11.5,4.5z M11.5,5.5c-0.135-0.001-0.268,0.025-0.391,0.078
-                                                    c-0.12,0.052-0.229,0.126-0.32,0.219c-0.09,0.09-0.161,0.196-0.211,0.312C10.525,6.232,10.498,6.366,10.5,6.5
-                                                    c0,0.134,0.025,0.267,0.078,0.391c0.097,0.242,0.289,0.434,0.531,0.531C11.232,7.474,11.365,7.5,11.5,7.5
-                                                    c0.135,0.001,0.268-0.025,0.391-0.078c0.117-0.05,0.224-0.121,0.313-0.211c0.093-0.092,0.167-0.2,0.219-0.32
-                                                    c0.104-0.25,0.104-0.531,0-0.781c-0.097-0.242-0.288-0.434-0.53-0.531C11.768,5.526,11.635,5.499,11.5,5.5z"/>
-                                            </g>
-                                        </svg> <span class="text-label" id="download-image-key">${downloadImageKey}</span></a>
+                                        <span class="text-label" id="download-image-key">${downloadImageKey}</span></a>
                                     </li>
                                     <li class="cursur-pointer" id="downloadCSV">
                                         <a id="add-photo">
-                                            <svg role="presentation" width="16px" height="16px" focusable="false" viewBox="8 8 16 16" class=""><g><path d="M20.5 8H15c-.4 0-.777.156-1.083.463l-3.478 3.968c-.283.283-.439.66-.439 1.06V22.5c0 .827.673 1.5 1.5 1.5h9c.827 0 1.5-.673 1.5-1.5v-13c0-.827-.673-1.5-1.5-1.5zm-6.514 1.9V13h-2.718l2.718-3.1zM21 22.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V14h3.986V9.003c.005 0 .01-.003.014-.003h5.5a.5.5 0 0 1 .5.5v13zm-2.462-6.24a.375.375 0 0 0-.576.48l1.05 1.26-1.05 1.26a.375.375 0 1 0 .576.48l1.25-1.5a.375.375 0 0 0 0-.48l-1.25-1.5zm-4.548-.048a.375.375 0 0 0-.528.048l-1.25 1.5a.375.375 0 0 0 0 .48l1.25 1.5a.374.374 0 1 0 .576-.48L12.988 18l1.05-1.26a.375.375 0 0 0-.048-.528zm3.129-1.568a.374.374 0 0 0-.475.237l-2 6a.375.375 0 1 0 .712.238l2-6a.375.375 0 0 0-.237-.475z"></path></g></svg>
                                             <span class="photo-label" id="download-csv-key">${downloadCSVKey}</span>
                                         </a>
                                     </li>
-
                                 </ul>
                             </div>
                         </div>
@@ -1637,7 +1621,7 @@ function footer2() {
 }
 
 /**
- * @description Click Event for non responder page 
+ * @description Method to load non responder page 
  */
 function create_responder_nonresponders() {
     if (actionInstance.customProperties[2].value == "Only me") {
@@ -1690,14 +1674,8 @@ function getClassFromDimension(imgURL, selector) {
     $(tmpImg).on('load', function() {
         imgWidth = tmpImg.width;
         imgHeight = tmpImg.height;
-        console.log('dimensions: ');
-        console.log(imgWidth);
-        console.log(imgHeight);
-
         let divWidth = Math.round($(selector).width());
         let divHeight = Math.round($(selector).height());
-        console.log(divWidth);
-        console.log(divHeight);
         let getClass = '';
         if (imgHeight > divHeight) {
             /* height is greater than width */
@@ -1709,12 +1687,14 @@ function getClassFromDimension(imgURL, selector) {
             /* small image */
             getClass = ('smallfit');
         }
-        console.log(getClass);
         $(selector).addClass(getClass);
 
     });
 }
 
+/**
+ * @description Method contains section to date change of quiz
+ */
 function changeDateSection() {
     $('#root .d-table').before(`
         <div class="change-date">
@@ -1756,6 +1736,9 @@ function changeDateSection() {
     `);
 }
 
+/**
+ * @description Method contains section to close quiz
+ */
 function closeQuizSection() {
     $('#root .d-table').before(`
         <div class="close-quiz">
@@ -1787,6 +1770,9 @@ function closeQuizSection() {
     `);
 }
 
+/**
+ * @description Method contains section to delete quiz
+ */
 function deleteQuizSection() {
     $('#root .d-table').before(`
         <div class="delete-quiz">

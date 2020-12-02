@@ -325,6 +325,11 @@ export class ActionHelper {
         }
     }
 
+    /**
+     * Method to Close the action instance
+     * @param actionId object of action instance id
+     * @param version object of action instance version
+     */
     static async closeActionInstance(actionId, version) {
         let actionInstanceUpdateInfo = {
             id: actionId,

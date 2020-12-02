@@ -37,7 +37,8 @@ let selectCorrectChoiceKey = '';
 let addQuestionKey = '';
 let uploadCoverImageKey = '';
 let attachmentSet = [];
-
+let coverImageKey = '';
+let clearKey = '';
 
 
 /* ******************************** Events ************************************** */
@@ -260,9 +261,13 @@ $(document).on("click", ".show-setting", function() {
 /**
  * @event Click to Submit Quiz
  */
-$(document).on("click", "#submit", function() {
+$(document).on("click", "#submit", function(e) {
+    e.preventDefault();
     $("#submit").prop('disabled', true);
-    submitForm();
+    $('.loader-overlay').show();
+    $('.loader-overlay').show("fast", function(){
+        submitForm();
+    });
 });
 
 /**
@@ -312,8 +317,6 @@ $(document).on("click", "#next", function() {
     });
 
     if (isError == false) {
-        // $('.body-outer').before(loader);
-
         $('#next').prop('disabled', false);
 
         $(".section-1").hide();
@@ -485,6 +488,7 @@ $(document).on('change', 'input[name="option_image"]', function() {
 function submitForm() {
     /* Validate */
     let errorText = "";
+    // $('.loader-overlay').show();
 
     $("input[type='text']").removeClass("danger");
     $("label.label-alert").remove();
@@ -529,21 +533,23 @@ function submitForm() {
         .each(function() {
             let element = $(this);
             if (element.val() == "") {
-                $(this)
-                    .parents("div.card-box")
-                    .removeClass("card-box")
-                    .addClass("card-box-alert");
-
                 if (element.attr("id") == "quiz-title") {
                     errorText += "<p>Quiz title is required.</p>";
                     $("#quiz-title").addClass("danger");
                     $("#quiz-title").before(
                         `<label class="label-alert d-block mb--4"><font class="required-key">${requiredKey}</font></label>`
                     );
+
+                    if ($(this).find("div.card-box").length > 0 ){
+                        $(this).parents("div.card-box").removeClass("card-box").addClass("card-box-alert");
+                    }
                 } else if (element.attr("id").startsWith("question-title")) {
                     if ($(element).parents('div.input-group').find('input[name="question_image"]').val() != "") {
                         // Do nothing
                     } else {
+                        if ($(this).find("div.card-box").length > 0) {
+                            $(this).parents("div.card-box").removeClass("card-box").addClass("card-box-alert");
+                        }
                         $(element).addClass("danger");
                         Localizer.getString('questionLeftBlank').then(function(result) {
                             $('.question-blank-key').text(result);
@@ -557,12 +563,13 @@ function submitForm() {
                         errorText += "<p>Question cannot not left blank.</p>";
                         $(element).addClass("danger");
                     }
-
-
                 } else if (element.attr("id").startsWith("option")) {
                     if ($(element).parents('div.input-group').find('input[name="option_image"]').val() != "") {
                         // Do nothing
                     } else {
+                        if ($(this).find("div.card-box").length > 0) {
+                            $(this).parents("div.card-box").removeClass("card-box").addClass("card-box-alert");
+                        }
                         $(this).addClass("danger");
                         $(this)
                             .parents("div.col-12").parents("div.option-div")
@@ -580,7 +587,7 @@ function submitForm() {
         });
 
     if ($.trim(errorText).length <= 0) {
-        $('.body-outer').before(loader);
+        
         ActionHelper
             .executeApi(request)
             .then(function(response) {
@@ -589,9 +596,13 @@ function submitForm() {
                 });
             })
             .catch(function(error) {
-                console.error("GetContext - Error1: " + JSON.stringify(error));
-            });
+            console.error("GetContext - Error1: " + JSON.stringify(error));
+        });
+    
+
     } else {
+        
+        $('.loader-overlay').hide();
         $('.required-key').text(requiredKey);
         $("#submit").prop('disabled', false);
         return;
@@ -605,7 +616,7 @@ function getQuestionSet() {
     let questionCount = $("form").find("div.container.question-container").length;
     questions = new Array();
     let error = false;
-    $('.loader-overlay').remove();
+    
     for (let i = 1; i <= questionCount; i++) {
         let optionType = ActionHelper.getColumnType('singleselect');
         let option = [];
@@ -620,7 +631,6 @@ function getQuestionSet() {
                 let count = index + 1;
                 let optId = "question" + i + "option" + count;
                 let optTitle = $("#question" + i).find("#option" + count).val();
-                // let optionAttachmentId = $("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-id').length > 0 ? $("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-id').val() : '';
                 let optionAttachmentSet = $("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-set').length > 0 ? JSON.parse($("#question" + i).find("#option" + count).parents('div.option-div').find('textarea#option-attachment-set').val()) : '';
 
                 if ($("#question" + i).find("#check" + count).is(":checked")) {
@@ -633,7 +643,6 @@ function getQuestionSet() {
                 } else {
                     optionType = ActionHelper.getColumnType('singleselect');
                 }
-                // let optDisplayData = JSON.stringify({ name: optTitle, attachmentId: optionAttachmentId });
                 if (optionAttachmentSet != "") {
                     option.push({
                         name: optId,
@@ -650,7 +659,6 @@ function getQuestionSet() {
             });
 
 
-        // let QuestionDisplayData = JSON.stringify({ name: $("#question" + i).find("#question-title").val(), attachmentId: questionAttachmentId });
         let val = {};
         if (questionAttachmentSet != "") {
             val = {
@@ -692,7 +700,7 @@ function getQuestionSet() {
     }
 
     if (error == false) {
-        $('.body-outer').before(loader);
+        
         return questions;
     } else {
         return false;
@@ -737,6 +745,8 @@ function getCorrectAnswer() {
  * @description Method to upload image to server
  */
 function uploadImages() {
+    
+    
     let imageCounter = 0;
     let dfd = $.Deferred();
     let totalImageUpload = 0;
@@ -747,6 +757,8 @@ function uploadImages() {
     });
     $('input[type="file"]').each(function(imgIndex, fileData) {
         if ($(fileData).val() != '') {
+            
+
             let identifier = $(fileData).attr('name');
             let coverImage = $(fileData).get(0).files[0];
             let attachment = ActionHelper.attachmentUpload(coverImage, coverImage['type']);
@@ -756,6 +768,7 @@ function uploadImages() {
                     attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
                     ActionHelper.executeApi(attachmentRequest)
                         .then(function(response) {
+                            
                             imageCounter++;
                             let attachmentData = { 'name': 'quiz-banner', type: 'Image', id: response.attachmentId };
                             attachmentSet.push(attachmentData);
@@ -775,9 +788,9 @@ function uploadImages() {
                     attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
                     ActionHelper.executeApi(attachmentRequest)
                         .then(function(response) {
+                            
                             imageCounter++;
                             let attachmentData = { 'name': 'question-banner-' + imgIndex, type: 'Image', id: response.attachmentId };
-                            attachmentSet.push(attachmentData);
                             let selector = $(fileData).parents('.question-container').attr('id');
                             if ($('#' + selector).find('#question-attachment-id').length > 0) {
                                 $('#' + selector).find('#question-attachment-id').val(response.attachmentId);
@@ -796,8 +809,8 @@ function uploadImages() {
                     ActionHelper.executeApi(attachmentRequest)
                         .then(function(response) {
                             imageCounter++;
+                            
                             let attachmentData = { 'name': 'option-banner-' + imgIndex, type: 'Image', id: response.attachmentId };
-                            attachmentSet.push(attachmentData);
                             let selector = $(fileData).parents('.row');
                             if ($(selector).find('textarea#option-attachment-id').length > 0) {
                                 $(selector).find('textarea#option-attachment-id').val(response.attachmentId);
@@ -813,7 +826,7 @@ function uploadImages() {
                     break;
             }
 
-            $(".loader-overlay").remove();
+            $(".loader-overlay").hide();
         }
     });
 
@@ -836,6 +849,7 @@ function uploadImages() {
  * @param action package id
  */
 function createAction(actionPackageId) {
+    
     let quizTitle = $("#quiz-title").val();
     let quizDescription = $("#quiz-description").val();
     let quizExpireDate = $("input[name='expiry_date']").val();
@@ -877,8 +891,6 @@ function createAction(actionPackageId) {
     });
     properties.push(getcorrectanswers);
 
-    console.log('attachmentSet: ' + JSON.stringify(attachmentSet));
-
     let action = {
         id: generateGUID(),
         actionPackageId: actionPackageId,
@@ -897,8 +909,7 @@ function createAction(actionPackageId) {
             attachments: attachmentSet,
         }],
     };
-    console.log('action: ' + JSON.stringify(action));
-    // return ;
+
     let request = ActionHelper.createAction(action);
     ActionHelper
         .executeApi(request)
@@ -1078,6 +1089,16 @@ async function getStringKeys() {
         uploadCoverImageKey = result;
         $('.upload-cover-image-key').text(uploadCoverImageKey)
     });
+
+    Localizer.getString('coverImage').then(function(result){
+        coverImageKey = result;
+        $('.cover-image-key').text(coverImageKey)
+    });
+
+    Localizer.getString('clear').then(function (result) {
+        clearKey = result;
+        $('.clear-key').text(clearKey)
+    })
 }
 
 /**
@@ -1089,6 +1110,8 @@ async function getTheme(request) {
     let context = response.context;
     lastSession = context.lastSessionData;
     let theme = context.theme;
+    $('.body-outer').before(loader);
+
     $("link#theme").attr("href", "css/style-" + theme + ".css");
     $('form.sec1').append(formSection);
     $('form.sec1').append(section2);
@@ -1104,8 +1127,6 @@ async function getTheme(request) {
     /* If Edit back the quiz */
     if (lastSession != null) {
         let actionId = lastSession.action.id;
-        console.log('actionId: ');
-        console.log(actionId);
         let ddtt = ((lastSession.action.customProperties[1].value).split('T'));
         let dt = ddtt[0].split('-');
         weekDateFormat = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
@@ -1129,10 +1150,8 @@ async function getTheme(request) {
         /* Quiz Section Attachment Check */
         if (lastSession.action.customProperties[4].value != "") {
 
-            // let req = ActionHelper.getAttachmentInfo(lastSession.action.customProperties[4].value);
             let req = ActionHelper.getAttachmentInfo(actionId, lastSession.action.customProperties[4].value);
             ActionHelper.executeApi(req).then(function(response) {
-                    // console.info("Attachment - Response: " + JSON.stringify(response));
                     $('#quiz-img-preview, #quiz-title-image').attr("src", response.attachmentInfo.downloadUrl);
                     $('.photo-box').hide();
                     $('.quiz-updated-img').show();
@@ -1140,7 +1159,6 @@ async function getTheme(request) {
                     $('#quiz-title-image').show();
                     $('.quiz-updated-img').show();
                     $('.quiz-clear').show();
-                    console.log(response.attachmentInfo);
                     $('#cover-image').after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                 })
                 .catch(function(error) {
@@ -1415,30 +1433,23 @@ function readURL(input, elem) {
             image.onload = function() {
                 let imgWidth = this.width;
                 let imgHeight = this.height;
-
-                console.log('dimentions: ');
-                console.log(this.width);
-                console.log(this.height);
                 let divWidth = $(elem).width();
                 let divHeight = $(elem).height();
                 $(elem).attr('src', this.src);
-                console.log($(elem).width());
-                console.log($(elem).height());
-                if (imgHeight > divHeight) {
-                    /* height is greater than width */
-                    $(elem).addClass('heightfit');
-                } else if (imgWidth > divWidth) {
-                    /* width is greater than height */
-                    $(elem).addClass('widthfit');
-                } else {
-                    /* small image */
-                    $(elem).addClass('smallfit');
+                
+                if (elem != '#quiz-img-preview, #quiz-title-image'){
+                    if (imgHeight > divHeight) {
+                        /* height is greater than width */
+                        $(elem).addClass('heightfit');
+                    } else if (imgWidth > divWidth) {
+                        /* width is greater than height */
+                        $(elem).addClass('widthfit');
+                    } else {
+                        /* small image */
+                        $(elem).addClass('smallfit');
+                    }
                 }
             };
-            /*
-                console.log($(elem)[0].naturalHeight);
-                console.log($(elem)[0].naturalWidth);
-            */
         };
         reader.readAsDataURL(input.files[0]); // convert to base64 string
     }
@@ -1459,8 +1470,8 @@ let formSection = `<div class="section-1">
                         <textarea class="form-control in-t font-12" id="quiz-description" maxlength="5000"></textarea>
                     </div>
                     <div class="form-group mb0">
-                        <label class="cover-image-label semi-bold mb--8 font-12">Cover Image (Optional)</label>
-                        <label class="quiz-clear semi-bold mb--8 cursor-pointer pull-right theme-color font-12" style="display:none">Clear</label>
+                        <label class="cover-image-label semi-bold mb--8 font-12 cover-image-key">${coverImageKey}</label>
+                        <label class="quiz-clear semi-bold mb--8 cursor-pointer pull-right theme-color font-12 clear-key" style="display:none">${clearKey}</label>
                         <div class="relative">
                             <!-- hide this div after img added -->
                             <div class="photo-box card-bg card-border max-min-220 upvj cursor-pointer">
@@ -1530,14 +1541,14 @@ let section2 = `<div class="section-2 d-none">
                     <div class="footer-padd bt">
                         <div class="container ">
                             <div class="row">
-                                <div class="col-9">
-                                    <a class=" cursor-pointer" id="back-section2">
-                                        <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="gt ki gs">
+                                <div class="col-9 d-table">
+                                    <a class="d-table-cell cursor-pointer" id="back-section2">
+                                        <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="gt ki gs mr--12">
                                             <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
                                             </path>
                                             <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
                                             </path>
-                                        </svg> Back
+                                        </svg> <span class="back-key">${backKey}</span>
                                     </a>
                                 </div>
                                 <div class="col-3 text-right"> 
@@ -1975,7 +1986,7 @@ let settingSection = `<div style="display:none" id="setting">
 /**
  * @description Variable contains Loader
  */
-let loader = `<div class="loader-overlay">
+let loader = `<div class="loader-overlay" style="display:none">
                 <div class="loader-outer">
                     <div class="spinner-border" role="status">
                         <span class="sr-only">Loading...</span>
