@@ -205,8 +205,7 @@ $(document).on("click", '#next', function() {
                         })
                         .catch(function(error) {
                             console.log("Error1: " + JSON.stringify(error));
-                        })
-                    ;
+                        });
 
                 } else {
                     $('#previous').attr('data-prev-id', (parseInt(currentPage) - 1));
@@ -385,7 +384,7 @@ $(document).on('click', '.submit-form', function() {
 /**
  * @event Click Event to close
  */
-$(document).on('click', '#close-event', function(){
+$(document).on('click', '#close-event', function() {
     let closeViewRequest = ActionHelper.closeView()
     ActionHelper.executeApi(closeViewRequest);
 });
@@ -467,7 +466,7 @@ async function getStringKeys() {
         $('.next-key').text(nextKey);
     });
 
-    Localizer.getString('done').then(function (result) {
+    Localizer.getString('done').then(function(result) {
         doneKey = result;
         $('.next-key').text(doneKey);
     });
@@ -497,7 +496,7 @@ async function getStringKeys() {
         $('.already-attempt').html(alreadyAttemptedKey);
     });
 
-    Localizer.getString('close').then(function (result) {
+    Localizer.getString('close').then(function(result) {
         closeKey = result;
         $('.close-key').text(closeKey);
     });
@@ -1019,7 +1018,7 @@ function summarySection() {
                                     </div>
                                 `);
                             } else {
-                                
+
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-radio-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14">
@@ -1047,7 +1046,7 @@ function summarySection() {
                         } else {
                             /* Answer is correct but not checked */
                             if ($(opt_val).hasClass('custom-check')) {
-                               
+
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-check-outer selector-inp" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
@@ -1071,7 +1070,7 @@ function summarySection() {
                                     </div>
                                 `);
                             } else {
-                                
+
                                 $cardBoxDiv.append(`
                                         <div class="radio-section custom-radio-outer" id="${opt_id}" columnid="${opt_ind}">
                                         <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
@@ -1100,7 +1099,7 @@ function summarySection() {
                         if ($(opt_val).find('input').prop('checked') == true) {
                             /* Answer is checked but incorrect */
                             if ($(opt_val).hasClass('custom-check')) {
-                                
+
                                 $cardBoxDiv.append(`
                                     <div class="radio-section custom-check-outer" id="${opt_id}" columnid="1">
                                         <label class="custom-check form-check-label d-block font-14 cursor-pointer selector-inp">
@@ -1354,21 +1353,26 @@ function summarySection() {
  */
 function radiobuttonclick() {
     let data = [];
-    row = {};
+    // row = {};
     $.each($("input[type='checkbox']:checked"), function(ind, v) {
-        let col = $(this).parents("div.radio-section").attr("columnid");
-        data.push($(this).attr("id"));
+        if ($(this).is(':visible')) {
+            let col = $(this).parents("div.radio-section").attr("columnid");
+            data.push($(this).attr("id"));
 
-        if (!row[col]) row[col] = [];
-        row[col] = JSON.stringify(data);
+            if (!row[col]) row[col] = [];
+            row[col] = JSON.stringify(data);
+        }
     });
 
     $.each($("input[type='radio']:checked"), function() {
-        let col = $(this).parents("div.radio-section").attr("columnid");
+        if ($(this).is(':visible')) {
+            let col = $(this).parents("div.radio-section").attr("columnid");
 
-        if (!row[col]) row[col] = [];
-        row[col] = $(this).attr("id");
+            if (!row[col]) row[col] = [];
+            row[col] = $(this).attr("id");
+        }
     });
+
 }
 
 /**
@@ -1393,10 +1397,6 @@ function getDataRow(actionId) {
         dataTableId: "TestDataSet",
         columnValues: row,
     };
-
-    console.log('row: ');
-    console.log(JSON.stringify(row));
-
     return data;
 }
 
@@ -1413,7 +1413,7 @@ function getClassFromDimension(imgURL, selector) {
     $(tmpImg).on('load', function() {
         imgWidth = tmpImg.width;
         imgHeight = tmpImg.height;
-        
+
         let divWidth = Math.round($(selector).width());
         let divHeight = Math.round($(selector).height());
         let getClass = '';
@@ -1537,7 +1537,7 @@ let summaryFooter = `<div class="footer section-1-footer">
 
 
 
-let closeFooter =  `
+let closeFooter = `
         <div class="footer section-1-footer">
             <div class="footer-padd bt">
                 <div class="container ">
