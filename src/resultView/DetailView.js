@@ -1000,7 +1000,7 @@ function createCreatorQuestionView() {
             <div class="clearfix"></div>
             <hr class="small">
             <div class="d-flex cursor-pointer" data-attr="home" id="${myUserId}">
-                    <p class="semi-bold font-14">${result}</p>
+                <p class="semi-bold font-14">${result}</p>
             </div>
             <hr class="small">
         `);
@@ -1184,7 +1184,7 @@ function createCreatorQuestionView() {
             if (actionDataRowsLength == 0) {
                 $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">0% Correct</div>`);
             } else {
-                $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">${(scoreArray[question.name] * 100) / actionDataRowsLength}% Correct</span>`);
+                $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">${((scoreArray[question.name] * 100) / actionDataRowsLength).toFixed(2)}% Correct</span>`);
             }
         });
     });
@@ -1696,7 +1696,7 @@ function getClassFromDimension(imgURL, selector) {
  * @description Method contains section to date change of quiz
  */
 function changeDateSection() {
-    $('#root .d-table').before(`
+    $('#root .d-table:first').before(`
         <div class="change-date">
             <div class="card-box card-bg card-border">
                 <div class="row">
@@ -1740,7 +1740,7 @@ function changeDateSection() {
  * @description Method contains section to close quiz
  */
 function closeQuizSection() {
-    $('#root .d-table').before(`
+    $('#root .d-table:first').before(`
         <div class="close-quiz">
             <div class="card-box card-bg card-border">
                 <div class="row">
@@ -1774,7 +1774,7 @@ function closeQuizSection() {
  * @description Method contains section to delete quiz
  */
 function deleteQuizSection() {
-    $('#root .d-table').before(`
+    $('#root .d-table:first').before(`
         <div class="delete-quiz">
             <div class="card-box card-bg card-border">
                 <div class="row">

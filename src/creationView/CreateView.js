@@ -596,8 +596,8 @@ function submitForm() {
                 });
             })
             .catch(function(error) {
-            console.error("GetContext - Error1: " + JSON.stringify(error));
-        });
+                console.error("GetContext - Error1: " + JSON.stringify(error));
+            });
     
 
     } else {
@@ -744,9 +744,7 @@ function getCorrectAnswer() {
 /**
  * @description Method to upload image to server
  */
-function uploadImages() {
-    
-    
+function uploadImages() {    
     let imageCounter = 0;
     let dfd = $.Deferred();
     let totalImageUpload = 0;
@@ -791,6 +789,7 @@ function uploadImages() {
                             
                             imageCounter++;
                             let attachmentData = { 'name': 'question-banner-' + imgIndex, type: 'Image', id: response.attachmentId };
+                            // attachmentSet.push(attachmentData);
                             let selector = $(fileData).parents('.question-container').attr('id');
                             if ($('#' + selector).find('#question-attachment-id').length > 0) {
                                 $('#' + selector).find('#question-attachment-id').val(response.attachmentId);
@@ -811,6 +810,7 @@ function uploadImages() {
                             imageCounter++;
                             
                             let attachmentData = { 'name': 'option-banner-' + imgIndex, type: 'Image', id: response.attachmentId };
+                            // attachmentSet.push(attachmentData);
                             let selector = $(fileData).parents('.row');
                             if ($(selector).find('textarea#option-attachment-id').length > 0) {
                                 $(selector).find('textarea#option-attachment-id').val(response.attachmentId);
@@ -1150,8 +1150,11 @@ async function getTheme(request) {
         /* Quiz Section Attachment Check */
         if (lastSession.action.customProperties[4].value != "") {
 
-            let req = ActionHelper.getAttachmentInfo(actionId, lastSession.action.customProperties[4].value);
+            let req = ActionHelper.getAttachmentInfoDraft(lastSession.action.customProperties[4].value);
             ActionHelper.executeApi(req).then(function(response) {
+                    console.log('quiz template response: ');
+                    console.log(JSON.stringify(response));
+                    console.log(lastSession.action.customProperties[4].value);
                     $('#quiz-img-preview, #quiz-title-image').attr("src", response.attachmentInfo.downloadUrl);
                     $('.photo-box').hide();
                     $('.quiz-updated-img').show();
@@ -1231,7 +1234,7 @@ async function getTheme(request) {
 
     if (lastSession != null) {
         let actionId = lastSession.action.id;
-        setTimeout(() => {
+        // setTimeout(() => {
             let option = $("div#option-section .option-div").clone();
             lastSession.action.dataTables[0].dataColumns.forEach((e, ind) => {
                 let correctAnsArr = JSON.parse(lastSession.action.customProperties[5].value);
@@ -1241,7 +1244,7 @@ async function getTheme(request) {
                     $('#question1').find('#question-title').val(questionTitleData);
 
                     if (questionAttachmentData != "") {
-                        let req = ActionHelper.getAttachmentInfo(actionId, questionAttachmentData);
+                        let req = ActionHelper.getAttachmentInfoDraft(actionId, questionAttachmentData);
                         ActionHelper.executeApi(req).then(function(response) {
                                 $('#question1').find('.question-preview').show()
                                 $('#question1').find('.question-preview-image').show()
@@ -1282,7 +1285,7 @@ async function getTheme(request) {
                             }
                         });
                         if (optionAttachment != "") {
-                            let req = ActionHelper.getAttachmentInfo(actionId, optionAttachment);
+                            let req = ActionHelper.getAttachmentInfoDraft(optionAttachment);
                             ActionHelper.executeApi(req).then(function(response) {
                                     $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview').show()
                                     $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').show()
@@ -1366,7 +1369,7 @@ async function getTheme(request) {
                     });
                 }
             });
-        }, 1000);
+        // }, 1000);
     }
 }
 
