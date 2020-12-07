@@ -275,13 +275,8 @@ export class ActionHelper {
      * Method to delete action instance
      * @param actionId action instance id
      */
-    static async deleteActionInstance(actionId, version) {
-        let actionInstanceUpdateInfo = {
-            id: actionId,
-            version: version,
-            status: actionSDK.ActionStatus.Closed,
-        };
-        let request = new actionSDK.UpdateAction.Request(actionInstanceUpdateInfo);
+    static async deleteActionInstance(actionId) {
+        let request = new actionSDK.DeleteAction.Request(actionId);
         let response = await actionSDK.executeApi(request);
         if (!response.error) {
             let closeViewRequest = new actionSDK.CloseView.Request()

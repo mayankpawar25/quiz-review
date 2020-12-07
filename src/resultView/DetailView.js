@@ -1189,7 +1189,11 @@ function createCreatorQuestionView() {
             if (actionDataRowsLength == 0) {
                 $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">0% Correct</div>`);
             } else {
-                $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">${((scoreArray[question.name] * 100) / actionDataRowsLength).toFixed(2)}% Correct</span>`);
+                let aggregrateQuestionScore = ((scoreArray[question.name] * 100) / actionDataRowsLength);
+                if (aggregrateQuestionScore % 1 != 0) {
+                    aggregrateQuestionScore = aggregrateQuestionScore.toFixed(2);
+                }
+                $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">${aggregrateQuestionScore}% Correct</span>`);
             }
         });
     });
