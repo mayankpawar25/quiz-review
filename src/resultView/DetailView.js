@@ -18,6 +18,7 @@ let actionId = '';
 let root = document.getElementById("root");
 let theme = '';
 let isCreator = false;
+let context= '';
 
 let dueByKey = '';
 let expiredOnKey = '';
@@ -339,9 +340,10 @@ async function getStringKeys() {
  * @description Method to select theme based on the teams theme  
  * @param request context request
  */
+
 async function getTheme(request) {
     dataResponse = await ActionHelper.executeApi(request);
-    let context = dataResponse.context;
+    context = dataResponse.context;
     $("form.section-1").show();
     theme = context.theme;
     $("link#theme").attr("href", "css/style-" + theme + ".css");
@@ -525,7 +527,9 @@ async function createBody() {
     }
 
     if (isCreator == true) {
-        footerDownload();
+        if (context.hostClientType == 'web') {
+            footerDownload();
+        }
     } else {
         footerClose();
     }
