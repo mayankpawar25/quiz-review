@@ -130,6 +130,7 @@ $(document).on("click", '#next', function() {
                                         <path id="Path_594" d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
                                     </svg> 
                                 </i>`);
+                            $(`div#${optId}`).find('div.pr--32.check-in-div').addClass('mh--20');
                         }
                         $(opt).parents("div.card-box").addClass('disabled');
                     });
@@ -154,6 +155,7 @@ $(document).on("click", '#next', function() {
                                             <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
                                         </svg> 
                                     </i>`);
+                                $(opt).parents('label.selector-inp').find('div.check-in-div').addClass('mh--20');
                             } else {
                                 $(opt).parents('label.d-block').find('div.check-in-div').append(`
                                     <i class="success-with-img"> 
@@ -162,6 +164,7 @@ $(document).on("click", '#next', function() {
                                             <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
                                         </svg> 
                                     </i>`);
+                                $(opt).parents('label.d-block').find('div.check-in-div').addClass('mh--20');
                             }
                         } else if ($(opt).is(':checked') && ansKey.includes(optval) == false) {
                             $(opt).parents('.card-box').addClass('alert-danger');
@@ -174,6 +177,7 @@ $(document).on("click", '#next', function() {
                                             <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
                                         </svg> 
                                     </i>`);
+                                $(opt).parents('label.selector-inp').find('div.check-in-div').addClass('mh--20');
                             } else {
                                 $(opt).parents('label.d-block').find('div.check-in-div').append(`
                                     <i class="success-with-img"> 
@@ -182,6 +186,8 @@ $(document).on("click", '#next', function() {
                                             <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
                                         </svg> 
                                     </i>`);
+                                $(opt).parents('label.d-block').find('div.check-in-div').addClass('mh--20');
+
                             }
                         }
                     });
@@ -389,6 +395,40 @@ $(document).on('click', '#close-event', function() {
     ActionHelper.executeApi(closeViewRequest);
 });
 
+/**
+ * @event Keydown and Click Event for next and previous
+ */
+/* $(document).on({
+    keydown: function(e){
+        let key = e.which;
+        if (key === 13 || key === 32) {
+            e.preventDefault();
+            $(this).find('button').click();
+            return false;
+        }
+    },
+    click: function(e){
+        e.preventDefault();
+        $(this).find('button').click();
+        return false;
+    }
+}, '.btn-left-div'); */
+
+/* $(document).on({
+    keydown: function (e) {
+        let key = e.which;
+        if (key === 13 || key === 32) {
+            e.preventDefault();
+            $(this).find('button').click();
+            return false;
+        }
+    },
+    click: function (e) {
+        e.preventDefault();
+        $(this).find('button').click();
+        return false;
+    }
+}, '.btn-right-div'); */
 
 /* ********************************* Methods ******************************************** */
 
@@ -516,7 +556,7 @@ async function getTheme(request) {
     $('div.section-1').append(`<div class="row"><div class="col-12"><div id="root"></div></div></div>`);
     $('div.section-1 div.row').prepend(`
             <div class="col-12 quiz-img-sec">
-                <div class="quiz-updated-img max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16" style="display: none">
+                <div class="quiz-updated-img bg-none bdr-none max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16" style="display: none">
                     <img src="" class="image-responsive quiz-template-image" style="display:none" />
                 </div>
             </div>`);
@@ -526,8 +566,6 @@ async function getTheme(request) {
         $('div.section-1').show();
         $('div.footer').show();
     }, 1000);
-
-    ActionHelper.hideLoader();
 
     OnPageLoad();
 }
@@ -612,12 +650,59 @@ function createBody() {
     } else {
         getStringKeys();
 
+        /* Loads all images when launching landing page */
+        actionInstance.dataTables.forEach((dataTable, ind) => {
+            if (dataTable.attachments.length > 0) {
+                let req = ActionHelper.getAttachmentInfo(contextActionId, dataTable.attachments[0].id);
+                ActionHelper.executeApi(req).then(function (response) {
+                    actionInstance.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
+                    if (actionInstance.dataTables[0].attachments[0].url != null) {
+                        $('.quiz-template-image').attr("src", actionInstance.dataTables[0].attachments[0].url);
+                        $('.quiz-template-image').show();
+                        $('.quiz-updated-img').show();
+                    }
+                    ActionHelper.hideLoader();
+
+                })
+                .catch(function (error) {
+                    console.error("AttachmentAction - Errorquiz: " + JSON.stringify(error));
+                });
+            }
+            
+            dataTable.dataColumns.forEach((questions, qindex) => {
+                if (questions.attachments.length > 0) {
+                    let req = ActionHelper.getAttachmentInfo(contextActionId, questions.attachments[0].id);
+                    ActionHelper.executeApi(req).then(function (response) {
+                        actionInstance.dataTables[ind].dataColumns[qindex].attachments[0].url = response.attachmentInfo.downloadUrl;
+                    })
+                    .catch(function (error) {
+                        console.error("AttachmentAction - Errorquestion: " + JSON.stringify(error));
+                    });
+                }
+
+                questions.options.forEach((option, optindex) => {
+                    if(option.attachments.length > 0){
+                        let req = ActionHelper.getAttachmentInfo(contextActionId, option.attachments[0].id);
+                        ActionHelper.executeApi(req).then(function (response) {
+                            actionInstance.dataTables[ind].dataColumns[qindex].options[optindex].attachments[0].url = response.attachmentInfo.downloadUrl;
+                        })
+                        .catch(function (error) {
+                            console.error("AttachmentAction - Erroroptions: " + JSON.stringify(error));
+                        });
+                    }
+                });
+            });
+        });
+
         let $card = $('<div class=""></div>');
         let $title = $(`<h4 class="mb--8"> ${actionInstance.displayName} </h4>`);
         let $description = $(`<p class="mb--16 text-justify text-break font-12">${actionInstance.customProperties[0].value}</p>`);
         $card.append($title);
         $card.append($description);
         $root.append($card);
+
+        console.log('actionInstance: ');
+        console.log(JSON.stringify(actionInstance));
 
         let counter = actionInstance.dataTables[0].dataColumns.length
         $root.append(textSection1);
@@ -643,17 +728,6 @@ function createBody() {
             $root.after(footerSection1);
         }
         getStringKeys();
-        if (actionInstance.customProperties[4].value != "") {
-            let req = ActionHelper.getAttachmentInfo(contextActionId, actionInstance.customProperties[4].value);
-            ActionHelper.executeApi(req).then(function(response) {
-                    $('.quiz-template-image').attr("src", response.attachmentInfo.downloadUrl);
-                    $('.quiz-template-image').show();
-                    $('.quiz-updated-img').show();
-                })
-                .catch(function(error) {
-                    console.error("AttachmentAction - Error7: " + JSON.stringify(error));
-                });
-        }
         return;
     }
 }
@@ -747,6 +821,8 @@ function getOptions(text, name, id, userResponse, correctAnswer) {
  * @description Method for creating Question
  */
 function createQuestionView() {
+    console.log('actionInstance create question view: ');
+    console.log(actionInstance);
     $('.footer.section-1-footer').remove();
     $root.after(paginationFooterSection);
 
@@ -779,17 +855,10 @@ function createQuestionView() {
         `);
 
         if (question.attachments.length > 0) {
-            let req = ActionHelper.getAttachmentInfo(contextActionId, question.attachments[0].id);
-            ActionHelper.executeApi(req).then(function(response) {
-                    console.info("Attachment - Response: " + JSON.stringify(response));
-                    $('#root div.card-box-question:visible .question-template-image').attr("src", response.attachmentInfo.downloadUrl);
-                    $('#root div.card-box-question:visible .question-template-image').show();
-                    $('#root div.card-box-question:visible .quiz-updated-img').show();
-                    getClassFromDimension(response.attachmentInfo.downloadUrl, '#root div.card-box-question:visible .question-template-image');
-                })
-                .catch(function(error) {
-                    console.error("AttachmentAction - Error8: " + JSON.stringify(error));
-                });
+            $('#root div.card-box-question:visible .question-template-image').attr("src", question.attachments[0].url);
+            $('#root div.card-box-question:visible .question-template-image').show();
+            $('#root div.card-box-question:visible .quiz-updated-img').show();
+            getClassFromDimension(question.attachments[0].url, '#root div.card-box-question:visible .question-template-image');
         }
 
         $('#root div.card-box-question:visible .question-title').html(`<p class="">${question.displayName}</p>`);
@@ -805,27 +874,29 @@ function createQuestionView() {
         if (choice_occurance > 1) {
             question.options.forEach((option) => {
                 let displayName = option.displayName;
-                let attachmentId = option.attachments.length > 0 ? option.attachments[0].id : '';
+                let attachmentURL = option.attachments.length > 0 ? option.attachments[0].url : '';
                 let $radioOption = getCheckboxButton(
                     displayName,
                     question.name,
                     option.name,
-                    attachmentId
+                    attachmentURL
                 );
                 $('div.card-box-question:visible > .option-sec').append($radioOption);
+                getClassFromDimension(attachmentURL, 'div.radio-section#' + option.name + ' .opt-image');
             });
         } else {
             //add radio input
             question.options.forEach((option) => {
                 let displayName = option.displayName;
-                let attachmentId = option.attachments.length > 0 ? option.attachments[0].id : '';
+                let attachmentURL = option.attachments.length > 0 ? option.attachments[0].url : '';
                 let $radioOption = getRadioButton(
                     displayName,
                     question.name,
                     option.name,
-                    attachmentId
+                    attachmentURL
                 );
                 $('div.card-box-question:visible > .option-sec').append($radioOption);
+                getClassFromDimension(attachmentURL, 'div.radio-section#' + option.name + ' .opt-image');
             });
         }
     });
@@ -838,29 +909,21 @@ function createQuestionView() {
  * @param id unique identifier
  * @param attachmentId Attachment id for image
  */
-function getRadioButton(text, name, id, attachmentId) {
-    if (attachmentId != "") {
-        let req = ActionHelper.getAttachmentInfo(contextActionId, attachmentId);
-        ActionHelper.executeApi(req).then(function(response) {
-                console.info("Attachment - Response: " + JSON.stringify(response));
-                $('div.custom-radio-outer#' + id + ' .custom-radio').prepend(`<div class="option-image-section cover-img min-max-132 mb--8">
-                        <img src="${response.attachmentInfo.downloadUrl}" class="opt-image img-responsive"/>
+function getRadioButton(text, name, id, attachmentURL) {
+    let $cardBox = $(`<div class="card-box card-bg card-border mb--8"></div>`);
+    $cardBox.append(`<div class="radio-section custom-radio-outer" id="${id}" columnId="${name}"> 
+                        <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
+                            <input type="radio" name="${name}" id="${id}">
+                            <span class="radio-block"></span> 
+                            <div class="pr--32 check-in-div">${text}</div>
+                        </label>
                     </div>`);
-                getClassFromDimension(response.attachmentInfo.downloadUrl, 'div.custom-radio-outer#' + id + ' .opt-image');
-            })
-            .catch(function(error) {
-                console.error("AttachmentAction - Error9: " + JSON.stringify(error));
-            });
-    }
-    return $(`<div class="card-box card-bg card-border mb--8">
-                <div class="radio-section custom-radio-outer" id="${id}" columnId="${name}"> 
-                    <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
-                        <input type="radio" name="${name}" id="${id}">
-                        <span class="radio-block"></span> 
-                        <div class="pr--32 check-in-div">${text}</div>
-                    </label>
-                </div>
+    if (attachmentURL != "") {
+        $cardBox.find('.custom-radio').prepend(`<div class="option-image-section cover-img min-max-132 mb--4">
+                <img src="${attachmentURL}" class="opt-image img-responsive"/>
             </div>`);
+     }
+    return $cardBox
 }
 
 /**
@@ -870,35 +933,27 @@ function getRadioButton(text, name, id, attachmentId) {
  * @param id unique identifier
  * @param attachmentId Attachment id for image
  */
-function getCheckboxButton(text, name, id, attachmentId) {
-    if (attachmentId != "") {
-        let req = ActionHelper.getAttachmentInfo(contextActionId, attachmentId);
-        ActionHelper.executeApi(req).then(function(response) {
-                console.info("Attachment - Response: " + JSON.stringify(response));
-                $('div.radio-section#' + id + ' .custom-check').prepend(`
-                    <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
-                        <div class="option-image-section updated-img cover-img min-max-132 mb--8">
-                            <img src="${response.attachmentInfo.downloadUrl}" class="opt-image img-responsive"/>
-                        </div>
-                    </label>        
-                `);
+function getCheckboxButton(text, name, id, attachmentURL) {
+    let $cardBox = $(`<div class="card-box card-bg card-border mb--8"></div>`);
+    $cardBox.append(`<div class="radio-section custom-check-outer selector-inp" id="${id}" columnId="${name}" >
+                        <label class="custom-check form-check-label d-block">
+                            <input type="checkbox" class="radio-block" name="${name}" id="${id}">
+                            <span class="checkmark"></span>
+                            <div class="pr--32 check-in-div">${text}
+                            </div>
+                        </label>
+                    </div>`);
 
-                getClassFromDimension(response.attachmentInfo.downloadUrl, 'div.radio-section#' + id + ' .opt-image');
-            })
-            .catch(function(error) {
-                console.error("AttachmentAction - Error10: " + JSON.stringify(error));
-            });
-    }
-    return $(`<div class="card-box card-bg card-border mb--8">
-                <div class="radio-section custom-check-outer selector-inp" id="${id}" columnId="${name}" >
-                    <label class="custom-check form-check-label d-block">
-                        <input type="checkbox" class="radio-block" name="${name}" id="${id}">
-                        <span class="checkmark"></span> 
-                        <div class="pr--32 check-in-div">${text}
-                        </div>
-                    </label>
+    if (attachmentURL != "") {
+        $cardBox.find('.custom-check').prepend(`
+            <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
+                <div class="option-image-section updated-img cover-img min-max-132 mb--8">
+                    <img src="${attachmentURL}" class="opt-image img-responsive"/>
                 </div>
-            </div>`);
+            </label>
+        `);
+    }
+    return $cardBox;
 }
 
 /**
@@ -1094,7 +1149,7 @@ let questionSection = `<div class="card-box-question">
                                 </label>
                             </div>
                             <div>
-                                <div class="quiz-updated-img cover-img min-max-132 mb--8" style="display: none">
+                                <div class="quiz-updated-img bg-none bdr-none cover-img min-max-132 mb--8" style="display: none">
                                     <img src="" class="image-responsive question-template-image" style="display: none" />
                                 </div>
                                 <div class="semi-bold font-14 mb--16 question-title"><p class="">How many days in a week?</p></div>
@@ -1111,8 +1166,8 @@ let paginationFooterSection = `<div class="footer section-1-footer">
             <div class="footer-padd bt">
                 <div class="container ">
                     <div class="row">
-                        <div class="col-4"> 
-                            <button type="button" class="tpt-btn disabled" id="previous"  data-prev-id="0"> 
+                        <div class="col-4" > 
+                            <button type="button" class="tpt-btn disabled" id="previous"  data-prev-id="0"  tabindex="0" role="button"> 
                                 <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="back-btn">
                                     <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
                                     </path>
@@ -1123,7 +1178,7 @@ let paginationFooterSection = `<div class="footer section-1-footer">
                         </div>
                         <div class="col-4 text-center" id="xofy"> 1 of 4</div>
                         <div class="col-4 text-right"> 
-                            <button type="button" class="tpt-btn pull-right" id="check" data-next-id="1"> <span class="check-key">${checkKey}</span>
+                            <button type="button" class="tpt-btn pull-right" id="check" data-next-id="1" tabindex="0" role="button"> <span class="check-key">${checkKey}</span>
                                 <svg role="presentation" focusable="false" viewBox="8 8 16 16 " class="next-btn">
                                     <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z"></path>
                                     <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z"></path>
@@ -1164,7 +1219,7 @@ let closeFooter = `
                     <div class="row">
                         <div class="col-4"> </div>
                         <div class="col-4 text-center"> </div>
-                        <div class="col-4 text-right"> <button type="button" class="btn btn-primary btn-sm pull-right close-key" id="close-event"> ${closeKey}</button></div>
+                        <div class="col-4 text-right"> <button type="button" class="btn btn-primary btn-sm pull-right close-key" id="close-event" tabindex="0" role="button"> ${closeKey}</button></div>
                     </div>
                 </div>
             </div>

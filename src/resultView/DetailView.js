@@ -144,9 +144,10 @@ $(document).on('click', '.change-due-by-event', function() {
     let ddtt = ((actionInstance.customProperties[1].value).split('T'));
     let dt = ddtt[0].split('-');
     let weekDateFormat = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
-    let ttTime = (ddtt[1].split('Z')[0]).split(':');
-    let currentTime = `${ttTime[0]}:${ttTime[1]}`;
-
+    let timeData = new Date(actionInstance.expiryTime);
+    let hourData = timeData.getHours();
+    let minuteData = timeData.getMinutes();
+    let currentTime = hourData + ':' + minuteData;    
     $('.form_date input').val(weekDateFormat);
     $(".form_date").attr({ "data-date": weekDateFormat });
     $('.form_time').datetimepicker({
@@ -231,9 +232,13 @@ $(document).on('click', '#change-quiz-question', function() {
  */
 $(document).on('change', "input[name='expiry_time'], input[name='expiry_date']", function() {
     $('#change-quiz-date').removeClass('disabled');
+});
+
+$(document).on('click', '#change-quiz-date', function(){
     let quizExpireDate = $("input[name='expiry_date']").val();
     let quizExpireTime = $("input[name='expiry_time']").val();
     actionInstance.expiryTime = new Date(quizExpireDate + " " + quizExpireTime).getTime();
+    actionInstance.customProperties[1].value = new Date(quizExpireDate + " " + quizExpireTime);
     ActionHelper.updateActionInstance(actionInstance);
 });
 
@@ -1042,7 +1047,7 @@ function createCreatorQuestionView() {
                 ActionHelper.executeApi(req).then(function(response) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $blankQDiv.prepend(`
-                            <div class="option-image-section cover-img min-max-132 mb--8"> 
+                            <div class="option-image-section cover-img min-max-132 mb--4"> 
                                 <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive"  crossorigin="anonymous">
                             </div>`);
                         getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-image`);
@@ -1230,7 +1235,7 @@ function createQuestionView(userId) {
                 ActionHelper.executeApi(req).then(function(response) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $blankQDiv.prepend(`
-                            <div class="option-image-section cover-img min-max-132 mb--8"> 
+                            <div class="option-image-section cover-img min-max-132 mb--4"> 
                                 <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive"  crossorigin="anonymous">
                             </div>`);
                         getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-image`);
@@ -1352,7 +1357,7 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
                 <div class="radio-section custom-radio-outer" id="${id} " columnid="3 ">
                     <label class="custom-radio d-block font-14">
                         <span class="radio-block selected "></span>
-                        <div class="pr--32 check-in-div">${text} 
+                        <div class="pr--32 check-in-div">${text}  &nbsp;
                             <i class="success-with-img"> 
                                 <svg version="1.1 " id="Layer_1 "  x="0px " y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
                                     <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
@@ -1386,7 +1391,7 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
                 <div class="radio-section custom-radio-outer" id="${id}">
                     <label class="custom-radio d-block selected font-14">
                         <span class="radio-block"></span>
-                        <div class="pr--32 check-in-div">${text}
+                        <div class="pr--32 check-in-div">${text} &nbsp;
                             <i class="success-with-img">
                                 <svg version="1.1 " id="Layer_1 "  x="0px " y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
                                     <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
@@ -1413,7 +1418,7 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
         ActionHelper.executeApi(req).then(function(response) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
                 $oDiv.find('label.custom-radio').prepend(`
-                    <div class="option-image-section cover-img min-max-132 mb--8"> 
+                    <div class="option-image-section cover-img min-max-132 mb--4"> 
                         <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
                     </div>`);
                 getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} .opt-image:last`);
@@ -1442,7 +1447,7 @@ function getOptionsCreator(text, optId, ind, result, attachmentId) {
                 <div class="radio-section custom-radio-outer " id="${optId}" columnid="${ind}">
                     <label class="custom-radio d-block font-14 cursor-pointer ">
                         <span class="radio-block"></span>
-                        <div class="pr--32 check-in-div">${text}
+                        <div class="pr--32 check-in-div">${text} &nbsp;
                             <i class="success"> 
                                 <svg version="1.1 " id="Layer_1"  x="0px" y="0px" width="16px " height="16px " viewBox="0 0 16 16 "  xml:space="preserve ">
                                 <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "/>
@@ -1469,7 +1474,7 @@ function getOptionsCreator(text, optId, ind, result, attachmentId) {
         ActionHelper.executeApi(req).then(function(response) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
                 $oDiv.find('label.custom-radio').prepend(`
-                    <div class="option-image-section cover-img min-max-132 mb--8"> 
+                    <div class="option-image-section cover-img min-max-132 mb--4"> 
                         <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
                     </div>`);
                 getClassFromDimension(response.attachmentInfo.downloadUrl, `#${optId} .opt-image`);
