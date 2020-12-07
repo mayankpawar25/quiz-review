@@ -700,10 +700,6 @@ function createBody() {
         $card.append($title);
         $card.append($description);
         $root.append($card);
-
-        console.log('actionInstance: ');
-        console.log(JSON.stringify(actionInstance));
-
         let counter = actionInstance.dataTables[0].dataColumns.length
         $root.append(textSection1);
 
@@ -821,8 +817,6 @@ function getOptions(text, name, id, userResponse, correctAnswer) {
  * @description Method for creating Question
  */
 function createQuestionView() {
-    console.log('actionInstance create question view: ');
-    console.log(actionInstance);
     $('.footer.section-1-footer').remove();
     $root.after(paginationFooterSection);
 

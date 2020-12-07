@@ -570,12 +570,8 @@ $(document).on('change', '#cover-image', function () {
             let fileData = this;
             if ($(fileData).val() != '') {
                 let coverImage = fileData.files[0];
-                console.log('coverImage: ');
-                console.log(JSON.stringify(coverImage));
                 
                 let attachment = ActionHelper.attachmentUpload(coverImage, coverImage['type']);
-                console.log('attachment:')
-                console.log(JSON.stringify(attachment));
                 let attachmentRequest = {};
                 if (!$('#submit').hasClass('disabled')) {
                     $('#submit').addClass('disabled');
@@ -584,8 +580,6 @@ $(document).on('change', '#cover-image', function () {
                 attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
                 ActionHelper.executeApi(attachmentRequest)
                     .then(function (response) {
-                        console.log('response:')
-                        console.log(JSON.stringify(response))
                         let attachmentData = { 'name': 'quiz-banner', type: 'Image', id: response.attachmentId };
                         attachmentSet.push(attachmentData);
                         if ($('#quiz-attachment-set').length > 0) {
@@ -810,7 +804,6 @@ $(document).on({
 
 $(document).on('keydown', '.clear-key-href', function(e){
     let key = e.which;
-    console.log(key);
     if (key === 13) {
         e.preventDefault();
         $('.quiz-clear').click();
@@ -1174,9 +1167,6 @@ function createAction(actionPackageId) {
         }],
     };
 
-    console.log('action:');
-    console.log(JSON.stringify(action));
-
     let request = ActionHelper.createAction(action);
     ActionHelper
         .executeApi(request)
@@ -1376,8 +1366,6 @@ async function getTheme(request) {
     let response = await ActionHelper.executeApi(request);
     let context = response.context;
 
-    // alert(JSON.stringify(context));
-    console.log(JSON.stringify(context));
     lastSession = context.lastSessionData;
     let theme = context.theme;
     $('.body-outer').before(loader);
@@ -1426,9 +1414,6 @@ async function getTheme(request) {
 
         /* Quiz Section Attachment Check */
         if (lastSession.action.customProperties[4].value != "") {
-            console.log('JSON.stringify(lastSession)');
-            console.log(JSON.stringify(lastSession));
-            console.log(JSON.stringify(lastSession.action.dataTables[0].attachments[0]));
             let attachmentData = lastSession.action.dataTables[0].attachments[0];
             attachmentSet.push(attachmentData);
             let req = ActionHelper.getAttachmentInfoDraft(attachmentData.id);
@@ -1521,7 +1506,6 @@ async function getTheme(request) {
                 let questionTitleData = e.displayName;
                 let questionAttachmentData = e.attachments.length > 0 ? e.attachments[0].id : '';
                 $('#question1').find('#question-title').val(questionTitleData);
-                console.log('questionAttachmentData: ' + questionAttachmentData);
                 if (questionAttachmentData != "") {
                     let attachmentData = e.attachments[0];
                     let req = ActionHelper.getAttachmentInfoDraft(questionAttachmentData);
@@ -1721,8 +1705,6 @@ function readURL(input, elem) {
         isSuccess = fileTypes.indexOf(extension) > -1;
         if (isSuccess) {
             reader.onload = function (e) {
-                console.log('e: ');
-                console.log(e);
                 let image = new Image();
                 image.src = e.target.result;
 
