@@ -1681,6 +1681,7 @@ a#back-setting svg {
     float: left;
     min-width: 16px;
     min-height: 16px;
+    margin-bottom: 8px;
 }
 
 .show-setting {
@@ -2432,7 +2433,13 @@ div#xofy {
 }
 
 .quiz-updated-img .heightfit {
-    max-height: 146px;
+    max-height: 148px;
+}
+
+.quiz-updated .widthfit {
+    width: 100%;
+    height: 148px;
+    max-height: 148px;
 }
 
 .btn-plain {
@@ -2659,6 +2666,24 @@ div#xofy {
     .heightfit {
         width: auto;
         max-height: 218px;
+    }
+    .quiz-updated-img .heightfit {
+        max-height: 96px;
+    }
+    .quiz-updated .widthfit {
+        width: 100%;
+        height: 96px;
+        max-height: 148px;
+    }
+    .max-min-220 {
+        max-height: 96px;
+        min-height: 96px;
+    }
+    .photo-box span {
+        bottom: 20px;
+    }
+    .photo-box {
+        background-position: top 20px center;
     }
 }
 
