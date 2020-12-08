@@ -42,7 +42,7 @@ let clearKey = '';
 
 /* ******************************** Events ************************************** */
 /** 
- * @event Click for add Question Section
+ * @event Keydown and Click for add Question Section
  */
 $(document).on({
     keydown: function (e) {
@@ -118,7 +118,7 @@ $(document).on('click', '.cancel-question-delete', function () {
 })
 
 /**
- * @event Click for remove the Question from the section-2
+ * @event Keydown and Click for remove the Question from the section-2
  */
 $(document).on({
     keydown: function(e){
@@ -180,7 +180,7 @@ $(document).on({
 }, '.remove-question')
 
 /** 
- * @event Click to add the Option under question
+ * @event Keydown and Click to add the Option under question
  */
 $(document).on({
     keydown: function (e) {
@@ -229,61 +229,6 @@ $(document).on({
         return false;
     }
 }, '.add-options');
-
-/* $(document).on("click", ".add-options", function () {
-    if ($(this).parents("div#options").find("div.option-div input[type='text'][id^=option]").length >= 10) {
-        $(this).parents('.question-container').find('.add-options').hide();
-        $(this).parents('.question-container').find('.add-options').after(`
-            <div class="max-option-err-box"> ${maxTenOptionKey} </div>
-        `);
-
-        $([document.documentElement, document.body]).animate({
-            scrollTop: $(this).parents('.question-container').find(".max-option-err-box").offset().top - 200
-        }, 1000);
-        return false;
-    }
-    $(this).parents(".container").find("div.option-div:last").after(opt.clone());
-
-    let selector = $(this).parents("div.container");
-    $(selector)
-        .find('div.option-div div.input-group input[type="text"]')
-        .each(function (index, elem) {
-            let counter = index + 1;
-            $(elem).attr({
-                placeholder: optionKey,
-            });
-            $(elem).attr({ id: "option" + counter });
-            $(elem)
-                .parents(".option-div")
-                .find("input[type='file']")
-                .attr({ id: "option-image-" + counter });
-            $(elem)
-                .parents(".option-div")
-                .find("input.form-check-input")
-                .attr({ id: "check" + counter });
-        });
-    $('.check-me').text(checkMeKey);
-    $('.check-me-title').attr({ "title": checkMeKey });
-
-});
- */
-
-/**
- * @event keydown and Click for remove the Option
- */
-/* $(document).on({
-    keydown: function (e) {
-        let key = e.which;
-        if (key === 13 || key === 32) {
-            $(this).parents('.rows').find('.remove-option').click();
-            return false;
-        }
-    },
-    click: function (e) {
-        $(this).parents('.rows').find('.remove-option').click();
-        return false;
-    }
-}, ".remove-option-href"); */
 
 /**
  * @event Click for remove the Option
@@ -336,16 +281,6 @@ $(document).on("click", ".remove-option", function (eve) {
     }
 });
  
-/**
- * @event Click to Load setting page
- */
-/* $(document).on("click", ".show-setting", function () {
-    $(".section-1").hide();
-    $(".section-1-footer").hide();
-    $("form #setting").show();
-});
- */
-
  /**
  * @event Click to Submit Quiz
  */
@@ -432,27 +367,26 @@ $(document).on("click", "#next", function () {
 });
 
 /**
- * @event Click event for back button
+ * @event Click and Keydown  to back button on section 2
  */
-/* $(document).on("click", "#back", function () {
-    $(".section-1").show();
-    $(".section-1-footer").show();
+$(document).on({
+    click: function(e){
+        $(".section-2").hide();
+        $(".section-2-footer").hide();
 
-    $("form #setting").hide();
-    $('#due').text(settingText);
-}); */
-
-/**
- * @event Event to back button on section 2
- */
-$(document).on("click", "#back-section2", function () {
-    $(".section-2").hide();
-    $(".section-2-footer").hide();
-
-    $(".section-1").show();
-    $(".section-1-footer").show();
-    $('.error-msg').remove();
-});
+        $(".section-1").show();
+        $(".section-1-footer").show();
+        $('.error-msg').remove();
+    },
+    keydown: function(e){
+        let key = e.which;
+        if (key === 13 || key === 32) {
+            e.preventDefault();
+            $(this).click();
+            return false;
+        }
+    }
+}, "#back-section2");
 
 /**
  * @event Change event for setting inputs
@@ -480,7 +414,7 @@ $(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], 
 });
 
 /**
- * @event keydown and Click event for correct answer inputs
+ * @event Keydown and Click event for correct answer inputs
  */
 $(document).on({
     keydown: function (e) {
@@ -504,7 +438,9 @@ $(document).on({
     }
 }, '.check-me-title');
 
-
+/**
+ * @event Keydown event for remove options
+ */
 $(document).on({
     keydown: function (e) {
         let key = e.which;
@@ -517,7 +453,7 @@ $(document).on({
 }, '.remove-option-href');
 
 /**
- * @event Event when click on class then open hidden file
+ * @event Click when click on class then open hidden file
  */
 $(document).on('click', '.upvj', function (event) {
     event.preventDefault();
@@ -529,21 +465,21 @@ $(document).on('click', '.upvj', function (event) {
 })
 
 /**
- * @event Event to show trash on focusin at input
+ * @event Focusin to show trash on focusin at input
  */
 $(document).on('focusin', '.option-div, .input-group-append, .input-group, .input-group input[type="text"], .input-tpt, .input-tpt .remove-option', function () {
     $(this).parents('div.row').find('.remove-option').show();
 });
 
 /**
- * @event Event to hide trash on focusout at input
+ * @event Focusout to hide trash on focusout at input
  */
 $(document).on('focusout', '.option-div, .input-tpt, .input-tpt .remove-option, .check-me-title, .input-group input[type="text"]', function () {
     $(this).parents('div.row').find('.remove-option').hide();
 });
 
 /**
- * @event Event to show trash on focusin at input
+ * @event Hover to show trash on focusin at input
  */
 $(document).on('hover', '.remove-option', function () {
     $(this).show();
@@ -551,7 +487,7 @@ $(document).on('hover', '.remove-option', function () {
 
 
 /**
- * @event Event when quiz cover image changes
+ * @event Change when quiz cover image changes
  */
 $(document).on('change', '#cover-image', function () {
     $('.error-msg').remove();
@@ -597,7 +533,7 @@ $(document).on('change', '#cover-image', function () {
                     });
             }
     }else{
-        $('.photo-box').parent('div').before(`<label class="label-alert pull-right d-block mt--8 invalid-image-format">
+        $('.photo-box').parents('div.form-group').find('label.clear-key').after(`<label class="label-alert pull-right d-block invalid-image-format">
                     <font>Invalid file format passed</font>
                 </label>`);
     }
@@ -605,9 +541,8 @@ $(document).on('change', '#cover-image', function () {
 });
 
 /**
- * @event Kepress and Click when question cover image changes
+ * @event Keydown and Click when question cover image changes
  */
-
 $(document).on({
     keydown: function (e) {
         let key = e.which;
@@ -624,12 +559,8 @@ $(document).on({
     }
 }, '.question-image, .option-image');
 
-/* $(document).on('click', '.question-image, .option-image', function () {
-}); */
-
-
 /**
- * @event Event when question cover image changes
+ * @event Change when question cover image changes
  */
 $(document).on('change', 'input[name="question_image"]', function () {
     $('.invalid-file-question').remove();
@@ -677,7 +608,7 @@ $(document).on('change', 'input[name="question_image"]', function () {
 });
 
 /**
- * @event Event when option cover image changes
+ * @event Change when option cover image changes
  */
 $(document).on('change', 'input[name="option_image"]', function () {
     $('.invalid-file-option').remove();
@@ -722,7 +653,9 @@ $(document).on('change', 'input[name="option_image"]', function () {
     }
 });
 
-
+/**
+ * @event Keydown to stop opening new tab when press enter on inputs
+ */
 $(document).on('keydown', 'input, textarea', function(e){
     let key = e.which;
     if(key == 13){
@@ -730,6 +663,9 @@ $(document).on('keydown', 'input, textarea', function(e){
     }
 })
 
+/**
+ * @event Keydown for open image upload
+ */
 $(document).on('keydown', '.photo-box-href', function(e){
     let key = e.which;
     if (key == 13) {
@@ -746,6 +682,9 @@ $(document).on('keydown', '.photo-box-href', function(e){
     }
 })
 
+/**
+ * @event Keydown and Click for clear banner image from quiz
+ */
 $(document).on({
     keydown: function(e){
         let key = e.which;
@@ -762,6 +701,9 @@ $(document).on({
     }
 }, '.clear-key-href');
 
+/**
+ * @event Keydown and Click to show setting section
+ */
 $(document).on({
     keydown: function (e) {
         let key = e.which;
@@ -780,7 +722,9 @@ $(document).on({
     }
 }, '.show-setting');
 
-
+/**
+ * @event Keydown and Click for back to landing page
+ */
 $(document).on({
     keydown: function (e) {
         e.preventDefault();
@@ -802,6 +746,9 @@ $(document).on({
     }
 }, '#back');
 
+/**
+ * @event Keydown to clear image
+ */
 $(document).on('keydown', '.clear-key-href', function(e){
     let key = e.which;
     if (key === 13) {
@@ -811,8 +758,6 @@ $(document).on('keydown', '.clear-key-href', function(e){
     }
 });
 
-
-
 /* ****************************** Method ************************************* */
 /**
  * @description Method for quiz data and submit the datas
@@ -820,8 +765,6 @@ $(document).on('keydown', '.clear-key-href', function(e){
 function submitForm() {
     /* Validate */
     let errorText = "";
-    // $('.loader-overlay').show();
-
     $("input[type='text']").removeClass("danger");
     $("label.label-alert").remove();
     $("div.card-box-alert").removeClass("card-box-alert").addClass("card-box");
@@ -919,19 +862,14 @@ function submitForm() {
         });
 
     if ($.trim(errorText).length <= 0) {
-
         ActionHelper
             .executeApi(request)
             .then(function (response) {
-                // uploadImages().then(function () {
-                    createAction(response.context.actionPackageId);
-                // });
+                createAction(response.context.actionPackageId);
             })
             .catch(function (error) {
                 console.error("GetContext - Error1: " + JSON.stringify(error));
             });
-
-
     } else {
 
         $('.loader-overlay').hide();
@@ -953,7 +891,6 @@ function getQuestionSet() {
         let optionType = ActionHelper.getColumnType('singleselect');
         let option = [];
         let isSelected = 0;
-        // let questionAttachmentId = $("#question" + i).find('textarea#question-attachment-id').length > 0 ? $("#question" + i).find('textarea#question-attachment-id').val() : '';
         let questionAttachmentSet = $("#question" + i).find('textarea#question-attachment-set').length > 0 ? JSON.parse($("#question" + i).find('textarea#question-attachment-set').val()) : '';
 
         /* Looping for options */
@@ -1365,17 +1302,10 @@ async function getStringKeys() {
 async function getTheme(request) {
     let response = await ActionHelper.executeApi(request);
     let context = response.context;
-
     lastSession = context.lastSessionData;
     let theme = context.theme;
     $('.body-outer').before(loader);
-
     $("link#theme").attr("href", "css/style-" + theme + ".css");
-
-    /* if (context.hostClientType == "ios"){
-        $("link#theme").after('<link href="css/style-ios-' + theme + '.css" rel="stylesheet" id="theme" />')
-    } */
-
     $('form.sec1').append(formSection);
     $('form.sec1').append(section2);
     $('form.sec1').after(settingSection);
@@ -1432,42 +1362,34 @@ async function getTheme(request) {
                     console.error("AttachmentAction - Error101: " + JSON.stringify(error));
                 });
         }
-
         /* Due Setting String */
         let end = new Date(weekDateFormat + ' ' + currentTime);
         let start = new Date();
         let days = calcDateDiff(start, end);
-
         let resultVisible = lastSession.action.customProperties[2].value == 'Everyone' ? resultEveryoneKey : resultMeKey;
         let correctAnswer = lastSession.action.customProperties[3].value == 'Yes' ? correctAnswerKey : '';
-
         Localizer.getString('dueIn', days, correctAnswer).then(function (result) {
             settingText = result;
             $('#due').text(settingText);
         });
-
     } else {
         let weekDate = new Date(new Date().setDate(new Date().getDate() + 7))
             .toISOString()
             .split("T")[0];
-
         let weekMonth = new Date(weekDate).toLocaleString('default', { month: 'short' });
         let weekD = new Date(weekDate).getDate();
         let weekYear = new Date(weekDate).getFullYear();
         weekDateFormat = weekMonth + " " + weekD + ", " + weekYear;
         currentTime = (("0" + new Date().getHours()).substr(-2)) + ":" + (("0" + new Date().getMinutes()).substr(-2));
     }
-
     let today = new Date()
         .toISOString()
         .split("T")[0];
     $("form").append($("#setting").clone());
     $("#add-questions").click();
-
     setTimeout(() => {
         $("form.sec1").show();
     }, 1000);
-
     $('.form_date input').val(weekDateFormat);
     $(".form_date").attr({ "data-date": weekDateFormat });
     $('.form_time').datetimepicker({
@@ -1481,9 +1403,7 @@ async function getTheme(request) {
         maxView: 1,
         forceParse: 0
     });
-
     $('.form_time input').val(currentTime);
-
     let dateInput = $('input[name="expiry_date"]');
     let container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
     let options = {
@@ -1495,10 +1415,8 @@ async function getTheme(request) {
     };
     dateInput.datepicker(options);
     await ActionHelper.hideLoader();
-
     if (lastSession != null) {
         let actionId = lastSession.action.id;
-        // setTimeout(() => {
         let option = $("div#option-section .option-div").clone();
         lastSession.action.dataTables[0].dataColumns.forEach((e, ind) => {
             let correctAnsArr = JSON.parse(lastSession.action.customProperties[5].value);
@@ -1640,7 +1558,6 @@ async function getTheme(request) {
                 });
             }
         });
-        // }, 1000);
     }
 }
 
@@ -1714,18 +1631,15 @@ function readURL(input, elem) {
                     let divWidth = $(elem).width();
                     let divHeight = $(elem).height();
                     $(elem).attr('src', this.src);
-
-                    if (elem != '#quiz-img-preview, #quiz-title-image') {
-                        if (imgHeight > divHeight) {
-                            /* height is greater than width */
-                            $(elem).addClass('heightfit');
-                        } else if (imgWidth > divWidth) {
-                            /* width is greater than height */
-                            $(elem).addClass('widthfit');
-                        } else {
-                            /* small image */
-                            $(elem).addClass('smallfit');
-                        }
+                    if (imgHeight > divHeight) {
+                        /* height is greater than width */
+                        $(elem).addClass('heightfit');
+                    } else if (imgWidth > divWidth) {
+                        /* width is greater than height */
+                        $(elem).addClass('widthfit');
+                    } else {
+                        /* small image */
+                        $(elem).addClass('smallfit');
                     }
                 };
             };
@@ -1752,8 +1666,9 @@ let formSection = `<div class="section-1">
                         <textarea class="form-control in-t font-12" id="quiz-description" maxlength="5000"></textarea>
                     </div>
                     <div class="form-group mb0">
-                        <label class="cover-image-label semi-bold mb--8 font-12 cover-image-key">${coverImageKey}</label>
+                        <label class="cover-image-label semi-bold mb--8 font-12 cover-image-key float-left">${coverImageKey}</label>
                         <label class="quiz-clear semi-bold mb--8 cursor-pointer pull-right theme-color font-12 clear-key-href clear-key" style="display:none" tabindex="0" role="button">${clearKey}</label>
+                        <div class="clearfix"></div>
                         <div class="relative">
                             <!-- hide this div after img added -->
                             <div class="photo-box card-bg card-border max-min-220 upvj cursor-pointer photo-box-href"  tabindex="0" role="button">
@@ -1776,8 +1691,10 @@ let formSection = `<div class="section-1">
                         <div class="col-9 d-table">
                             <div class="d-table-cell">
                                 <a  tabindex="0" role="button" class="theme-color cursor-pointer show-setting" id="hide1">
-                                    <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt ha gv"><path class="ui-icon__outline cc" d="M13.82,8.07a.735.735,0,0,1,.5.188l1.438,1.3c.2-.008.4,0,.594.007l1.21-1.25a.724.724,0,0,1,.532-.226,3.117,3.117,0,0,1,.867.226c.469.172,1.3.438,1.328,1.032l.094,1.929a5.5,5.5,0,0,1,.414.422c.594-.007,1.187-.023,1.781-.023a.658.658,0,0,1,.352.117,4.122,4.122,0,0,1,1,2.031.735.735,0,0,1-.188.5l-1.3,1.438c.008.2,0,.4-.007.594l1.25,1.21a.724.724,0,0,1,.226.532,3.117,3.117,0,0,1-.226.867c-.172.461-.438,1.3-1.024,1.328l-1.937.094a5.5,5.5,0,0,1-.422.414c.007.594.023,1.187.023,1.781a.611.611,0,0,1-.117.344A4.1,4.1,0,0,1,18.18,23.93a.735.735,0,0,1-.5-.188l-1.438-1.3c-.2.008-.4,0-.594-.007l-1.21,1.25a.724.724,0,0,1-.532.226,3.117,3.117,0,0,1-.867-.226c-.469-.172-1.3-.438-1.328-1.032l-.094-1.929a5.5,5.5,0,0,1-.414-.422c-.594.007-1.187.023-1.781.023a.611.611,0,0,1-.344-.117A4.1,4.1,0,0,1,8.07,18.18a.735.735,0,0,1,.188-.5l1.3-1.438c-.008-.2,0-.4.007-.594l-1.25-1.21a.724.724,0,0,1-.226-.532,3.117,3.117,0,0,1,.226-.867c.172-.461.446-1.3,1.024-1.328l1.937-.094A5.5,5.5,0,0,1,11.7,11.2c-.007-.594-.023-1.187-.023-1.781a.658.658,0,0,1,.117-.352A4.122,4.122,0,0,1,13.82,8.07ZM12.672,9.617l.023,1.8c.008.312-.859,1.164-1.164,1.18l-1.976.1-.422,1.133,1.289,1.258c.2.2.164.562.164.82a1.781,1.781,0,0,1-.148.844L9.117,18.227l.5,1.1c.6-.008,1.211-.023,1.813-.023.312,0,1.156.859,1.172,1.164l.1,1.976,1.133.422,1.258-1.289c.2-.2.562-.164.82-.164a1.7,1.7,0,0,1,.844.148l1.469,1.321,1.1-.5-.023-1.8c-.008-.312.859-1.164,1.164-1.18l1.976-.1.422-1.133-1.289-1.258c-.2-.2-.164-.562-.164-.82a1.781,1.781,0,0,1,.148-.844l1.321-1.469-.5-1.1c-.6.008-1.211.023-1.813.023-.312,0-1.156-.859-1.172-1.164l-.1-1.976-1.133-.422-1.258,1.289c-.2.2-.562.164-.82.164a1.781,1.781,0,0,1-.844-.148L13.773,9.117ZM16.008,13.5A2.5,2.5,0,1,1,13.5,16,2.531,2.531,0,0,1,16.008,13.5ZM16,14.5a1.5,1.5,0,1,0,1.5,1.461A1.513,1.513,0,0,0,16,14.5Z"></path></svg>    
-                                    <span id="due"> ${settingText}</span>
+                                    <span>
+                                        <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="cc gs gt ha gv"><path class="ui-icon__outline cc" d="M13.82,8.07a.735.735,0,0,1,.5.188l1.438,1.3c.2-.008.4,0,.594.007l1.21-1.25a.724.724,0,0,1,.532-.226,3.117,3.117,0,0,1,.867.226c.469.172,1.3.438,1.328,1.032l.094,1.929a5.5,5.5,0,0,1,.414.422c.594-.007,1.187-.023,1.781-.023a.658.658,0,0,1,.352.117,4.122,4.122,0,0,1,1,2.031.735.735,0,0,1-.188.5l-1.3,1.438c.008.2,0,.4-.007.594l1.25,1.21a.724.724,0,0,1,.226.532,3.117,3.117,0,0,1-.226.867c-.172.461-.438,1.3-1.024,1.328l-1.937.094a5.5,5.5,0,0,1-.422.414c.007.594.023,1.187.023,1.781a.611.611,0,0,1-.117.344A4.1,4.1,0,0,1,18.18,23.93a.735.735,0,0,1-.5-.188l-1.438-1.3c-.2.008-.4,0-.594-.007l-1.21,1.25a.724.724,0,0,1-.532.226,3.117,3.117,0,0,1-.867-.226c-.469-.172-1.3-.438-1.328-1.032l-.094-1.929a5.5,5.5,0,0,1-.414-.422c-.594.007-1.187.023-1.781.023a.611.611,0,0,1-.344-.117A4.1,4.1,0,0,1,8.07,18.18a.735.735,0,0,1,.188-.5l1.3-1.438c-.008-.2,0-.4.007-.594l-1.25-1.21a.724.724,0,0,1-.226-.532,3.117,3.117,0,0,1,.226-.867c.172-.461.446-1.3,1.024-1.328l1.937-.094A5.5,5.5,0,0,1,11.7,11.2c-.007-.594-.023-1.187-.023-1.781a.658.658,0,0,1,.117-.352A4.122,4.122,0,0,1,13.82,8.07ZM12.672,9.617l.023,1.8c.008.312-.859,1.164-1.164,1.18l-1.976.1-.422,1.133,1.289,1.258c.2.2.164.562.164.82a1.781,1.781,0,0,1-.148.844L9.117,18.227l.5,1.1c.6-.008,1.211-.023,1.813-.023.312,0,1.156.859,1.172,1.164l.1,1.976,1.133.422,1.258-1.289c.2-.2.562-.164.82-.164a1.7,1.7,0,0,1,.844.148l1.469,1.321,1.1-.5-.023-1.8c-.008-.312.859-1.164,1.164-1.18l1.976-.1.422-1.133-1.289-1.258c-.2-.2-.164-.562-.164-.82a1.781,1.781,0,0,1,.148-.844l1.321-1.469-.5-1.1c-.6.008-1.211.023-1.813.023-.312,0-1.156-.859-1.172-1.164l-.1-1.976-1.133-.422-1.258,1.289c-.2.2-.562.164-.82.164a1.781,1.781,0,0,1-.844-.148L13.773,9.117ZM16.008,13.5A2.5,2.5,0,1,1,13.5,16,2.531,2.531,0,0,1,16.008,13.5ZM16,14.5a1.5,1.5,0,1,0,1.5,1.461A1.513,1.513,0,0,0,16,14.5Z"></path></svg>    
+                                        <span id="due"> ${settingText}</span>
+                                    </span>
                                 </a>
                             </div>
                         </div>
@@ -1824,13 +1741,15 @@ let section2 = `<div class="section-2 d-none">
                         <div class="container ">
                             <div class="row">
                                 <div class="col-9 d-table">
-                                    <a class="d-table-cell cursor-pointer" id="back-section2" tabindex="0" role="button">
-                                        <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="gt ki gs mr--12">
-                                            <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
-                                            </path>
-                                            <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
-                                            </path>
-                                        </svg> <span class="back-key">${backKey}</span>
+                                    <a class="d-table-cell cursor-pointer" id="back-section2">
+                                        <span tabindex="0" role="button">
+                                            <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="gt ki gs mr--12">
+                                                <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
+                                                </path>
+                                                <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
+                                                </path>
+                                            </svg> <span class="back-key">${backKey}</span>
+                                        </span>
                                     </a>
                                 </div>
                                 <div class="col-3 text-right"> 
@@ -1980,12 +1899,16 @@ let questionsSection = `<div style="display: none;" id="question-section">
                                             </div>
                                             <div class="input-group-append check-opt check-me-title"  title="${checkMeKey}" tabindex="0" role="checkbox">
                                                 <span class="input-group-text input-tpt cursor-pointer">
-                                                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-                                                        <rect x="22.695" y="-6" fill="none" width="16" height="16"/>
-                                                        <path id="Path_594" d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
-                                                            c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
-                                                            l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
-                                                            c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z"/>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                                        <defs>
+                                                            <clipPath id="clip-Custom_Size_1">
+                                                            <rect width="16" height="16"/>
+                                                            </clipPath>
+                                                        </defs>
+                                                        <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                                            <rect width="16" height="16" fill="none"/>
+                                                            <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                                        </g>
                                                     </svg>
                                                 </span>
                                             </div>
@@ -2062,14 +1985,17 @@ let questionsSection = `<div style="display: none;" id="question-section">
                                             </div>
                                             <div class="input-group-append check-opt check-me-title" title="${checkMeKey}"  tabindex="0" role="checkbox">
                                                 <span class="input-group-text input-tpt cursor-pointer">
-                                                    <svg version="1.1" id="Layer_1"  x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16"  xml:space="preserve">
-                                                        <rect x="22.695" y="-6" fill="none" width="16" height="16"/>
-                                                        <path id="Path_594"  d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
-                                                            c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
-                                                            l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
-                                                            c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z"/>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                                        <defs>
+                                                            <clipPath id="clip-Custom_Size_1">
+                                                            <rect width="16" height="16"/>
+                                                            </clipPath>
+                                                        </defs>
+                                                        <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                                            <rect width="16" height="16" fill="none"/>
+                                                            <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                                        </g>
                                                     </svg>
-
                                                 </span>
                                             </div>
                                             <div class="text-right text-success">
@@ -2164,12 +2090,16 @@ let optionSection = `<div style="display: none;" id="option-section">
                         </div>
                         <div class="input-group-append check-opt check-me-title" title="${checkMeKey}"  tabindex="0" role="checkbox">
                             <span class="input-group-text input-tpt cursor-pointer">
-                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-                                    <rect x="22.695" y="-6" fill="none" width="16" height="16"/>
-                                    <path id="Path_594" d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352
-                                        c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477
-                                        l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005
-                                        c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                    <defs>
+                                        <clipPath id="clip-Custom_Size_1">
+                                        <rect width="16" height="16"/>
+                                        </clipPath>
+                                    </defs>
+                                    <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                        <rect width="16" height="16" fill="none"/>
+                                        <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                    </g>
                                 </svg>
                             </span>
                         </div>
@@ -2245,13 +2175,15 @@ let settingSection = `<div style="display:none" id="setting">
                         <div class="row">
                             <div class="col-9">
                                 <div class="d-table">
-                                    <a tabindex="0" role="button" class="cursor-pointer" id="back" tabindex="0" role="button">
-                                        <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="back-btn">
-                                            <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
-                                            </path>
-                                            <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
-                                            </path>
-                                        </svg> <span class="back-key">${backKey}</span>
+                                    <a class="cursor-pointer" id="back" >
+                                        <span tabindex="0" role="button">
+                                            <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="back-btn">
+                                                <path class="ui-icon__out   line gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
+                                                </path>
+                                                <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
+                                                </path>
+                                            </svg> <span class="back-key">${backKey}</span>
+                                        </span>
                                     </a>
                                 </div>
                             </div>

@@ -125,10 +125,17 @@ $(document).on("click", '#next', function() {
                             $(opt).parents('.card-box').addClass('alert-success');
                             $(`div#${optId}`).find('div.pr--32.check-in-div').append(`
                                 <i class="success-with-img"> 
-                                    <svg version="1.1" id="Layer_1" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" xml:space="preserve">
-                                        <rect x="22.695" y="-6" fill="none" width="16" height="16"></rect>
-                                        <path id="Path_594" d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
-                                    </svg> 
+                                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                        <defs>
+                                            <clipPath id="clip-Custom_Size_1">
+                                            <rect width="16" height="16"/>
+                                            </clipPath>
+                                        </defs>
+                                        <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                            <rect width="16" height="16" fill="none"/>
+                                            <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                        </g>
+                                    </svg>
                                 </i>`);
                             $(`div#${optId}`).find('div.pr--32.check-in-div').addClass('mh--20');
                         }
@@ -150,19 +157,33 @@ $(document).on("click", '#next', function() {
                             if ($(opt).parents('label.selector-inp').length > 0) {
                                 $(opt).parents('label.selector-inp').find('div.check-in-div').append(`
                                     <i class="success-with-img"> 
-                                        <svg version="1.1 " id="Layer_1 " x="0px " y="0px " width="16px " height="16px " viewBox="0 0 16 16 " xml:space="preserve ">
-                                            <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "></rect>
-                                            <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
-                                        </svg> 
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                            <defs>
+                                                <clipPath id="clip-Custom_Size_1">
+                                                <rect width="16" height="16"/>
+                                                </clipPath>
+                                            </defs>
+                                            <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                                <rect width="16" height="16" fill="none"/>
+                                                <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                            </g>
+                                        </svg>
                                     </i>`);
                                 $(opt).parents('label.selector-inp').find('div.check-in-div').addClass('mh--20');
                             } else {
                                 $(opt).parents('label.d-block').find('div.check-in-div').append(`
                                     <i class="success-with-img"> 
-                                        <svg version="1.1 " id="Layer_1 " x="0px " y="0px " width="16px " height="16px " viewBox="0 0 16 16 " xml:space="preserve ">
-                                            <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "></rect>
-                                            <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
-                                        </svg> 
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                            <defs>
+                                                <clipPath id="clip-Custom_Size_1">
+                                                <rect width="16" height="16"/>
+                                                </clipPath>
+                                            </defs>
+                                            <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                                <rect width="16" height="16" fill="none"/>
+                                                <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                            </g>
+                                        </svg>
                                     </i>`);
                                 $(opt).parents('label.d-block').find('div.check-in-div').addClass('mh--20');
                             }
@@ -172,19 +193,33 @@ $(document).on("click", '#next', function() {
                             if ($(opt).parents('label.selector-inp').length > 0) {
                                 $(opt).parents('label.selector-inp').find('div.check-in-div').append(`
                                     <i class="success-with-img"> 
-                                        <svg version="1.1 " id="Layer_1 " x="0px " y="0px " width="16px " height="16px " viewBox="0 0 16 16 " xml:space="preserve ">
-                                            <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "></rect>
-                                            <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
-                                        </svg> 
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                            <defs>
+                                                <clipPath id="clip-Custom_Size_1">
+                                                <rect width="16" height="16"/>
+                                                </clipPath>
+                                            </defs>
+                                            <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                                <rect width="16" height="16" fill="none"/>
+                                                <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                            </g>
+                                        </svg>
                                     </i>`);
                                 $(opt).parents('label.selector-inp').find('div.check-in-div').addClass('mh--20');
                             } else {
                                 $(opt).parents('label.d-block').find('div.check-in-div').append(`
                                     <i class="success-with-img"> 
-                                        <svg version="1.1 " id="Layer_1 " x="0px " y="0px " width="16px " height="16px " viewBox="0 0 16 16 " xml:space="preserve ">
-                                            <rect x="22.695 " y="-6 " fill="none " width="16 " height="16 "></rect>
-                                            <path id="Path_594 " d="M14.497,3.377c0.133-0.001,0.26,0.052,0.352,0.148c0.096,0.092,0.15,0.219,0.148,0.352 c0.002,0.133-0.053,0.26-0.148,0.352l-8.25,8.248c-0.189,0.193-0.5,0.196-0.693,0.006C5.904,12.48,5.902,12.479,5.9,12.477 l-4.75-4.75c-0.193-0.19-0.196-0.501-0.006-0.694C1.146,7.031,1.148,7.029,1.15,7.027c0.189-0.193,0.5-0.196,0.693-0.005 c0.002,0.001,0.004,0.003,0.006,0.005l4.4,4.391l7.9-7.891C14.239,3.432,14.365,3.377,14.497,3.377z "></path>
-                                        </svg> 
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                            <defs>
+                                                <clipPath id="clip-Custom_Size_1">
+                                                <rect width="16" height="16"/>
+                                                </clipPath>
+                                            </defs>
+                                            <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                                <rect width="16" height="16" fill="none"/>
+                                                <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                            </g>
+                                        </svg>
                                     </i>`);
                                 $(opt).parents('label.d-block').find('div.check-in-div').addClass('mh--20');
 
@@ -327,31 +362,31 @@ $(document).on("click", "#check", function() {
  * @event Click handles previous questions
  */
 $(document).on("click", '#previous', function() {
-    $('.check-key').addClass('next-key');
-    $('.check-key').removeClass('check-key');
-    $('.next-key').text(nextKey);
-    $('#check').attr('id', 'next');
-    $('.choice-required-err').remove();
+    if($(this).hasClass('disabled') == false){
+        $('.check-key').addClass('next-key');
+        $('.check-key').removeClass('check-key');
+        $('.next-key').text(nextKey);
+        $('#check').attr('id', 'next');
+        $('.choice-required-err').remove();
 
-    let pagenumber = $(this).attr('data-prev-id');
-    currentPage = pagenumber;
-    getStringKeys();
+        let pagenumber = $(this).attr('data-prev-id');
+        currentPage = pagenumber;
+        getStringKeys();
 
-    $root.find('.card-box-question').hide();
-    $root.find('.card-box-question:nth-child(' + (parseInt(currentPage) + 1) + ')').show();
-    $('#previous').attr('data-prev-id', (parseInt(currentPage) - 1));
-    $('#next').attr('data-next-id', (parseInt(currentPage) + 1));
-    $('#check').attr('data-next-id', (parseInt(currentPage) + 1));
-    Localizer.getString('xofy', parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
-        $('#xofy').text(result);
-        nextButtonName();
-    });
+        $root.find('.card-box-question').hide();
+        $root.find('.card-box-question:nth-child(' + (parseInt(currentPage) + 1) + ')').show();
+        $('#previous').attr('data-prev-id', (parseInt(currentPage) - 1));
+        $('#next').attr('data-next-id', (parseInt(currentPage) + 1));
+        $('#check').attr('data-next-id', (parseInt(currentPage) + 1));
+        Localizer.getString('xofy', parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
+            $('#xofy').text(result);
+            nextButtonName();
+        });
 
-    if (currentPage <= 0) {
-        $('#previous').addClass('disabled');
+        if (currentPage <= 0) {
+            $('#previous').addClass('disabled');
+        }
     }
-
-
 });
 
 /**
@@ -395,40 +430,25 @@ $(document).on('click', '#close-event', function() {
     ActionHelper.executeApi(closeViewRequest);
 });
 
-/**
- * @event Keydown and Click Event for next and previous
- */
-/* $(document).on({
+
+
+$(document).on({
+    click: function(e){
+        e.preventDefault();
+        if ($(this).hasClass('disabled') == true) {
+            return false;
+        }
+    },
     keydown: function(e){
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
-            $(this).find('button').click();
-            return false;
+            if ($(this).hasClass('disabled') == true) {
+                return false;
+            }
         }
-    },
-    click: function(e){
-        e.preventDefault();
-        $(this).find('button').click();
-        return false;
     }
-}, '.btn-left-div'); */
-
-/* $(document).on({
-    keydown: function (e) {
-        let key = e.which;
-        if (key === 13 || key === 32) {
-            e.preventDefault();
-            $(this).find('button').click();
-            return false;
-        }
-    },
-    click: function (e) {
-        e.preventDefault();
-        $(this).find('button').click();
-        return false;
-    }
-}, '.btn-right-div'); */
+}, 'input[type="radio"], input[type="checkbox"]')
 
 /* ********************************* Methods ******************************************** */
 
@@ -649,10 +669,11 @@ function createBody() {
 
     } else {
         getStringKeys();
-
+        let isImage = false;
         /* Loads all images when launching landing page */
         actionInstance.dataTables.forEach((dataTable, ind) => {
             if (dataTable.attachments.length > 0) {
+                isImage = true;
                 let req = ActionHelper.getAttachmentInfo(contextActionId, dataTable.attachments[0].id);
                 ActionHelper.executeApi(req).then(function (response) {
                     actionInstance.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
@@ -660,6 +681,7 @@ function createBody() {
                         $('.quiz-template-image').attr("src", actionInstance.dataTables[0].attachments[0].url);
                         $('.quiz-template-image').show();
                         $('.quiz-updated-img').show();
+                        getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
                     }
                     ActionHelper.hideLoader();
 
@@ -671,6 +693,7 @@ function createBody() {
             
             dataTable.dataColumns.forEach((questions, qindex) => {
                 if (questions.attachments.length > 0) {
+                    isImage = true;
                     let req = ActionHelper.getAttachmentInfo(contextActionId, questions.attachments[0].id);
                     ActionHelper.executeApi(req).then(function (response) {
                         actionInstance.dataTables[ind].dataColumns[qindex].attachments[0].url = response.attachmentInfo.downloadUrl;
@@ -682,6 +705,7 @@ function createBody() {
 
                 questions.options.forEach((option, optindex) => {
                     if(option.attachments.length > 0){
+                        isImage = true;
                         let req = ActionHelper.getAttachmentInfo(contextActionId, option.attachments[0].id);
                         ActionHelper.executeApi(req).then(function (response) {
                             actionInstance.dataTables[ind].dataColumns[qindex].options[optindex].attachments[0].url = response.attachmentInfo.downloadUrl;
@@ -694,6 +718,9 @@ function createBody() {
             });
         });
 
+        if(isImage == false){
+            ActionHelper.hideLoader();
+        }
         let $card = $('<div class=""></div>');
         let $title = $(`<h4 class="mb--8"> ${actionInstance.displayName} </h4>`);
         let $description = $(`<p class="mb--16 text-justify text-break font-12">${actionInstance.customProperties[0].value}</p>`);
@@ -983,6 +1010,7 @@ function summarySection() {
     let $mb16Div2 = $(`<div class="mb--16"></div>`);
     $('.summary-section').append($mb16Div2);
     $('div.section-1').after(summaryFooter);
+    $('div.container').find('.footer.section-1-footer').remove();
 
     let $cardQuestionDiv = $(`<div class="card-box-quest"></div>`);
     $('.summary-section').append($cardQuestionDiv);
