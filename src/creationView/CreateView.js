@@ -508,36 +508,35 @@ $(document).on('change', '#cover-image', function () {
         $('.quiz-clear').show();
 
         /* Perform image upload for quiz template */
-        // if ($('#quiz-title-image').attr('src').length > 0) {
-            let fileData = this;
-            if ($(fileData).val() != '') {
-                let coverImage = fileData.files[0];
-                
-                let attachment = ActionHelper.attachmentUpload(coverImage, coverImage['type']);
-                let attachmentRequest = {};
-                if (!$('#submit').hasClass('disabled')) {
-                    $('#submit').addClass('disabled');
-                    $('#submit').prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`);
-                }
-                attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
-                ActionHelper.executeApi(attachmentRequest)
-                    .then(function (response) {
-                        let attachmentData = { 'name': 'quiz-banner', type: 'Image', id: response.attachmentId };
-                        attachmentSet.push(attachmentData);
-                        if ($('#quiz-attachment-set').length > 0) {
-                            $('#quiz-attachment-id').val(response.attachmentId);
-                            $('#quiz-attachment-set').val(JSON.stringify(attachmentData));
-                        } else {
-                            $(fileData).after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentId + '</textarea>');
-                            $(fileData).after('<textarea id="quiz-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
-                        }
-                        $('#submit').removeClass('disabled');
-                        $('#submit').find(`.spinner-border.spinner-border-sm`).remove();
-                    })
-                    .catch(function (error) {
-                        console.log("GetContext - Error2: " + JSON.stringify(error));
-                    });
+        let fileData = this;
+        if ($(fileData).val() != '') {
+            let coverImage = fileData.files[0];
+            
+            let attachment = ActionHelper.attachmentUpload(coverImage, coverImage['type']);
+            let attachmentRequest = {};
+            if (!$('#submit').hasClass('disabled')) {
+                $('#submit').addClass('disabled');
+                $('#submit').prepend(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`);
             }
+            attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
+            ActionHelper.executeApi(attachmentRequest)
+            .then(function (response) {
+                let attachmentData = { 'name': 'quiz-banner', type: 'Image', id: response.attachmentId };
+                attachmentSet.push(attachmentData);
+                if ($('#quiz-attachment-set').length > 0) {
+                    $('#quiz-attachment-id').val(response.attachmentId);
+                    $('#quiz-attachment-set').val(JSON.stringify(attachmentData));
+                } else {
+                    $(fileData).after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentId + '</textarea>');
+                    $(fileData).after('<textarea id="quiz-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                }
+                $('#submit').removeClass('disabled');
+                $('#submit').find(`.spinner-border.spinner-border-sm`).remove();
+            })
+            .catch(function (error) {
+                console.log("GetContext - Error2: " + JSON.stringify(error));
+            });
+        }
     }else{
         $('.photo-box').parents('div.form-group').find('label.clear-key').after(`<label class="label-alert pull-right d-block invalid-image-format">
                     <font class="invalid-file-key">${invalidFileFormatKey}</font>

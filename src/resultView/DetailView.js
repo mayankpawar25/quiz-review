@@ -1006,7 +1006,7 @@ function createReponderQuestionView(userId, responder = '') {
             let $cardDiv = $('<div class="card-box card-bg card-border alert-success mb--8"></div>');
             let $questionContentDiv = $('<div class="question-content disabled2"></div>');
             let $rowdDiv = $('<div class="mt--24"></div>');
-            let $dflexDiv = $('<div class="d-table mb--4"></div>');
+            let $dflexDiv = $('<div class="d-table mb--8"></div>');
             $questionContentDiv.append($rowdDiv);
             $questionContentDiv.append($dflexDiv);
             let count = ind + 1;
@@ -1143,7 +1143,7 @@ function createCreatorQuestionView() {
             answerIs = "";
             let $quesContDiv = $(`<div class="question-content disabled2" id="content-${question.name}"></div>`);
             let $mtDiv = $(`<div class="mt--24"></div>`);
-            let $dflexDiv = $('<div class="d-table mb--4"></div>');
+            let $dflexDiv = $('<div class="d-table mb--8"></div>');
 
             $quesContDiv.append($mtDiv);
             $('#root').append($quesContDiv);
@@ -1335,7 +1335,7 @@ function createQuestionView(userId) {
             answerIs = "";
             let $questionDiv = $(`<div class="question-content disabled2" id="content-${question.name}"></div>`);
             let $mtDiv = $(`<div class="mt--24"></div>`);
-            let $dtableDiv = $(`<div class="d-table mb--4 "></div>`);
+            let $dtableDiv = $(`<div class="d-table mb--8 "></div>`);
             let count = ind + 1;
             let questionAttachmentId = question.attachments != "" ? question.attachments[0].id : "";
 

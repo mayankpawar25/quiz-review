@@ -2704,3 +2704,14 @@ div#xofy {
         float: left;
     }
 }
+
+.card-box-question label+label {
+    line-height: 16px;
+}
+
+.card-box-question label {
+    display: table-cell;
+    vertical-align: -webkit-baseline-middle;
+    width: 100%;
+    vertical-align: middle;
+}
