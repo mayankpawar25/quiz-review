@@ -1,9 +1,9 @@
 {
+    "schemaVersion": 1,
     "tag": "quiz-teams-app",
     "id": "<packageId>",
-    "name": "Quiz-edog",
-    "$schema": "https://int.actions.office365.com/ActionCommon/jsons/ActionManifest.schema.json",
-    "description": "Create Quiz",
+    "name": "Quiz",
+    "description": "Create a Quiz",
     "developer": {
         "name": "<name>",
         "websiteUrl": "<websiteUrl>",
@@ -11,8 +11,8 @@
         "termsOfUseUrl": "<termsOfUseUrl>"
     },
     "icon": "images/appIcon.png",
-    "actionModel": "actionModel.json",
     "version": "1.0.0",
+    "actionModel": "actionModel.json",
     "views": {
         "CardView": {
             "sourceLocation": "json/cardView.json"
@@ -30,13 +30,6 @@
             "header": "Quiz results"
         }
     },
-    "localizationInfo": {
-        "defaultLocale": "en-us",
-        "localeFiles": {
-            "en-us": "strings/en-us/strings.json"
-        }
-    },
-    "showLoadingIndicator": true,
     "msTeamsProps": {
         "name": {
             "short": "Quiz",
@@ -52,11 +45,10 @@
         },
         "accentColor": "#4464ee"
     },
-    "whitelistedUrlDomains": [
-        "ajax.googleapis.com",
-        "cdnjs.cloudflare.com",
-        "maxcdn.bootstrapcdn.com",
-        "ajax.aspnetcdn.com",
-        "int.actions.office365.com"
-    ]
+    "localizationInfo": {
+        "defaultLocale": "en-us",
+        "localeFiles": {
+            "en-us": "strings/en-us/strings.json"
+        }
+    }
 }
