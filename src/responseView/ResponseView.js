@@ -431,7 +431,9 @@ $(document).on('click', '#close-event', function() {
 });
 
 
-
+/**
+ * @event Click and Keydown for disable action on response summary section
+ */
 $(document).on({
     click: function(e){
         e.preventDefault();

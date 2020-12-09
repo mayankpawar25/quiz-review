@@ -39,7 +39,7 @@ let uploadCoverImageKey = '';
 let attachmentSet = [];
 let coverImageKey = '';
 let clearKey = '';
-let invalidFileFormat = '';
+let invalidFileFormatKey = '';
 
 /* ******************************** Events ************************************** */
 /** 
@@ -1327,9 +1327,67 @@ async function getTheme(request) {
     opt = $("div#option-section .option-div").clone();
     let weekDateFormat;
     let currentTime;
-
+    let isImage = false;
+    let isLastSessionUpdDone = false;
     /* If Edit back the quiz */
     if (lastSession != null) {
+        lastSession.action.dataTables.forEach((dataTable, ind) => {
+            if (dataTable.attachments.length > 0) {
+                isImage = true;
+                let req = ActionHelper.getAttachmentInfoDraft(dataTable.attachments[0].id);
+                ActionHelper.executeApi(req).then(function (response) {
+                    lastSession.action.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
+                    if (lastSession.action.dataTables[0].attachments[0].url != null) {
+                        $('#quiz-img-preview, #quiz-title-image').attr("src", response.attachmentInfo.downloadUrl);
+                        $('.photo-box').hide();
+                        $('.quiz-updated-img').show();
+                        $('.quiz-updated-img').show();
+                        $('#quiz-title-image').show();
+                        $('.quiz-updated-img').show();
+                        $('.quiz-clear').show();
+                        $('#cover-image').after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
+                        $('#cover-image').after('<textarea id="quiz-attachment-set" class="d-none">' + JSON.stringify(lastSession.action.dataTables[0].attachments) + '</textarea>');
+                        getClassFromDimension(response.attachmentInfo.downloadUrl, '#quiz-img-preview, #quiz-title-image');
+                    }
+                    ActionHelper.hideLoader();
+                    isLastSessionUpdDone = true;
+                })
+                .catch(function (error) {
+                    console.error("AttachmentAction - Errorquiz: " + JSON.stringify(error));
+                });
+            }else{
+                isLastSessionUpdDone = true;
+            }
+            dataTable.dataColumns.forEach((questions, qindex) => {
+                if (questions.attachments.length > 0) {
+                    isImage = true;
+                    let req = ActionHelper.getAttachmentInfoDraft(questions.attachments[0].id);
+                    ActionHelper.executeApi(req).then(function (response) {
+                        lastSession.action.dataTables[ind].dataColumns[qindex].attachments[0].url = response.attachmentInfo.downloadUrl;
+                    })
+                    .catch(function (error) {
+                        console.error("AttachmentAction - Errorquestion: " + JSON.stringify(error));
+                    });
+                }
+
+                questions.options.forEach((option, optindex) => {
+                    if (option.attachments.length > 0) {
+                        isImage = true;
+                        let req = ActionHelper.getAttachmentInfoDraft(option.attachments[0].id);
+                        ActionHelper.executeApi(req).then(function (response) {
+                            lastSession.action.dataTables[ind].dataColumns[qindex].options[optindex].attachments[0].url = response.attachmentInfo.downloadUrl;
+                        })
+                        .catch(function (error) {
+                            console.error("AttachmentAction - Erroroptions: " + JSON.stringify(error));
+                        });
+                    }
+                });
+            });
+        });
+        if (isImage == false) {
+            ActionHelper.hideLoader();
+        }
+
         let actionId = lastSession.action.id;
         let ddtt = ((lastSession.action.customProperties[1].value).split('T'));
         let dt = ddtt[0].split('-');
@@ -1357,23 +1415,8 @@ async function getTheme(request) {
         if (lastSession.action.customProperties[4].value != "") {
             let attachmentData = lastSession.action.dataTables[0].attachments[0];
             attachmentSet.push(attachmentData);
-            let req = ActionHelper.getAttachmentInfoDraft(attachmentData.id);
-            ActionHelper.executeApi(req).then(function (response) {
-                $('#quiz-img-preview, #quiz-title-image').attr("src", response.attachmentInfo.downloadUrl);
-                $('.photo-box').hide();
-                $('.quiz-updated-img').show();
-                $('.quiz-updated-img').show();
-                $('#quiz-title-image').show();
-                $('.quiz-updated-img').show();
-                $('.quiz-clear').show();
-                $('#cover-image').after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
-                $('#cover-image').after('<textarea id="quiz-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
-                getClassFromDimension(response.attachmentInfo.downloadUrl, '#quiz-img-preview, #quiz-title-image');
-            })
-                .catch(function (error) {
-                    console.error("AttachmentAction - Error101: " + JSON.stringify(error));
-                });
         }
+
         /* Due Setting String */
         let end = new Date(weekDateFormat + ' ' + currentTime);
         let start = new Date();
@@ -1426,155 +1469,134 @@ async function getTheme(request) {
         orientation: 'top'
     };
     dateInput.datepicker(options);
-    await ActionHelper.hideLoader();
     if (lastSession != null) {
-        let actionId = lastSession.action.id;
-        let option = $("div#option-section .option-div").clone();
-        lastSession.action.dataTables[0].dataColumns.forEach((e, ind) => {
-            let correctAnsArr = JSON.parse(lastSession.action.customProperties[5].value);
-            if (ind == 0) {
-                let questionTitleData = e.displayName;
-                let questionAttachmentData = e.attachments.length > 0 ? e.attachments[0].id : '';
-                $('#question1').find('#question-title').val(questionTitleData);
-                if (questionAttachmentData != "") {
-                    let attachmentData = e.attachments[0];
-                    let req = ActionHelper.getAttachmentInfoDraft(questionAttachmentData);
-                    ActionHelper.executeApi(req).then(function (response) {
-                        $('#question1').find('.question-preview').show()
-                        $('#question1').find('.question-preview-image').show()
-                        $('#question1').find('.question-preview-image').attr("src", response.attachmentInfo.downloadUrl);
-                        $('#question-image-1').after('<textarea id="question-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
-                        $('#question-image-1').after('<textarea id="question-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
-                        getClassFromDimension(response.attachmentInfo.downloadUrl, $('#question1').find('.question-preview-image'));
-                    })
-                        .catch(function (error) {
-                            console.error("AttachmentAction - Error102: " + JSON.stringify(error));
-                        });
-                }
-
-                e.options.forEach((opt, i) => {
-                    let counter = i + 1;
-                    let optionName = opt.displayName;
-                    let optionAttachment = opt.attachments.length > 0 ? opt.attachments[0].id : '';
-                    if (i <= 1) {
-                        $('#question1').find('#option' + counter).val(optionName);
-                    } else {
-                        $('#question1').find("div.option-div:last").after(option.clone());
-                        $('#question1').find("div.option-div:last input[type='text']").attr({
-                            placeholder: optionKey,
-                        });
-                        $('#question1').find("div.option-div:last input[type='text']").attr({ id: "option" + counter }).val(optionName);
-                        $('#question1').find("div.option-div:last input[type='text']")
-                            .parents(".option-div")
-                            .find("input[type='image']")
-                            .attr({ id: "option-image-" + counter });
-                        $('#question1').find("div.option-div:last input[type='text']")
-                            .parents(".option-div")
-                            .find("input.form-check-input")
-                            .attr({ id: "check" + counter });
-                    }
-
-                    $.each(correctAnsArr, function (cindex, cAns) {
-                        if ($.inArray("question1option" + counter, cAns) != -1) {
-                            $('#question1').find('#check' + counter).prop('checked', true);
-                            $('#question1').find('#option' + counter).parents('div.input-group.input-group-tpt.mb--8').find('.check-me-title').addClass('checked-112');
+        let tid = setInterval(() => {
+            if(isLastSessionUpdDone == true){
+                let actionId = lastSession.action.id;
+                let option = $("div#option-section .option-div").clone();
+                lastSession.action.dataTables[0].dataColumns.forEach((e, ind) => {
+                    let correctAnsArr = JSON.parse(lastSession.action.customProperties[5].value);
+                    if (ind == 0) {
+                        let questionTitleData = e.displayName;
+                        let questionAttachmentData = e.attachments.length > 0 ? e.attachments[0].id : '';
+                        $('#question1').find('#question-title').val(questionTitleData);
+                        if (questionAttachmentData != "") {
+                            let attachmentData = e.attachments[0];
+                            $('#question1').find('.question-preview').show()
+                            $('#question1').find('.question-preview-image').show()
+                            $('#question1').find('.question-preview-image').attr("src", attachmentData.url);
+                            $('#question-image-1').after('<textarea id="question-attachment-id" class="d-none">' + attachmentData.id + '</textarea>');
+                            $('#question-image-1').after('<textarea id="question-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                            getClassFromDimension(attachmentData.url, $('#question1').find('.question-preview-image'));
                         }
-                    });
-                    if (optionAttachment != "") {
-                        let req = ActionHelper.getAttachmentInfoDraft(optionAttachment);
-                        ActionHelper.executeApi(req).then(function (response) {
-                            let attachmentData = opt.attachments[0];
-                            $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview').show()
-                            $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').show()
-                            $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').attr("src", response.attachmentInfo.downloadUrl);
-                            $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
-                            $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
-                            getClassFromDimension(response.attachmentInfo.downloadUrl, $('#question1').find('#option-image-' + counter));
-                        })
-                            .catch(function (error) {
-                                console.error("AttachmentAction - Error104: " + JSON.stringify(error));
+
+                        e.options.forEach((opt, i) => {
+                            let counter = i + 1;
+                            let optionName = opt.displayName;
+                            let optionAttachment = opt.attachments.length > 0 ? opt.attachments[0].id : '';
+                            if (i <= 1) {
+                                $('#question1').find('#option' + counter).val(optionName);
+                            } else {
+                                $('#question1').find("div.option-div:last").after(option.clone());
+                                $('#question1').find("div.option-div:last input[type='text']").attr({
+                                    placeholder: optionKey,
+                                });
+                                $('#question1').find("div.option-div:last input[type='text']").attr({ id: "option" + counter }).val(optionName);
+                                $('#question1').find("div.option-div:last input[type='text']")
+                                    .parents(".option-div")
+                                    .find("input[type='image']")
+                                    .attr({ id: "option-image-" + counter });
+                                $('#question1').find("div.option-div:last input[type='text']")
+                                    .parents(".option-div")
+                                    .find("input.form-check-input")
+                                    .attr({ id: "check" + counter });
+                            }
+
+                            $.each(correctAnsArr, function (cindex, cAns) {
+                                if ($.inArray("question1option" + counter, cAns) != -1) {
+                                    $('#question1').find('#check' + counter).prop('checked', true);
+                                    $('#question1').find('#option' + counter).parents('div.input-group.input-group-tpt.mb--8').find('.check-me-title').addClass('checked-112');
+                                }
                             });
-                    }
-                });
-            } else {
-                let qcounter = ind + 1;
-                $(".section-2").find('#add-questions').parents("div.container").before($('#question-section').html());
-
-                let ocounter = 0;
-                let questionTitleData = e.displayName;
-                let questionAttachmentData = e.attachments.length > 0 ? e.attachments[0].id : '';
-                $(".section-2").find("div.container.question-container:last").attr('id', 'question' + qcounter);
-                Localizer.getString('question').then(function (result) {
-                    $("#question" + qcounter).find("span.question-number").text(result + ' # ' + qcounter);
-                })
-
-                $('#question' + qcounter).find('#question-title').val(questionTitleData);
-
-                if (questionAttachmentData != "") {
-                    let req = ActionHelper.getAttachmentInfoDraft(questionAttachmentData);
-                    ActionHelper.executeApi(req).then(function (response) {
-                        let attachmentData = e.attachments[0];
-                        $('#question' + qcounter).find('.question-preview').show()
-                        $('#question' + qcounter).find('.question-preview-image').show()
-                        $('#question' + qcounter).find('.question-preview-image').attr("src", response.attachmentInfo.downloadUrl);
-                        $('#question-image-' + qcounter).after('<textarea id="question-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
-                        $('#question-image-' + qcounter).after('<textarea id="question-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
-                        getClassFromDimension(response.attachmentInfo.downloadUrl, $('#question' + qcounter).find('.question-preview-image'));
-                    })
-                        .catch(function (error) {
-                            console.error("AttachmentAction - Error105: " + JSON.stringify(error));
+                            if (optionAttachment != "") {
+                                let attachmentData = opt.attachments[0];
+                                $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview').show()
+                                $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').show()
+                                $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').attr("src", attachmentData.url);
+                                $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + optionAttachment + '</textarea>');
+                                $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                                getClassFromDimension(attachmentData.url, $('#question1').find('#option-image-' + counter));
+                            }
                         });
-                }
-
-                Localizer.getString('enterTheQuestion').then(function (result) {
-                    $("div.container.question-container:visible:last").find('input[type="text"]').attr({
-                        placeholder: result,
-                    });
-                });
-                e.options.forEach((opt, i) => {
-                    ocounter = i + 1;
-                    let optionName = opt.displayName;
-                    let optionAttachment = opt.attachments.length ? opt.attachments[0].id : '';
-                    if (i <= 1) {
-                        $('#question' + qcounter).find('#option' + ocounter).val(optionName);
                     } else {
-                        $('#question' + qcounter).find("div.option-div:last").after(option.clone());
-                        $('#question' + qcounter).find("div.option-div:visible:last input[type='text']").attr({
-                            placeholder: optionKey,
-                        });
-                        $('#question' + qcounter).find("div.option-div:last input[type='text']").attr({ id: "option" + ocounter }).val(optionName);
-                        $('#question' + qcounter).find("div.option-div:last input[type='file']").attr({ id: "option-image-" + ocounter });
-                        $('#question' + qcounter).find("div.option-div:last input[type='text']")
-                            .parents(".option-div")
-                            .find("input.form-check-input")
-                            .attr({ id: "check" + ocounter });
-                    }
-                    $.each(correctAnsArr, (cindex, cAns) => {
-                        if ($.inArray("question" + qcounter + "option" + ocounter, cAns) != -1) {
-                            $('#question' + qcounter).find('#check' + ocounter).prop('checked', true);
-                            $('#question' + qcounter).find('#option' + ocounter).parents('div.input-group.input-group-tpt.mb--8').find('.check-me-title').addClass('checked-112');
-                        }
-                    });
+                        let qcounter = ind + 1;
+                        $(".section-2").find('#add-questions').parents("div.container").before($('#question-section').html());
 
-                    if (optionAttachment != "") {
-                        let req = ActionHelper.getAttachmentInfoDraft(optionAttachment);
-                        ActionHelper.executeApi(req).then(function (response) {
-                            let attachmentData = opt.attachments[0];
-                            $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview').show()
-                            $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').show()
-                            $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').attr("src", response.attachmentInfo.downloadUrl);
-                            $('#question' + qcounter).find('#option-image-' + ocounter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
-                            $('#question' + qcounter).find('#option-image-' + ocounter).after('<textarea id="option-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
-                            getClassFromDimension(response.attachmentInfo.downloadUrl, $('#question' + qcounter).find('#option-image-' + ocounter));
-                        })
-                            .catch(function (error) {
-                                console.error("AttachmentAction - Error106: " + JSON.stringify(error));
+                        let ocounter = 0;
+                        let questionTitleData = e.displayName;
+                        let questionAttachmentData = e.attachments.length > 0 ? e.attachments[0].id : '';
+                        $(".section-2").find("div.container.question-container:last").attr('id', 'question' + qcounter);
+                        Localizer.getString('question').then(function (result) {
+                            $("#question" + qcounter).find("span.question-number").text(result + ' # ' + qcounter);
+                        });
+                        $('#question' + qcounter).find('#question-title').val(questionTitleData);
+                        if (questionAttachmentData != "") {
+                            let attachmentData = e.attachments[0];
+                            $('#question' + qcounter).find('.question-preview').show()
+                            $('#question' + qcounter).find('.question-preview-image').show()
+                            $('#question' + qcounter).find('.question-preview-image').attr("src", attachmentData.url);
+                            $('#question-image-' + qcounter).after('<textarea id="question-attachment-id" class="d-none">' + attachmentData.id + '</textarea>');
+                            $('#question-image-' + qcounter).after('<textarea id="question-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                            getClassFromDimension(attachmentData.url, $('#question' + qcounter).find('.question-preview-image'));
+                        }
+
+                        Localizer.getString('enterTheQuestion').then(function (result) {
+                            $("div.container.question-container:visible:last").find('input[type="text"]').attr({
+                                placeholder: result,
                             });
+                        });
+                        e.options.forEach((opt, i) => {
+                            ocounter = i + 1;
+                            let optionName = opt.displayName;
+                            let optionAttachment = opt.attachments.length ? opt.attachments[0].id : '';
+                            if (i <= 1) {
+                                $('#question' + qcounter).find('#option' + ocounter).val(optionName);
+                            } else {
+                                $('#question' + qcounter).find("div.option-div:last").after(option.clone());
+                                $('#question' + qcounter).find("div.option-div:visible:last input[type='text']").attr({
+                                    placeholder: optionKey,
+                                });
+                                $('#question' + qcounter).find("div.option-div:last input[type='text']").attr({ id: "option" + ocounter }).val(optionName);
+                                $('#question' + qcounter).find("div.option-div:last input[type='file']").attr({ id: "option-image-" + ocounter });
+                                $('#question' + qcounter).find("div.option-div:last input[type='text']")
+                                    .parents(".option-div")
+                                    .find("input.form-check-input")
+                                    .attr({ id: "check" + ocounter });
+                            }
+                            $.each(correctAnsArr, (cindex, cAns) => {
+                                if ($.inArray("question" + qcounter + "option" + ocounter, cAns) != -1) {
+                                    $('#question' + qcounter).find('#check' + ocounter).prop('checked', true);
+                                    $('#question' + qcounter).find('#option' + ocounter).parents('div.input-group.input-group-tpt.mb--8').find('.check-me-title').addClass('checked-112');
+                                }
+                            });
+
+                            if (optionAttachment != "") {
+                                let attachmentData = opt.attachments[0];
+                                $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview').show()
+                                $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').show()
+                                $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').attr("src", attachmentData.url);
+                                $('#question' + qcounter).find('#option-image-' + ocounter).after('<textarea id="option-attachment-id" class="d-none">' + attachmentData.id + '</textarea>');
+                                $('#question' + qcounter).find('#option-image-' + ocounter).after('<textarea id="option-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                                getClassFromDimension(attachmentData.url, $('#question' + qcounter).find('#option-image-' + ocounter));
+                            }
+                        });
                     }
                 });
+                clearInterval(tid);
             }
-        });
+        }, 100);
     }
+    await ActionHelper.hideLoader();
 }
 
 
