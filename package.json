@@ -6,10 +6,11 @@
         "build": "webpack --env.mode=prod --env.watch=false",
         "start": "webpack --env.mode=dev --env.watch=true",
         "zip": "cd ./output && bestzip ./ActionPackage.zip *",
-        "create": "npm run build && npm run zip && upload-action-package -z ./output/ActionPackage.zip -t ./output/ -e https://int.actions.office365.com",
-        "update": "npm run build && npm run zip && upload-action-package -z ./output/ActionPackage.zip -e https://int.actions.office365.com",
-        "inner-loop": "create-inner-loop -p com.microsoft.sample.quiz.mike06072009 -d ./output -e https://int.actions.office365.com",
-        "delete-loop": "delete-inner-loop -p com.microsoft.sample.quiz.mike06072009 -e https://int.actions.office365.com"
+        "deploy": "npm run build && npm run zip && upload-action-package -z ./output/ActionPackage.zip -t ./output/ --ld ./output/ --lp quiz",
+        "deploy-debug": "npm run build && npm run zip && upload-action-package -z ./output/ActionPackage.zip -t ./output/ -l debug --ld ./output/ --lp quiz",
+        "update-teams-app": "npm run build && npm run zip && upload-action-package -z ./output/ActionPackage.zip --ld ./output/ --lp quiz",
+        "inner-loop": "create-inner-loop -p <packageId> -d ./output --ld ./output/ --lp quiz",
+        "lint": "tslint -c tslint.json -p tsconfig.json --fix"
     },
     "devDependencies": {
         "@types/react": "16.8.19",
