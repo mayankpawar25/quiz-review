@@ -324,6 +324,9 @@ $(document).on('click', '.quiz-clear', function () {
     $(this).hide();
     $('#quiz-attachment-id').remove();
     $('#quiz-attachment-set').remove();
+    $('textarea#quiz-attachment-set').remove();
+    $('textarea#quiz-attachment-id').remove();
+    attachmentSet = [];
 });
 
 /**
@@ -526,8 +529,10 @@ $(document).on('change', '#cover-image', function () {
                     $('#quiz-attachment-id').val(response.attachmentId);
                     $('#quiz-attachment-set').val(JSON.stringify(attachmentData));
                 } else {
-                    $(fileData).after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentId + '</textarea>');
-                    $(fileData).after('<textarea id="quiz-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                    if ($(fileData).val() != ''){
+                        $(fileData).after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentId + '</textarea>');
+                        $(fileData).after('<textarea id="quiz-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                    }
                 }
                 $('#submit').removeClass('disabled');
                 $('#submit').find(`.spinner-border.spinner-border-sm`).remove();
@@ -592,8 +597,10 @@ $(document).on('change', 'input[name="question_image"]', function () {
                         $('#' + selector).find('#question-attachment-id').val(response.attachmentId);
                         $('#' + selector).find('#question-attachment-set').val(JSON.stringify(attachmentData));
                     } else {
-                        $(fileData).after('<textarea id="question-attachment-id" class="d-none" >' + response.attachmentId + '</textarea>');
-                        $(fileData).after('<textarea id="question-attachment-set" class="d-none" >' + JSON.stringify(attachmentData) + '</textarea>');
+                        if ($(fileData).val() != "") {
+                            $(fileData).after('<textarea id="question-attachment-id" class="d-none" >' + response.attachmentId + '</textarea>');
+                            $(fileData).after('<textarea id="question-attachment-set" class="d-none" >' + JSON.stringify(attachmentData) + '</textarea>');
+                        }
                     }
                     $('#submit').removeClass('disabled');
                     $('#submit').find(`.spinner-border.spinner-border-sm`).remove();
@@ -638,8 +645,10 @@ $(document).on('change', 'input[name="option_image"]', function () {
                         $(selector).find('textarea#option-attachment-id').val(response.attachmentId);
                         $(selector).find('textarea#option-attachment-set').val(JSON.stringify(attachmentData));
                     } else {
-                        $(fileData).after('<textarea id="option-attachment-id" class="d-none" >' + response.attachmentId + '</textarea>');
-                        $(fileData).after('<textarea id="option-attachment-set" class="d-none" >' + JSON.stringify(attachmentData) + '</textarea>');
+                        if ($(fileData).val() != "") {
+                            $(fileData).after('<textarea id="option-attachment-id" class="d-none" >' + response.attachmentId + '</textarea>');
+                            $(fileData).after('<textarea id="option-attachment-set" class="d-none" >' + JSON.stringify(attachmentData) + '</textarea>');
+                        }
                     }
                     $('#submit').removeClass('disabled');
                     $('#submit').find(`.spinner-border.spinner-border-sm`).remove();
@@ -660,7 +669,7 @@ $(document).on('change', 'input[name="option_image"]', function () {
 /**
  * @event Keydown to stop opening new tab when press enter on inputs
  */
-$(document).on('keydown', 'input, textarea', function(e){
+$(document).on('keydown', 'input', function(e){
     let key = e.which;
     if(key == 13){
         return false;

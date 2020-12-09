@@ -64,7 +64,8 @@ $(document).on("click", '#next', function() {
     getStringKeys();
 
     if (parseInt(currentPage) > 0) {
-        $('#previous').removeClass('disabled');
+        if ($('#previous').attr('data-prev-id') > 0)
+            $('#previous').removeClass('disabled');
         $('#previous').attr('data-prev-id', parseInt(currentPage) - 1);
     }
 
@@ -263,7 +264,8 @@ $(document).on("click", '#next', function() {
                         $('.section-1-footer').find('.next-key').removeClass('next-key');
                         $('.section-1-footer').find('.check-key').text(checkKey);
                     }
-                    $('#previous').removeClass('disabled');
+                    if ($('#previous').attr('data-prev-id') > 0)
+                        $('#previous').removeClass('disabled');
                 }
             }
 
@@ -299,7 +301,8 @@ $(document).on("click", '#next', function() {
                 });
                 $('#check').attr('data-next-id', (parseInt(currentPage) + 1));
                 $('#next').attr('data-next-id', (parseInt(currentPage) + 1));
-                $('#previous').removeClass('disabled');
+                if ($('#previous').attr('data-prev-id') > 0)
+                    $('#previous').removeClass('disabled');
                 if ($('div.card-box-question:nth-child(' + (parseInt(currentPage) + 1 + ')')).find('.card-box.disabled:first').length == 0) {
                     $('.section-1-footer').find('.next-key').addClass('check-key');
                     $('.section-1-footer').find('.next-key').removeClass('next-key');
@@ -850,7 +853,8 @@ function createQuestionView() {
     $root.after(paginationFooterSection);
 
     if (currentPage > 0) {
-        $('#previous').removeClass('disabled');
+        if ($('#previous').attr('data-prev-id') > 0)
+            $('#previous').removeClass('disabled');
     } else {
         $('#previous').addClass('disabled');
     }
