@@ -230,7 +230,6 @@ $(document).on({
             });
         $('.check-me').text(checkMeKey);
         $('.check-me-title').attr({ "title": checkMeKey });
-        console.log("input#option" + counter);
         $(this).parents(".container").find("div.option-div:last").find("input#option" + counter).focus();
         return false;
     }
