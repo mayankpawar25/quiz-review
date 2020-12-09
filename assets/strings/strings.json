@@ -36,6 +36,8 @@
     "_coverImage.comment" : "Cover Image (Optional) Label",
     "clear": "Clear",
     "_clear.comment": "Clear Label",
+    "invalidFileFormat": "Invalid file format",
+    "_invalidFileFormat.comment": "Invalid file format error message in creation view",
     "_addQuestion.comment": "Add Question button to add new question section",
     "uploadCoverImage": "Upload cover image",
     "_uploadCoverImage.comment": "Upload cover image label",

@@ -435,7 +435,7 @@ $(document).on('click', '#close-event', function() {
 $(document).on({
     click: function(e){
         e.preventDefault();
-        if ($(this).hasClass('disabled') == true) {
+        if ($(this).hasClass('disabled')) {
             return false;
         }
     },
@@ -443,12 +443,12 @@ $(document).on({
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
-            if ($(this).hasClass('disabled') == true) {
+            if ($(this).hasClass('disabled')) {
                 return false;
             }
         }
     }
-}, 'input[type="radio"], input[type="checkbox"]')
+}, '.summary-section input[type="radio"], .summary-section input[type="checkbox"]')
 
 /* ********************************* Methods ******************************************** */
 

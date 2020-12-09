@@ -39,6 +39,7 @@ let uploadCoverImageKey = '';
 let attachmentSet = [];
 let coverImageKey = '';
 let clearKey = '';
+let invalidFileFormat = '';
 
 /* ******************************** Events ************************************** */
 /** 
@@ -105,6 +106,8 @@ $(document).on({
             <path d="M7.49219 0.5C7.6276 0.5 7.74479 0.549479 7.84375 0.648438C7.94271 0.747396 7.99219 0.864583 7.99219 1V7H13.9922C14.1276 7 14.2448 7.04948 14.3438 7.14844C14.4427 7.2474 14.4922 7.36458 14.4922 7.5C14.4922 7.63542 14.4427 7.7526 14.3438 7.85156C14.2448 7.95052 14.1276 8 13.9922 8H7.99219V14C7.99219 14.1354 7.94271 14.2526 7.84375 14.3516C7.74479 14.4505 7.6276 14.5 7.49219 14.5C7.35677 14.5 7.23958 14.4505 7.14062 14.3516C7.04167 14.2526 6.99219 14.1354 6.99219 14V8H0.992188C0.856771 8 0.739583 7.95052 0.640625 7.85156C0.541667 7.7526 0.492188 7.63542 0.492188 7.5C0.492188 7.36458 0.541667 7.2474 0.640625 7.14844C0.739583 7.04948 0.856771 7 0.992188 7H6.99219V1C6.99219 0.864583 7.04167 0.747396 7.14062 0.648438C7.23958 0.549479 7.35677 0.5 7.49219 0.5Z" fill="#6264A7"/>
         </svg> ${addMoreOptionsKey}`);
 
+        /* Focus to last question input */
+        $("#question" + questionCounter + " #question-title").focus();
         return false;
     }
 }, '#add-questions');
@@ -207,10 +210,11 @@ $(document).on({
         $(this).parents(".container").find("div.option-div:last").after(opt.clone());
 
         let selector = $(this).parents("div.container");
+        let counter = 0;
         $(selector)
             .find('div.option-div div.input-group input[type="text"]')
             .each(function (index, elem) {
-                let counter = index + 1;
+                counter = index + 1;
                 $(elem).attr({
                     placeholder: optionKey,
                 });
@@ -226,6 +230,8 @@ $(document).on({
             });
         $('.check-me').text(checkMeKey);
         $('.check-me-title').attr({ "title": checkMeKey });
+        console.log("input#option" + counter);
+        $(this).parents(".container").find("div.option-div:last").find("input#option" + counter).focus();
         return false;
     }
 }, '.add-options');
@@ -534,7 +540,7 @@ $(document).on('change', '#cover-image', function () {
             }
     }else{
         $('.photo-box').parents('div.form-group').find('label.clear-key').after(`<label class="label-alert pull-right d-block invalid-image-format">
-                    <font>Invalid file format passed</font>
+                    <font class="invalid-file-key">${invalidFileFormatKey}</font>
                 </label>`);
     }
 
@@ -601,7 +607,7 @@ $(document).on('change', 'input[name="question_image"]', function () {
     }else{
         $('.question-preview-image').attr('src', '');
         $('.question-preview').hide();
-        $(this).parents('.form-group-question').find('.question-preview').before(`<label class="label-alert d-block mb--4 invalid-file-question"><font class="question-blank-key">Invalid file format passed</font></label>`);
+        $(this).parents('.form-group-question').find('.question-preview').before(`<label class="label-alert d-block mb--4 invalid-file-question"><font class="invalid-file-key">${invalidFileFormatKey}</font></label>`);
         $(this).parents('div.input-group-append').find('#question-attachment-id').remove();
         $(this).parents('div.input-group-append').find('#question-attachment-set').remove();
     }
@@ -647,7 +653,7 @@ $(document).on('change', 'input[name="option_image"]', function () {
     }else{
         $('.option-preview-image').attr('src', '');
         $('.option-preview').hide();
-        $(this).parents('div.option-div').prepend(`<label class="label-alert d-block mb--4 invalid-file-option"><font class="question-blank-key">Invalid file format passed</font></label>`);
+        $(this).parents('div.option-div').prepend(`<label class="label-alert d-block mb--4 invalid-file-option"><font class="invalid-file-key">${invalidFileFormatKey}</font></label>`);
         $(this).parents('div.option-div').find('#question-attachment-id').remove();
         $(this).parents('div.option-div').find('#question-attachment-set').remove();
     }
@@ -1292,7 +1298,12 @@ async function getStringKeys() {
     Localizer.getString('clear').then(function (result) {
         clearKey = result;
         $('.clear-key').text(clearKey)
-    })
+    });
+
+    Localizer.getString('invalidFileFormat').then(function (result) {
+        invalidFileFormatKey = result;
+        $('.invalid-file-key').text(invalidFileFormatKey);
+    });
 }
 
 /**
@@ -1357,6 +1368,7 @@ async function getTheme(request) {
                 $('.quiz-clear').show();
                 $('#cover-image').after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                 $('#cover-image').after('<textarea id="quiz-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                getClassFromDimension(response.attachmentInfo.downloadUrl, '#quiz-img-preview, #quiz-title-image');
             })
                 .catch(function (error) {
                     console.error("AttachmentAction - Error101: " + JSON.stringify(error));
@@ -1433,6 +1445,7 @@ async function getTheme(request) {
                         $('#question1').find('.question-preview-image').attr("src", response.attachmentInfo.downloadUrl);
                         $('#question-image-1').after('<textarea id="question-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                         $('#question-image-1').after('<textarea id="question-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                        getClassFromDimension(response.attachmentInfo.downloadUrl, $('#question1').find('.question-preview-image'));
                     })
                         .catch(function (error) {
                             console.error("AttachmentAction - Error102: " + JSON.stringify(error));
@@ -1476,6 +1489,7 @@ async function getTheme(request) {
                             $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').attr("src", response.attachmentInfo.downloadUrl);
                             $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                             $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                            getClassFromDimension(response.attachmentInfo.downloadUrl, $('#question1').find('#option-image-' + counter));
                         })
                             .catch(function (error) {
                                 console.error("AttachmentAction - Error104: " + JSON.stringify(error));
@@ -1505,6 +1519,7 @@ async function getTheme(request) {
                         $('#question' + qcounter).find('.question-preview-image').attr("src", response.attachmentInfo.downloadUrl);
                         $('#question-image-' + qcounter).after('<textarea id="question-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                         $('#question-image-' + qcounter).after('<textarea id="question-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                        getClassFromDimension(response.attachmentInfo.downloadUrl, $('#question' + qcounter).find('.question-preview-image'));
                     })
                         .catch(function (error) {
                             console.error("AttachmentAction - Error105: " + JSON.stringify(error));
@@ -1548,8 +1563,9 @@ async function getTheme(request) {
                             $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview').show()
                             $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').show()
                             $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').attr("src", response.attachmentInfo.downloadUrl);
-                            $('#question' + qcounter).find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
-                            $('#question' + qcounter).find('#option-image-' + counter).after('<textarea id="option-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                            $('#question' + qcounter).find('#option-image-' + ocounter).after('<textarea id="option-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
+                            $('#question' + qcounter).find('#option-image-' + ocounter).after('<textarea id="option-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
+                            getClassFromDimension(response.attachmentInfo.downloadUrl, $('#question' + qcounter).find('#option-image-' + ocounter));
                         })
                             .catch(function (error) {
                                 console.error("AttachmentAction - Error106: " + JSON.stringify(error));
@@ -1559,6 +1575,38 @@ async function getTheme(request) {
             }
         });
     }
+}
+
+
+/**
+ * @description Method to get image dimensions and image div dimensions 
+ * @param imageURL contains image url
+ * @param selector contains image where url placed
+ */
+function getClassFromDimension(imgURL, selector) {
+    let tmpImg = new Image();
+    tmpImg.src = imgURL;
+    let imgWidth = 0;
+    let imgHeight = 0;
+    $(tmpImg).on('load', function () {
+        imgWidth = tmpImg.width;
+        imgHeight = tmpImg.height;
+
+        let divWidth = Math.round($(selector).width());
+        let divHeight = Math.round($(selector).height());
+        let getClass = '';
+        if (imgHeight > divHeight) {
+            /* height is greater than width */
+            getClass = ('heightfit');
+        } else if (imgWidth > divWidth) {
+            /* width is greater than height */
+            getClass = ('widthfit');
+        } else {
+            /* small image */
+            getClass = ('smallfit');
+        }
+        $(selector).addClass(getClass);
+    });
 }
 
 /**
