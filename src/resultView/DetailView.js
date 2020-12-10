@@ -35,6 +35,12 @@ let deleteQuizKey = '';
 let downloadImageKey = '';
 let downloadCSVKey = '';
 let downloadKey = '';
+let closeQuizConfirmKey = '';
+let deleteQuizConfirmKey = '';
+let cancelKey = '';
+let confirmKey = '';
+let changeKey = '';
+let changeDueDateKey = '';
 
 /* ********************************* Events ******************************************** */
 
@@ -452,6 +458,37 @@ async function getStringKeys() {
         downloadCSVKey = result;
         $('#download-csv-key').html(downloadCSVKey);
     });
+
+    Localizer.getString('closeQuizConfirm').then(function(result){
+        closeQuizConfirmKey = result;
+        $('.close-quiz-confirm-key').html(closeQuizConfirmKey);
+    });
+
+    Localizer.getString('deleteQuizConfirm').then(function (result) {
+        deleteQuizConfirmKey = result;
+        $('.close-quiz-confirm-key').html(deleteQuizConfirmKey);
+    });
+
+    Localizer.getString('cancel').then(function (result) {
+        cancelKey = result;
+        $('.cancel-key').html(cancelKey);
+    });
+
+    Localizer.getString('confirm').then(function (result) {
+        confirmKey = result;
+        $('.confirm-key').html(confirmKey);
+    });
+
+    Localizer.getString('change').then(function (result) {
+        changeKey = result;
+        $('.change-key').html(changeKey);
+    });
+    
+    Localizer.getString('changeDueDate').then(function (result) {
+        changeDueDateKey = result;
+        $('.change-due-date-key').html(changeDueDateKey);
+    });
+    
 }
 
 /**
@@ -1858,7 +1895,7 @@ function changeDateSection() {
             <div class="card-box card-bg card-border">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h4 class="mb--8"><strong class="due-by-key bold">Change due date</strong></h4>
+                        <h4 class="mb--8"><strong class="due-by-key bold change-due-date-key">${changeDueDateKey}</strong></h4>
                     </div>
                     <div class="clearfix"></div>
                     <div class="col-6 pr--4">
@@ -1880,7 +1917,7 @@ function changeDateSection() {
                                 <label class="confirm-box text-danger"> </label>
                             </div>
                             <div class=" pl--8 text-right">
-                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">Cancel</button><button type="button" class="btn btn-primary btn-sm disabled" id="change-quiz-date">Change</button>
+                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8 cancel-key">${cancelKey}</button><button type="button" class="btn btn-primary btn-sm disabled change-key" id="change-quiz-date">${changeKey}</button>
                             </div>
                         </div>
                     </div>
@@ -1902,7 +1939,7 @@ function closeQuizSection() {
             <div class="card-box card-bg card-border">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h4 class="mb--8"><strong class="due-by-key bold">Close Quiz</strong></h4>
+                        <h4 class="mb--8"><strong class="due-by-key bold close-quiz-key">${closeQuizKey}</strong></h4>
                     </div>
                     <div class="clearfix"></div>
 
@@ -1910,10 +1947,10 @@ function closeQuizSection() {
                     <div class="col-12">
                         <div class="d-flex-alert mt--16 mb--8">
                             <div class="pr--8">
-                                <label class="confirm-box text-danger">Are you sure you want to close this survey? </label>
+                                <label class="confirm-box text-danger close-quiz-confirm-key">${closeQuizConfirmKey}</label>
                             </div>
                             <div class=" pl--8 text-right">
-                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">Cancel</button><button type="button" class="btn btn-primary btn-sm" id="change-quiz-question">Confirm</button>
+                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8 cancel-key">${cancelKey}</button><button type="button" class="btn btn-primary btn-sm" id="change-quiz-question confirm-key">${confirmKey}</button>
                             </div>
 
                         </div>
@@ -1936,7 +1973,7 @@ function deleteQuizSection() {
             <div class="card-box card-bg card-border">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h4 class="mb--8"><strong class="due-by-key bold">Delete Quiz</strong></h4>
+                        <h4 class="mb--8"><strong class="due-by-key bold delete-quiz-key">${deleteQuizKey}</strong></h4>
                     </div>
                     <div class="clearfix"></div>
 
@@ -1944,10 +1981,10 @@ function deleteQuizSection() {
                     <div class="col-12">
                         <div class="d-flex-alert mt--16 mb--8">
                             <div class="pr--8">
-                                <label class="confirm-box text-danger">Are you sure you want to delete this Quiz? </label>
+                                <label class="confirm-box text-danger delete-quiz-confirm-key">${deleteQuizConfirmKey} </label>
                             </div>
                             <div class=" pl--8 text-right">
-                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">Cancel</button><button type="button" class="btn btn-primary btn-sm" id="delete-quiz">Confirm</button>
+                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8 cancel-key">${cancelKey}</button><button type="button" class="btn btn-primary btn-sm confirm-key" id="delete-quiz">${confirmKey}</button>
                             </div>
 
                         </div>

@@ -502,13 +502,7 @@ $(document).on('change', '#cover-image', function () {
     $('.invalid-image-format').remove();
     let urlResponse = readURL(this, '#quiz-img-preview, #quiz-title-image');
     if (urlResponse == true){
-        $('.photo-box').hide();
-        $('.quiz-updated-img').show();
-        $('.quiz-updated-img').show();
-        $('#quiz-title-image').show();
-        $('.quiz-updated-img').show();
-        $('.quiz-clear').show();
-
+       
         /* Perform image upload for quiz template */
         let fileData = this;
         if ($(fileData).val() != '') {
@@ -541,6 +535,13 @@ $(document).on('change', '#cover-image', function () {
                 console.log("GetContext - Error2: " + JSON.stringify(error));
             });
         }
+
+        $('.photo-box').hide();
+        $('.quiz-updated-img').show();
+        $('.quiz-updated-img').show();
+        $('#quiz-title-image').show();
+        $('.quiz-updated-img').show();
+        $('.quiz-clear').show();
     }else{
         $('.photo-box').parents('div.form-group').find('label.clear-key').after(`<label class="label-alert pull-right d-block invalid-image-format">
                     <font class="invalid-file-key">${invalidFileFormatKey}</font>
@@ -658,8 +659,8 @@ $(document).on('change', 'input[name="option_image"]', function () {
                 });
         }
     }else{
-        $('.option-preview-image').attr('src', '');
-        $('.option-preview').hide();
+        $(this).parents('div.option-div').find('.option-preview-image').attr('src', '');
+        $(this).parents('div.option-div').find('.option-preview').hide();
         $(this).parents('div.option-div').prepend(`<label class="label-alert d-block mb--4 invalid-file-option"><font class="invalid-file-key">${invalidFileFormatKey}</font></label>`);
         $(this).parents('div.option-div').find('#question-attachment-id').remove();
         $(this).parents('div.option-div').find('#question-attachment-set').remove();
@@ -1169,7 +1170,7 @@ async function getStringKeys() {
         optionKey = result;
         $('.opt-cls').attr('placeholder', optionKey)
     });
-    Localizer.getString('dueIn', ' 1 week', ', Correct answer shown after every question').then(function (result) {
+    Localizer.getString('dueIn', ' 1 week', '').then(function (result) {
         settingText = result;
         $('#due').text(settingText);
     });
@@ -1335,17 +1336,22 @@ async function getTheme(request) {
     let weekDateFormat;
     let currentTime;
     let isImage = false;
-    let isLastSessionUpdDone = false;
+    let imageCounter = 0;
+    let imageSuccessCounter = 0;
+
     /* If Edit back the quiz */
     if (lastSession != null) {
+        
         lastSession.action.dataTables.forEach((dataTable, ind) => {
             if (dataTable.attachments.length > 0) {
+                imageCounter++;
                 isImage = true;
                 let req = ActionHelper.getAttachmentInfoDraft(dataTable.attachments[0].id);
                 ActionHelper.executeApi(req).then(function (response) {
                     lastSession.action.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
                     if (lastSession.action.dataTables[0].attachments[0].url != null) {
                         $('#quiz-img-preview, #quiz-title-image').attr("src", response.attachmentInfo.downloadUrl);
+                        getClassFromDimension(response.attachmentInfo.downloadUrl, '#quiz-img-preview, #quiz-title-image');
                         $('.photo-box').hide();
                         $('.quiz-updated-img').show();
                         $('.quiz-updated-img').show();
@@ -1354,23 +1360,22 @@ async function getTheme(request) {
                         $('.quiz-clear').show();
                         $('#cover-image').after('<textarea id="quiz-attachment-id" class="d-none">' + response.attachmentInfo.id + '</textarea>');
                         $('#cover-image').after('<textarea id="quiz-attachment-set" class="d-none">' + JSON.stringify(lastSession.action.dataTables[0].attachments) + '</textarea>');
-                        getClassFromDimension(response.attachmentInfo.downloadUrl, '#quiz-img-preview, #quiz-title-image');
+                        imageSuccessCounter++;
                     }
                     ActionHelper.hideLoader();
-                    isLastSessionUpdDone = true;
                 })
                 .catch(function (error) {
                     console.error("AttachmentAction - Errorquiz: " + JSON.stringify(error));
                 });
-            }else{
-                isLastSessionUpdDone = true;
             }
             dataTable.dataColumns.forEach((questions, qindex) => {
                 if (questions.attachments.length > 0) {
+                    imageCounter++;
                     isImage = true;
                     let req = ActionHelper.getAttachmentInfoDraft(questions.attachments[0].id);
                     ActionHelper.executeApi(req).then(function (response) {
                         lastSession.action.dataTables[ind].dataColumns[qindex].attachments[0].url = response.attachmentInfo.downloadUrl;
+                        imageSuccessCounter++;
                     })
                     .catch(function (error) {
                         console.error("AttachmentAction - Errorquestion: " + JSON.stringify(error));
@@ -1379,10 +1384,12 @@ async function getTheme(request) {
 
                 questions.options.forEach((option, optindex) => {
                     if (option.attachments.length > 0) {
+                        imageCounter++;
                         isImage = true;
                         let req = ActionHelper.getAttachmentInfoDraft(option.attachments[0].id);
                         ActionHelper.executeApi(req).then(function (response) {
                             lastSession.action.dataTables[ind].dataColumns[qindex].options[optindex].attachments[0].url = response.attachmentInfo.downloadUrl;
+                            imageSuccessCounter++;
                         })
                         .catch(function (error) {
                             console.error("AttachmentAction - Erroroptions: " + JSON.stringify(error));
@@ -1395,7 +1402,6 @@ async function getTheme(request) {
             ActionHelper.hideLoader();
         }
 
-        let actionId = lastSession.action.id;
         let ddtt = ((lastSession.action.customProperties[1].value).split('T'));
         let dt = ddtt[0].split('-');
         weekDateFormat = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
@@ -1477,9 +1483,10 @@ async function getTheme(request) {
     };
     dateInput.datepicker(options);
     if (lastSession != null) {
+        $('#next').addClass('disabled');
         let tid = setInterval(() => {
-            if(isLastSessionUpdDone == true){
-                let actionId = lastSession.action.id;
+            if (imageSuccessCounter == imageCounter){
+                $('#next').removeClass('disabled');
                 let option = $("div#option-section .option-div").clone();
                 lastSession.action.dataTables[0].dataColumns.forEach((e, ind) => {
                     let correctAnsArr = JSON.parse(lastSession.action.customProperties[5].value);
@@ -1532,7 +1539,7 @@ async function getTheme(request) {
                                 $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image').attr("src", attachmentData.url);
                                 $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-id" class="d-none">' + optionAttachment + '</textarea>');
                                 $('#question1').find('#option-image-' + counter).after('<textarea id="option-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
-                                getClassFromDimension(attachmentData.url, $('#question1').find('#option-image-' + counter));
+                                getClassFromDimension(attachmentData.url, $('#question1').find('#option' + counter).parents('div.col-12').find('.option-preview-image'));
                             }
                         });
                     } else {
@@ -1594,7 +1601,7 @@ async function getTheme(request) {
                                 $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image').attr("src", attachmentData.url);
                                 $('#question' + qcounter).find('#option-image-' + ocounter).after('<textarea id="option-attachment-id" class="d-none">' + attachmentData.id + '</textarea>');
                                 $('#question' + qcounter).find('#option-image-' + ocounter).after('<textarea id="option-attachment-set" class="d-none">' + JSON.stringify(attachmentData) + '</textarea>');
-                                getClassFromDimension(attachmentData.url, $('#question' + qcounter).find('#option-image-' + ocounter));
+                                getClassFromDimension(attachmentData.url, $('#question' + qcounter).find('#option' + ocounter).parents('div.col-12').find('.option-preview-image'));
                             }
                         });
                     }
@@ -1688,7 +1695,7 @@ function calcDateDiff(start, end) {
  * @param elem object html elem where preview need to show
  */
 function readURL(input, elem) {
-    let fileTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp']; 
+    let fileTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp', '.jfif']; 
     let isSuccess = false;
     $(elem).removeClass('heightfit');
     $(elem).removeClass('widthfit');
@@ -2237,7 +2244,7 @@ let settingSection = `<div style="display:none" id="setting">
                 <div class="col-12 mt--24">
                     <div class="input-group form-check custom-check-outer">
                         <label class="custom-check form-check-label">
-                            <input type="checkbox" name="show_correctAnswer" id="show-correct-answer" value="Yes" checked/>
+                            <input type="checkbox" name="show_correctAnswer" id="show-correct-answer" value="Yes"/>
                             <span class="checkmark"></span>
                             <p class="show-correct-key">${showCorrectAnswerKey}</p>
                             <span class="answer-cannot-change-key sub-text mt--4 d-block">${answerCannotChangeKey}</span>

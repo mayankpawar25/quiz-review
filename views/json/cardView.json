@@ -43,61 +43,6 @@
                 "maxLines": 2,
                 "wrap": true,
                 "spacing": "small"
-            },
-            {
-                "id": "OneResponded",
-                "type": "TextBlock",
-                "$when": "${equals(summary.rowCreatorCount, 1)}",
-                "text": "${formatString(strings.one_responded, responders[0].displayName)}",
-                "size": "small",
-                "weight": "bolder",
-                "maxLines": 2,
-                "wrap": true,
-                "spacing": "small"
-            },
-            {
-                "id": "TwoResponded",
-                "type": "TextBlock",
-                "$when": "${equals(summary.rowCreatorCount, 2)}",
-                "text": "${formatString(strings.two_responded, responders[0].displayName, responders[1].displayName)}",
-                "size": "small",
-                "weight": "bolder",
-                "maxLines": 2,
-                "wrap": true,
-                "spacing": "small"
-            },
-            {
-                "id": "ThreeResponded",
-                "type": "TextBlock",
-                "$when": "${equals(summary.rowCreatorCount, 3)}",
-                "text": "${formatString(strings.three_responded, responders[0].displayName, responders[1].displayName, responders[2].displayName)}",
-                "size": "small",
-                "weight": "bolder",
-                "maxLines": 2,
-                "wrap": true,
-                "spacing": "small"
-            },
-            {
-                "id": "FourResponded",
-                "type": "TextBlock",
-                "$when": "${equals(summary.rowCreatorCount, 4)}",
-                "text": "${formatString(strings.three_and_one_other_responded, responders[0].displayName, responders[1].displayName, responders[2].displayName)}",
-                "size": "small",
-                "weight": "bolder",
-                "maxLines": 2,
-                "wrap": true,
-                "spacing": "small"
-            },
-            {
-                "id": "MoreResponded",
-                "type": "TextBlock",
-                "$when": "${greater(summary.rowCreatorCount, 4)}",
-                "text": "${formatString(strings.three_and_others_responded, responders[0].displayName, responders[1].displayName, responders[2].displayName, sub(summary.rowCreatorCount - 3))}",
-                "size": "small",
-                "weight": "bolder",
-                "maxLines": 2,
-                "wrap": true,
-                "spacing": "small"
             }
         ],
         "actions": [{

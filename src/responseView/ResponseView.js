@@ -684,9 +684,9 @@ function createBody() {
                     actionInstance.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
                     if (actionInstance.dataTables[0].attachments[0].url != null) {
                         $('.quiz-template-image').attr("src", actionInstance.dataTables[0].attachments[0].url);
+                        getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
                         $('.quiz-template-image').show();
                         $('.quiz-updated-img').show();
-                        getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
                     }
                     ActionHelper.hideLoader();
 
@@ -1239,7 +1239,9 @@ let summaryFooter = `<div class="footer section-1-footer">
                         </div>`;
 
 
-
+/**
+ * @description Variable contains close button at footer
+ */
 let closeFooter = `
         <div class="footer section-1-footer">
             <div class="footer-padd bt">

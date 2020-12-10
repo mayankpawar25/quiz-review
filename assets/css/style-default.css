@@ -2539,7 +2539,7 @@ div#xofy {
 }
 
 .spinner-border {
-    display: none;
+    /* display: none; */
 }
 
 .setting-label {
