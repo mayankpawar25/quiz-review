@@ -193,6 +193,6 @@
     "$manifest.activities.activityTypes[3].description": "Quiz results are out",
     "$manifest.msTeamsProps.name.full": "Quiz",
     "$manifest.msTeamsProps.name.short": "Quiz",
-    "$manifest.msTeamsProps.description.full": "Ask a series of questions and get actionable insights by creating a quiz in a chat or channel. Use quiz for – Registrations | Enrollments | Feedback | Testimonials | Lead Capture | Applications | Reporting | Complaints | Evaluations​\n• Find the app in \"…\" under the message compose box​. Name your quiz and add questions. You're good to go. Stay on top of participation by tracking responses​. View quiz results and download them to share with your co-workers",
-    "$manifest.msTeamsProps.description.short": "Collect data from your coworkers"
+    "$manifest.msTeamsProps.description.full": "Create a quiz to test people's knowledge in a chat or channel. Find the app in '…' under the message compose box. Provide title and create a questionnaire to post in you chat or channel. Find responses and aggregated summary for quick evaluation.",
+    "$manifest.msTeamsProps.description.short": "Create a quiz"
 }
