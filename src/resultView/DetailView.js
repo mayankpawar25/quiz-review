@@ -579,41 +579,34 @@ async function createBody() {
     } else {
         head();
     }
-
+    
     /*  Person Responded X of Y Responses  */
     getSubscriptionCount = ActionHelper.getSubscriptionMemberCount(
         actionContext.subscription
     );
     let response = await ActionHelper.executeApi(getSubscriptionCount);
 
-    let $pcard = $(`<div class="progress-section"></div>`);
-    let memberCount = response.memberCount;
-    let participationPercentage = 0;
-
-    participationPercentage = Math.round(
-        (actionSummary.rowCreatorCount / memberCount) * 100
-    );
-    Localizer.getString("participation", participationPercentage).then(function(result) {
-        $pcard.append(
-            `<label class="mb--8"><strong classs="semi-bold">${result}</strong></label><div class="progress mb--8"><div class="progress-bar bg-primary" role="progressbar" style="width: ${participationPercentage}%" aria-valuenow="${participationPercentage}" aria-valuemin="0" aria-valuemax="100"></div></div>`
-        );
-    });
-
     if (isCreator == true) {
+        let $pcard = $(`<div class="progress-section"></div>`);
+        let memberCount = response.memberCount;
+        let participationPercentage = 0;
+
+        participationPercentage = Math.round(
+            (actionSummary.rowCreatorCount / memberCount) * 100
+        );
+        Localizer.getString("participation", participationPercentage).then(function (result) {
+            $pcard.append(
+                `<label class="mb--8"><strong classs="semi-bold">${result}</strong></label><div class="progress mb--8"><div class="progress-bar bg-primary" role="progressbar" style="width: ${participationPercentage}%" aria-valuenow="${participationPercentage}" aria-valuemin="0" aria-valuemax="100"></div></div>`
+            );
+        });
         Localizer.getString("xofy_people_responded", actionSummary.rowCount, memberCount).then(function(result) {
             let xofy = result;
             $pcard.append(`<p class="date-color cursor-pointer mb--24"> <span id="show-responders" class="under-line" tabindex="0" role="button">${xofy}</span><!--<span class="pull-right send-reminder under-line"> Send reminder</span> --></p>`);
             $pcard.append(`<div class="clearfix"></div>`);
         });
-    } else {
-        Localizer.getString("xofy_people_responded", actionSummary.rowCount, memberCount).then(function(result) {
-            let xofy = result;
-            $pcard.append(`<p class="date-color mb--24"><span id="show-responders">${xofy}</span></p>`);
-            $pcard.append(`<div class="clearfix"></div>`);
-        });
+        $("#root").append($pcard);
     }
 
-    $("#root").append($pcard);
     let responderDateLength = Object.keys(responderDate).length;
     if (responderDateLength > 0) {
         if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
@@ -712,9 +705,10 @@ function head() {
         ActionHelper.executeApi(req).then(function(response) {
                 $card.prepend(`
                     <div class="quiz-updated-img relative max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16 bg-none bdr-none">
-                        <div class="loader-cover">
-                            <div class="spinner-border" role="status">
-                                <span class="sr-only">Loading...</span>
+                        <div class="loader-cover d-table">
+                            <div class="d-table-cell">
+                                <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span></div>
                             </div>
                         </div>
                         <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive quiz-template-image smallfit"  crossorigin="anonymous">
@@ -815,9 +809,10 @@ function headCreator() {
         ActionHelper.executeApi(req).then(function(response) {
                 $card.prepend(`
                     <div class="quiz-updated-img relative max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16 bg-none bdr-none">
-                        <div class="loader-cover">
-                            <div class="spinner-border" role="status">
-                                <span class="sr-only">Loading...</span>
+                        <div class="loader-cover d-table">
+                            <div class="d-table-cell">
+                                <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span></div>
                             </div>
                         </div>
                         <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive quiz-template-image smallfit"  crossorigin="anonymous">
@@ -1045,7 +1040,7 @@ function createResponderQuestionView(userId, responder = "") {
             answerIs = "";
             let $cardDiv = $(`<div class="card-box card-bg card-border alert-success mb--8"></div>`);
             let $questionContentDiv = $(`<div class="question-content disabled2"></div>`);
-            let $rowdDiv = $(`<div class="mt--24"></div>`);
+            let $rowdDiv = $(`<div class="mt--16"></div>`);
             let $dflexDiv = $(`<div class="d-table mb--4"></div>`);
             $questionContentDiv.append($rowdDiv);
             $questionContentDiv.append($dflexDiv);
@@ -1198,7 +1193,7 @@ function createCreatorQuestionView() {
             let correctCounter = 0;
             answerIs = "";
             let $quesContDiv = $(`<div class="question-content disabled2" id="content-${question.name}"></div>`);
-            let $mtDiv = $(`<div class="mt--24"></div>`);
+            let $mtDiv = $(`<div class="mt--16"></div>`);
             let $dflexDiv = $(`<div class="d-table mb--4"></div>`);
 
             $quesContDiv.append($mtDiv);
@@ -1225,9 +1220,10 @@ function createCreatorQuestionView() {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $blankQDiv.prepend(`
                             <div class="option-image-section relative cover-img min-max-132 mb--4">
-                                <div class="loader-cover">
-                                    <div class="spinner-border" role="status">
-                                        <span class="sr-only">Loading...</span>
+                                <div class="loader-cover d-table">
+                                    <div class="d-table-cell">
+                                        <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span></div>
                                     </div>
                                 </div>
                                 <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive"  crossorigin="anonymous">
@@ -1412,7 +1408,7 @@ function createQuestionView(userId) {
         dataTable.dataColumns.forEach((question, ind) => {
             answerIs = "";
             let $questionDiv = $(`<div class="question-content disabled2" id="content-${question.name}"></div>`);
-            let $mtDiv = $(`<div class="mt--24"></div>`);
+            let $mtDiv = $(`<div class="mt--16"></div>`);
             let $dtableDiv = $(`<div class="d-table mb--4 "></div>`);
             let count = ind + 1;
             let questionAttachmentId = question.attachments != "" ? question.attachments[0].id : "";
@@ -1439,9 +1435,10 @@ function createQuestionView(userId) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $blankQDiv.prepend(`
                             <div class="option-image-section relative cover-img min-max-132 mb--4">
-                                <div class="loader-cover">
-                                    <div class="spinner-border" role="status">
-                                        <span class="sr-only">Loading...</span>
+                                <div class="loader-cover d-table">
+                                    <div class="d-table-cell">
+                                        <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span></div>
                                     </div>
                                 </div>
                                 <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive"  crossorigin="anonymous">
@@ -1578,7 +1575,7 @@ function getRadioOptions(text, name, id, userResponse, correctAnswer, attachment
                 <div class="radio-section custom-radio-outer" id="${id} " columnid="3 ">
                     <label class="custom-radio d-block font-14">
                         <span class="radio-block selected "></span>
-                        <div class="pr--32 check-in-div">${text}  &nbsp;
+                        <div class="pr--32 check-in-div font-12">${text}  &nbsp;
                             <i class="success-with-img">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
                                     <defs>
@@ -1606,7 +1603,7 @@ function getRadioOptions(text, name, id, userResponse, correctAnswer, attachment
                 <div class="radio-section custom-radio-outer" id="${id}">
                     <label class="custom-radio d-block selected font-14">
                         <span class="radio-block selected"></span>
-                        <div class="pr--32 check-in-div">
+                        <div class="pr--32 check-in-div font-12">
                         ${text}
                         </div>
                     </label>
@@ -1619,7 +1616,7 @@ function getRadioOptions(text, name, id, userResponse, correctAnswer, attachment
                 <div class="radio-section custom-radio-outer" id="${id}">
                     <label class="custom-radio d-block selected font-14">
                         <span class="radio-block"></span>
-                        <div class="pr--32 check-in-div">${text} &nbsp;
+                        <div class="pr--32 check-in-div font-12">${text} &nbsp;
                             <i class="success-with-img">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
                                     <defs>
@@ -1642,7 +1639,7 @@ function getRadioOptions(text, name, id, userResponse, correctAnswer, attachment
         $oDiv.append(`<div class="card-box card-bg card-border mb--8 ">
                 <div class=" radio-section custom-radio-outer " id="${id}" columnid="3 ">
                     <label class="custom-radio d-block font-14">
-                        <span class="radio-block"></span><div class="pr--32 check-in-div">${text}</div>
+                        <span class="radio-block"></span><div class="pr--32 check-in-div font-12">${text}</div>
                     </label>
                 </div>
             </div>`);
@@ -1654,9 +1651,10 @@ function getRadioOptions(text, name, id, userResponse, correctAnswer, attachment
                 console.info("Attachment - Response: " + JSON.stringify(response));
                 $oDiv.find("label.custom-radio").prepend(`
                     <div class="option-image-section relative cover-img min-max-132 mb--4">
-                        <div class="loader-cover">
-                            <div class="spinner-border" role="status">
-                                <span class="sr-only">Loading...</span>
+                        <div class="loader-cover d-table">
+                            <div class="d-table-cell">
+                                <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span></div>
                             </div>
                         </div>
                         <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
@@ -1688,7 +1686,7 @@ function getCheckOptions(text, name, id, userResponse, correctAnswer, attachment
                 <div class="radio-section custom-check-outer" id="${id} " columnid="3 ">
                     <label class="custom-check d-block font-14">
                         <span class="checkmark selected "></span>
-                        <div class="pr--32 check-in-div">${text}  &nbsp;
+                        <div class="pr--32 check-in-div font-12">${text}  &nbsp;
                             <i class="success-with-img">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
                                     <defs>
@@ -1716,7 +1714,7 @@ function getCheckOptions(text, name, id, userResponse, correctAnswer, attachment
                 <div class="radio-section custom-check-outer" id="${id}">
                     <label class="custom-check d-block selected font-14">
                         <span class="checkmark selected"></span>
-                        <div class="pr--32 check-in-div">
+                        <div class="pr--32 check-in-div font-12">
                         ${text}
                         </div>
                     </label>
@@ -1729,7 +1727,7 @@ function getCheckOptions(text, name, id, userResponse, correctAnswer, attachment
                 <div class="radio-section custom-check-outer" id="${id}">
                     <label class="custom-check d-block selected font-14">
                         <span class="checkmark"></span>
-                        <div class="pr--32 check-in-div">${text} &nbsp;
+                        <div class="pr--32 check-in-div font-12">${text} &nbsp;
                             <i class="success-with-img">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
                                     <defs>
@@ -1752,7 +1750,7 @@ function getCheckOptions(text, name, id, userResponse, correctAnswer, attachment
         $oDiv.append(`<div class="card-box card-bg card-border mb--8 ">
                 <div class=" radio-section custom-check-outer " id="${id}" columnid="3 ">
                     <label class="custom-check d-block font-14">
-                        <span class="checkmark"></span><div class="pr--32 check-in-div">${text}</div>
+                        <span class="checkmark"></span><div class="pr--32 check-in-div font-12">${text}</div>
                     </label>
                 </div>
             </div>`);
@@ -1764,9 +1762,10 @@ function getCheckOptions(text, name, id, userResponse, correctAnswer, attachment
             console.info("Attachment - Response: " + JSON.stringify(response));
             $oDiv.find("label.custom-radio").prepend(`
                     <div class="option-image-section relative cover-img min-max-132 mb--4">
-                        <div class="loader-cover">
-                            <div class="spinner-border" role="status">
-                                <span class="sr-only">Loading...</span>
+                        <div class="loader-cover d-table">
+                            <div class="d-table-cell">
+                                <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span></div>
                             </div>
                         </div>
                         <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
@@ -1795,9 +1794,9 @@ function getRadioOptionsCreator(text, optId, ind, result, attachmentId) {
     if (result == "correct") {
         $oDiv.append(`
                 <div class="radio-section custom-radio-outer " id="${optId}" columnid="${ind}">
-                    <label class="custom-radio d-block font-14 cursor-pointer ">
+                    <label class="custom-radio d-block font-12 cursor-pointer ">
                         <span class="radio-block"></span>
-                        <div class="pr--32 check-in-div">${text} &nbsp;
+                        <div class="pr--32 check-in-div font-12">${text} &nbsp;
                             <i class="success">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
                                     <defs>
@@ -1818,9 +1817,9 @@ function getRadioOptionsCreator(text, optId, ind, result, attachmentId) {
     } else {
         $oDiv.append(`
                 <div class="radio-section custom-radio-outer " id="${optId}" columnid="${ind}">
-                    <label class="custom-radio d-block font-14 cursor-pointer ">
+                    <label class="custom-radio d-block font-12 cursor-pointer ">
                         <span class="radio-block"></span>
-                        <div class="pr--32 check-in-div">${text}</div>
+                        <div class="pr--32 check-in-div font-12">${text}</div>
                     </label>
                 </div>
             `);
@@ -1831,9 +1830,10 @@ function getRadioOptionsCreator(text, optId, ind, result, attachmentId) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
                 $oDiv.find("label.custom-radio").prepend(`
                     <div class="option-image-section relative cover-img min-max-132 mb--4">
-                        <div class="loader-cover">
-                            <div class="spinner-border" role="status">
-                                <span class="sr-only">Loading...</span>
+                        <div class="loader-cover d-table">
+                            <div class="d-table-cell">
+                                <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span></div>
                             </div>
                         </div>
                         <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
@@ -1862,9 +1862,9 @@ function getCheckOptionsCreator(text, optId, ind, result, attachmentId) {
     if (result == "correct") {
         $oDiv.append(`
                 <div class="radio-section custom-check-outer " id="${optId}" columnid="${ind}">
-                    <label class="custom-check d-block font-14 cursor-pointer ">
+                    <label class="custom-check d-block font-12 cursor-pointer ">
                         <span class="checkmark"></span>
-                        <div class="pr--32 check-in-div">${text} &nbsp;
+                        <div class="pr--32 check-in-div font-12">${text} &nbsp;
                             <i class="success">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
                                     <defs>
@@ -1885,9 +1885,9 @@ function getCheckOptionsCreator(text, optId, ind, result, attachmentId) {
     } else {
         $oDiv.append(`
                 <div class="radio-section custom-check-outer " id="${optId}" columnid="${ind}">
-                    <label class="custom-check d-block font-14 cursor-pointer ">
+                    <label class="custom-check d-block font-12 cursor-pointer ">
                         <span class="checkmark"></span>
-                        <div class="pr--32 check-in-div">${text}</div>
+                        <div class="pr--32 check-in-div font-12">${text}</div>
                     </label>
                 </div>
             `);
@@ -1898,9 +1898,10 @@ function getCheckOptionsCreator(text, optId, ind, result, attachmentId) {
             console.info("Attachment - Response: " + JSON.stringify(response));
             $oDiv.find("label.custom-radio").prepend(`
                     <div class="option-image-section relative cover-img min-max-132 mb--4">
-                        <div class="loader-cover">
-                            <div class="spinner-border" role="status">
-                                <span class="sr-only">Loading...</span>
+                        <div class="loader-cover d-table">
+                            <div class="d-table-cell">
+                                <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span></div>
                             </div>
                         </div>
                         <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
@@ -1921,7 +1922,7 @@ function getCheckOptionsCreator(text, optId, ind, result, attachmentId) {
 function removeImageLoader(selector) {
     let tid = setInterval(() => {
         if ($(selector).hasClass("heightfit") || $(selector).hasClass("widthfit") || $(selector).hasClass("smallfit")) {
-            $(".loader-cover").hide();
+            $(".loader-cover").addClass("d-none");
             clearInterval(tid);
         }
     }, 100);

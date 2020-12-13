@@ -585,10 +585,11 @@ async function getTheme(request) {
     $("div.section-1").append(`<div class="row"><div class="col-12"><div id="root"></div></div></div>`);
     $("div.section-1 div.row").prepend(`
             <div class="col-12 quiz-img-sec">
-                <div class="quiz-updated-img bg-none bdr-none max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16" style="display: none">
-                    <div class="loader-cover">
-                        <div class="spinner-border" role="status">
-                            <span class="sr-only">Loading...</span>
+                <div class="quiz-updated-img bg-none bdr-none max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16 relative" style="display: none">
+                    <div class="loader-cover d-table">
+                        <div class="d-table-cell">
+                            <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span></div>
                         </div>
                     </div>
                     <img src="" class="image-responsive quiz-template-image" style="display:none" />
@@ -896,7 +897,7 @@ function createQuestionView() {
             $("#root div.card-box-question:visible .question-template-image").show();
             $("#root div.card-box-question:visible .quiz-updated-img").show();
             getClassFromDimension(question.attachments[0].url, "#root div.card-box-question:visible .question-template-image");
-            removeImageLoader(`$("#root div.card-box-question:visible .question-template-image")`);
+            removeImageLoader("#root div.card-box-question:visible .question-template-image");
         }
 
         $("#root div.card-box-question:visible .question-title").html(`<p class="">${question.displayName}</p>`);
@@ -952,17 +953,18 @@ function createQuestionView() {
 function getRadioButton(text, name, id, attachmentURL) {
     let $cardBox = $(`<div class="card-box card-bg card-border mb--8"></div>`);
     $cardBox.append(`<div class="radio-section custom-radio-outer" id="${id}" columnId="${name}">
-                        <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
+                        <label class="custom-radio d-block font-12 cursor-pointer selector-inp">
                             <input type="radio" name="${name}" id="${id}">
                             <span class="radio-block"></span>
                             <div class="pr--32 check-in-div">${text}</div>
                         </label>
                     </div>`);
     if (attachmentURL != "") {
-        $cardBox.find(".custom-radio").prepend(`<div class="option-image-section cover-img min-max-132 mb--4">
-                <div class="loader-cover">
-                    <div class="spinner-border" role="status">
-                        <span class="sr-only">Loading...</span>
+        $cardBox.find(".custom-radio").prepend(`<div class="option-image-section cover-img min-max-132 mb--4 relative">
+                <div class="loader-cover d-table">
+                    <div class="d-table-cell">
+                        <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span></div>
                     </div>
                 </div>
                 <img src="${attachmentURL}" class="opt-image img-responsive"/>
@@ -981,7 +983,7 @@ function getRadioButton(text, name, id, attachmentURL) {
 function getCheckboxButton(text, name, id, attachmentURL) {
     let $cardBox = $(`<div class="card-box card-bg card-border mb--8"></div>`);
     $cardBox.append(`<div class="radio-section custom-check-outer selector-inp" id="${id}" columnId="${name}" >
-                        <label class="custom-check form-check-label d-block">
+                        <label class="custom-check font-12 form-check-label d-block">
                             <input type="checkbox" class="radio-block" name="${name}" id="${id}">
                             <span class="checkmark"></span>
                             <div class="pr--32 check-in-div">${text}
@@ -991,11 +993,12 @@ function getCheckboxButton(text, name, id, attachmentURL) {
 
     if (attachmentURL != "") {
         $cardBox.find(".custom-check").prepend(`
-            <label class="custom-radio d-block font-14 cursor-pointer selector-inp">
-                <div class="option-image-section updated-img cover-img min-max-132 mb--8">
-                    <div class="loader-cover">
-                        <div class="spinner-border" role="status">
-                            <span class="sr-only">Loading...</span>
+            <label class="custom-radio d-block font-12 cursor-pointer selector-inp">
+                <div class="option-image-section updated-img cover-img min-max-132 mb--8 relative">
+                    <div class="loader-cover d-table">
+                        <div class="d-table-cell">
+                            <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span></div>
                         </div>
                     </div>
                     <img src="${attachmentURL}" class="opt-image img-responsive"/>
@@ -1172,7 +1175,7 @@ function getClassFromDimension(imgURL, selector) {
 function removeImageLoader(selector) {
     let tid = setInterval(() => {
         if ($(selector).hasClass("heightfit") || $(selector).hasClass("widthfit") || $(selector).hasClass("smallfit")) {
-            $(".loader-cover").hide();
+            $(".loader-cover").addClass("d-none");
             clearInterval(tid);
         }
     }, 100);
@@ -1219,10 +1222,11 @@ let questionSection = `<div class="card-box-question">
                                 </label>
                             </div>
                             <div>
-                                <div class="quiz-updated-img bg-none bdr-none cover-img min-max-132 mb--8" style="display: none">
-                                    <div class="loader-cover">
-                                        <div class="spinner-border" role="status">
-                                            <span class="sr-only">Loading...</span>
+                                <div class="quiz-updated-img bg-none bdr-none cover-img min-max-132 mb--8 relative" style="display: none">
+                                    <div class="loader-cover d-table">
+                                        <div class="d-table-cell">
+                                            <div class="spinner-border" role="status">
+                                            <span class="sr-only">Loading...</span></div>
                                         </div>
                                     </div>
                                     <img src="" class="image-responsive question-template-image" style="display: none" />

@@ -327,7 +327,7 @@ $(document).on("click", ".quiz-clear", function () {
     $("#quiz-attachment-set").remove();
     $("textarea#quiz-attachment-set").remove();
     $("textarea#quiz-attachment-id").remove();
-    $(".loader-cover").show();
+    $(".loader-cover").removeClass('d-none');;
     attachmentSet = [];
 });
 
@@ -1115,9 +1115,6 @@ function createAction(actionPackageId) {
         }],
     };
 
-    console.log("action: ");
-    console.log(JSON.stringify(action));
-
     let request = ActionHelper.createAction(action);
     ActionHelper
         .executeApi(request)
@@ -1699,7 +1696,7 @@ function calcDateDiff(start, end) {
  * @param elem object html elem where preview need to show
  */
 function readURL(input, elem) {
-    let fileTypes = ["jpg", "jpeg", "png", "gif", "webp", ".jfif"];
+    let fileTypes = ["jpg", "jpeg", "png", "gif", "webp", "jfif"];
     let isSuccess = false;
     $(elem).removeClass("heightfit");
     $(elem).removeClass("widthfit");
@@ -1746,7 +1743,7 @@ function readURL(input, elem) {
 function removeImageLoader(selector) {
     let tid = setInterval(() => {
         if ($(selector).hasClass("heightfit") || $(selector).hasClass("widthfit") || $(selector).hasClass("smallfit")) {
-            $(".loader-cover").hide();
+            $(".loader-cover").addClass("d-none");
             clearInterval(tid);
         }
     }, 100);
@@ -1765,7 +1762,7 @@ let formSection = `<div class="section-1">
                         <textarea class="form-control in-t font-12" id="quiz-description" maxlength="5000"></textarea>
                     </div>
                     <div class="form-group mb0">
-                        <label class="cover-image-label semi-bold mb--8 font-12 cover-image-key float-left">${coverImageKey}</label>
+                        <label class="cover-image-label semi-bold mb--8 font-12 cover-image-key app-black-color float-left">${coverImageKey}</label>
                         <label class="quiz-clear semi-bold mb--8 cursor-pointer pull-right theme-color font-12 clear-key-href clear-key" style="display:none" tabindex="0" role="button">${clearKey}</label>
                         <div class="clearfix"></div>
                         <div class="relative">
@@ -1774,10 +1771,11 @@ let formSection = `<div class="section-1">
                                 <span class="tap-upload-label upload-cover-image-key">${uploadCoverImageKey}</span>
                             </div>
                             <!-- show this div after img added -->
-                            <div class="quiz-updated-img max-min-220 card-bg card-border cursor-pointer updated-img bdr-none bg-none fixed-ar fixed-ar-16-9" style="display:none">
-                                <div class="loader-cover">
-                                    <div class="spinner-border" role="status">
-                                        <span class="sr-only">Loading...</span>
+                            <div class="quiz-updated-img max-min-220 card-bg card-border cursor-pointer updated-img bdr-none bg-none fixed-ar fixed-ar-16-9 relative" style="display:none">
+                                <div class="loader-cover d-table">
+                                    <div class="d-table-cell">
+                                        <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span></div>
                                     </div>
                                 </div>
                                 <img src="" id="quiz-img-preview" class="quiz-updated-img card-bg card-border cursor-pointer">
@@ -1817,10 +1815,11 @@ let section2 = `<div class="section-2 d-none">
                     <div class="card-box quiz-card-section container quiz-preview-sec">
                         <div class="row">
                             <div class="col-12">
-                                <div class="quiz-updated-img max-min-220 card-bg bdr-none bg-none card-border cover-img cursor-pointer mb--16 updated-img" style="display:none">
-                                    <div class="loader-cover">
-                                        <div class="spinner-border" role="status">
-                                            <span class="sr-only">Loading...</span>
+                                <div class="quiz-updated-img max-min-220 card-bg bdr-none bg-none card-border cover-img cursor-pointer mb--16 updated-img relative" style="display:none">
+                                    <div class="loader-cover d-table">
+                                        <div class="d-table-cell">
+                                            <div class="spinner-border" role="status">
+                                            <span class="sr-only">Loading...</span></div>
                                         </div>
                                     </div>
                                     <img src="" id="quiz-title-image" style="display:none" class="quiz-updated-img card-bg card-border">
