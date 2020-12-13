@@ -1085,10 +1085,10 @@ a#back-setting svg {
 
 .radio-block {
     position: absolute;
-    top: 4px;
+    top: 0px;
     left: 0;
-    height: 12px;
-    width: 12px;
+    height: 16px;
+    width: 16px;
     background-color: transparent;
     border-radius: 50%;
     border: 1px solid var(--app-black);
@@ -1148,7 +1148,7 @@ a#back-setting svg {
 .custom-check-outer {
     display: block;
     position: relative;
-    padding-left: 28px;
+    padding-left: 24px;
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -1166,7 +1166,7 @@ a#back-setting svg {
 
 .checkmark {
     position: absolute;
-    top: 2px;
+    top: 0px;
     left: 0;
     height: 16px;
     width: 16px;
@@ -2333,7 +2333,7 @@ span.file-counter {
     line-height: 32px;
     font-size: var(--font-regular);
     font-weight: var(--font-weight-600);
-    color: var(--app-black);
+    color: var(--app-gray-02);
 }
 
 .tpt-btn .next-btn {
@@ -2342,7 +2342,7 @@ span.file-counter {
     height: 1rem;
     margin-top: -2px;
     margin-left: 8px;
-    color: var(--app-black);
+    color: var(--app-gray-02);
 }
 
 .pagination-1 {
@@ -2493,7 +2493,7 @@ div#xofy {
 
 .footer .dropdown-menu {
     color: var(--app-gray-sub-text);
-    font-size: var(--font-13);
+    font-size: var(--font-12);
     font-weight: var(--font-weight-600);
 }
 
@@ -2505,7 +2505,7 @@ div#xofy {
     padding: 0.5rem;
     line-height: 1rem;
     color: var(--app-gray-sub-text);
-    font-size: var(--font-13);
+    font-size: var(--font-12);
     font-weight: var(--font-weight-600);
 }
 
@@ -2592,6 +2592,58 @@ div#xofy {
     min-height: 20px;
 }
 
+.loader-cover {
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    background-color: #fff;
+    text-align: center;
+    display: table;
+    z-index: 1;
+}
+
+.loader-cover .spinner-border {
+    margin-top: 12%;
+}
+
+.change-date .d-flex-alert {
+    display: flex;
+    justify-content: right;
+}
+
+.close-quiz .d-flex-alert {
+    display: flex;
+    justify-content: right;
+}
+
+.delete-quiz .d-flex-alert {
+    display: flex;
+    justify-content: right;
+}
+
+.change-date .d-flex-alert .pl--8,
+.close-quiz .d-flex-alert .pl--8,
+.delete-quiz .d-flex-alert .pl--8 {
+    width: 100%;
+}
+
+.relative {
+    position: relative;
+}
+
+.question-prev-training .card-bg {
+    background-color: var(--app-white) !important;
+    border: 1px solid var(--card-border) !important;
+}
+
+.radio-section {
+    line-height: 16px;
+}
+
+.setting-section .checkmark {
+    top: 2px;
+}
+
 @media screen and (max-width: 576px) {
     .container {
         width: 100%;
@@ -2672,18 +2724,18 @@ div#xofy {
     }
     .quiz-updated .widthfit {
         width: 100%;
-        height: 96px;
-        max-height: 148px;
+        height: 120px;
+        max-height: 120px;
     }
     .max-min-220 {
-        max-height: 96px;
-        min-height: 96px;
+        max-height: 120px;
+        min-height: 120px;
     }
     .photo-box span {
-        bottom: 20px;
+        bottom: 34px;
     }
     .photo-box {
-        background-position: top 20px center;
+        background-position: top 34px center;
     }
 }
 

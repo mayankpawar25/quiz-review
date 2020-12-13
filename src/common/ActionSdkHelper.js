@@ -47,7 +47,6 @@ export class ActionHelper {
         return new actionSDK.GetContext.Request();
     }
 
-
     /**
      * Method to exceute api
      * @param request object identifier
@@ -164,7 +163,7 @@ export class ActionHelper {
      * Method to get set attachment preview in summary view
      * @param request object identfier
      * @param questionname string
-     * @param filesAmount Int 
+     * @param filesAmount Int
      * @param $imgThumbnail object contaains html object of image thumbnail
      * @param $col3 object contains html object where preview gets append
      * @param type string such as photo, document, video, question
@@ -172,19 +171,19 @@ export class ActionHelper {
     static setAttachmentPreview(request, questionName, filesAmount, $imgThumbnail, $col3, type) {
         actionSDK.executeApi(request)
             .then(function(response) {
-                if (type == 'photo') {
+                if (type == "photo") {
                     $imgThumbnail.append(`<img class="image-sec" id="${questionName}" src="${response.attachmentInfo.downloadUrl}"></img>`);
                     if (filesAmount > 1) {
                         $imgThumbnail.append(`<span class="file-counter"> +${filesAmount - 1} </span>`);
                     }
                     $col3.append($imgThumbnail);
-                } else if (type == 'document') {
+                } else if (type == "document") {
                     $imgThumbnail.append(`<img class="image-sec" id="${questionName}" src="images/doc.png"></img>`);
                     if (filesAmount > 1) {
                         $imgThumbnail.append(`<span class="file-counter"> +${filesAmount - 1} </span>`);
                     }
                     $col3.append($imgThumbnail);
-                } else if (type == 'video') {
+                } else if (type == "video") {
                     $imgThumbnail.append(`<div class="embed-responsive embed-responsive-4by3"><video controls="" class="video" id="${questionName}" src="${response.attachmentInfo.downloadUrl}"></video></div>`);
                     $col3.append($imgThumbnail);
                 }
@@ -222,12 +221,12 @@ export class ActionHelper {
      * @param type string identifer
      */
     static getColumnType(type) {
-        if (type == 'multiselect') {
+        if (type == "multiselect") {
             return actionSDK.ActionDataColumnValueType.MultiOption;
-        } else if (type == 'singleselect') {
+        } else if (type == "singleselect") {
             return actionSDK.ActionDataColumnValueType.SingleOption;
-        } else if (type == 'largetext') {
-            return actionSDK.ActionDataColumnValueType.LargeText
+        } else if (type == "largetext") {
+            return actionSDK.ActionDataColumnValueType.LargeText;
         }
     }
 
@@ -246,8 +245,8 @@ export class ActionHelper {
         return new actionSDK.CreateAction.Request(action);
     }
 
-    /* 
-     * @desc Method to return the input is json object   
+    /*
+     * @desc Method to return the input is json object
      * @param str object contains json values
      */
     static isJson(str) {
@@ -279,8 +278,7 @@ export class ActionHelper {
         let request = new actionSDK.DeleteAction.Request(actionId);
         let response = await actionSDK.executeApi(request);
         if (!response.error) {
-            let closeViewRequest = new actionSDK.CloseView.Request()
-
+            let closeViewRequest = new actionSDK.CloseView.Request();
             actionSDK
                 .executeApi(closeViewRequest)
                 .then(function(batchResponse) {
@@ -296,7 +294,6 @@ export class ActionHelper {
         }
     }
 
-
     /**
      * Method to update action instance data
      * @param data object of data we want modify
@@ -305,7 +302,7 @@ export class ActionHelper {
         let request = new actionSDK.UpdateAction.Request(actionUpdateInfo);
         let response = await actionSDK.executeApi(request);
         if (!response.error) {
-            let closeViewRequest = new actionSDK.CloseView.Request()
+            let closeViewRequest = new actionSDK.CloseView.Request();
             actionSDK
                 .executeApi(closeViewRequest)
                 .then(function(batchResponse) {
@@ -335,7 +332,7 @@ export class ActionHelper {
         let request = new actionSDK.UpdateAction.Request(actionInstanceUpdateInfo);
         await actionSDK.executeApi(request);
         if (!response.error) {
-            let closeViewRequest = new actionSDK.CloseView.Request()
+            let closeViewRequest = new actionSDK.CloseView.Request();
             actionSDK
                 .executeApi(closeViewRequest)
                 .then(function(batchResponse) {
@@ -350,7 +347,7 @@ export class ActionHelper {
         }
         if (response.success == true) {
             if (response.updateSuccess) {
-                let closeViewRequest = new actionSDK.CloseView.Request()
+                let closeViewRequest = new actionSDK.CloseView.Request();
                 actionSDK
                     .executeApi(closeViewRequest)
                     .then(function(batchResponse) {

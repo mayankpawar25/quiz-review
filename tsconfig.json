@@ -1,16 +1,20 @@
 {
     "compilerOptions": {
-        "outDir": "./output",
+        "allowJs": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
         "target": "es6",
-        "sourceMap": true,
-        "noImplicitAny": false,
-        "esModuleInterop": true,
         "lib": [
             "dom",
             "dom.iterable",
             "esnext"
         ]
     },
+    "exclude": [
+        "output",
+        "assets",
+        "node_modules"
+    ],
     "include": [
         "./src/**/*.*"
     ]

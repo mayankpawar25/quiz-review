@@ -1,4 +1,5 @@
 {
+    "schemaVersion": 1,
     "view": {
         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
         "type": "AdaptiveCard",
@@ -14,10 +15,30 @@
                 "spacing": "small"
             },
             {
+                "id": "Active",
+                "type": "TextBlock",
+                "$when": "${equals(action.status, 'Active')}",
+                "text": "${formatString(strings.due_by_date, ('' + dateString(action.expiryTime, 'SHORT') + ' ' + timeString(action.expiryTime)))}",
+                "_text.comment": "due date if quiz is active",
+                "color": "default",
+                "size": "small",
+                "wrap": true
+            },
+            {
+                "id": "Close",
+                "type": "TextBlock",
+                "$when": "${equals(action.status, 'Closed')}",
+                "text": "${strings.QuizClosed}",
+                "color": "attention",
+                "size": "small",
+                "wrap": true
+            },
+            {
                 "id": "Expiry",
                 "type": "TextBlock",
-                "text": "${if(equals(action.status, 'Active'), formatString(strings.due_by_date, ('' + dateString(action.expiryTime, 'SHORT') + ' ' + timeString(action.expiryTime))),strings.quiz_expired)}",
-                "color": "${if(equals(action.status, 'Active'), 'default','attention')}",
+                "$when": "${equals(action.status, 'Expired')}",
+                "text": "${strings.QuizExpired}",
+                "color": "attention",
                 "size": "small",
                 "wrap": true
             },

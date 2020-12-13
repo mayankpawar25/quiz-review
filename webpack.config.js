@@ -1,6 +1,7 @@
-const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require("path");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = env => {
     var config = {
@@ -8,6 +9,13 @@ module.exports = env => {
             CreateView: "./src/creationView/CreateView.js",
             ResponseView: "./src/responseView/ResponseView.js",
             DetailView: "./src/resultView/DetailView.js",
+        },
+        output: {
+            filename: "[name].js",
+            path: path.resolve(__dirname, 'output/js')
+        },
+        resolve: {
+            extensions: ['.tsx', '.ts', '.js', ".css"]
         },
         module: {
             rules: [{
@@ -26,35 +34,48 @@ module.exports = env => {
                 }
 
             ],
-        },
-        resolve: {
-            extensions: ['.tsx', '.ts', '.js']
-        },
-        output: {
-            filename: "[name].js",
-            path: path.resolve(__dirname, 'output/js')
-        },
-        plugins: [
-            new CleanWebpackPlugin(),
-            new CopyWebpackPlugin([{
-                    from: 'actionManifest.json',
-                    to: path.resolve(__dirname, 'output')
-                },
-                {
-                    from: 'actionModel.json',
-                    to: path.resolve(__dirname, 'output')
-                },
-                {
-                    from: 'views',
-                    to: path.resolve(__dirname, 'output')
-                },
-                {
-                    from: 'assets',
-                    to: path.resolve(__dirname, 'output')
-                }
-            ]),
+        }
+    };
+
+    // Webpack plugins
+    config.plugins = [];
+
+    // For each entry there will be one html file
+    var entries = Object.keys(config.entry);
+    for (var entry of entries) {
+        // Exclude other entries from this html
+        var excludeChunks = entries.filter(x => x != entry);
+        config.plugins.push(new HtmlWebpackPlugin({
+            templateContent: '',
+            filename: `${entry}.html`,
+            excludeChunks: excludeChunks
+        }));
+    }
+
+    // Process other assets
+    var copyAssets = {
+        patterns: [
+            {
+                from: 'actionManifest.json',
+                to: path.resolve(__dirname, 'output')
+            },
+            {
+                from: 'actionModel.json',
+                to: path.resolve(__dirname, 'output')
+            },
+            {
+                from: 'views',
+                to: path.resolve(__dirname, 'output')
+            },
+            {
+                from: 'assets',
+                to: path.resolve(__dirname, 'output')
+            }
         ]
     };
+
+    config.plugins.push(new CopyWebpackPlugin(copyAssets));
+    config.plugins.push(new CleanWebpackPlugin());
 
     if (env.mode === 'dev') {
         config.mode = 'development';
@@ -68,6 +89,5 @@ module.exports = env => {
     } else {
         config.watch = false;
     }
-
     return config;
 }

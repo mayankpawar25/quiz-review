@@ -1,4 +1,4 @@
-import { ActionHelper, Localizer } from '../common/ActionSdkHelper';
+import { ActionHelper, Localizer } from "../common/ActionSdkHelper";
 import * as html2canvas from "html2canvas";
 
 let actionContext = null;
@@ -6,41 +6,41 @@ let actionInstance = null;
 let actionSummary = null;
 let actionDataRows = null;
 let actionDataRowsLength = 0;
-let ResponderDate = [];
+let responderDate = [];
 let actionNonResponders = [];
 let myUserId = "";
 let score = 0;
 let total = 0;
 let answerIs = "";
 let request = ActionHelper.getContextRequest();
-let dataResponse = '';
-let actionId = '';
+let dataResponse = "";
+let actionId = "";
 let root = document.getElementById("root");
-let theme = '';
+let theme = "";
 let isCreator = false;
-let context= '';
+let context = "";
 
-let dueByKey = '';
-let expiredOnKey = '';
-let correctKey = '';
-let incorrectKey = '';
-let backKey = '';
-let youKey = '';
-let questionKey = '';
-let scoreKey = '';
-let closeKey = '';
-let changeDueByKey = '';
-let closeQuizKey = '';
-let deleteQuizKey = '';
-let downloadImageKey = '';
-let downloadCSVKey = '';
-let downloadKey = '';
-let closeQuizConfirmKey = '';
-let deleteQuizConfirmKey = '';
-let cancelKey = '';
-let confirmKey = '';
-let changeKey = '';
-let changeDueDateKey = '';
+let dueByKey = "";
+let expiredOnKey = "";
+let correctKey = "";
+let incorrectKey = "";
+let backKey = "";
+let youKey = "";
+let questionKey = "";
+let scoreKey = "";
+let closeKey = "";
+let changeDueByKey = "";
+let closeQuizKey = "";
+let deleteQuizKey = "";
+let downloadImageKey = "";
+let downloadCSVKey = "";
+let downloadKey = "";
+let closeQuizConfirmKey = "";
+let deleteQuizConfirmKey = "";
+let cancelKey = "";
+let confirmKey = "";
+let changeKey = "";
+let changeDueDateKey = "";
 
 /* ********************************* Events ******************************************** */
 
@@ -48,10 +48,10 @@ let changeDueDateKey = '';
  * @event Click Event for rerender the landing page
  */
 $(document).on({
-    click: function(e){
+    click: function(e) {
         createBody();
     },
-    keydown: function(e){
+    keydown: function(e) {
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
@@ -59,7 +59,7 @@ $(document).on({
             return false;
         }
     }
-}, '.back')
+}, ".back");
 
 /**
  * @event Click Event for back to responder and non responder page
@@ -81,28 +81,28 @@ $(document).on("click", "#closeKey", function() {
  * @event Click and Keydown Event for back to responder and non responder page
  */
 $(document).on({
-    click: function(e){
+    click: function(e) {
         let userId = $(this).attr("userid-data");
         create_responder_nonresponders();
     },
-    keydown: function(e){
+    keydown: function(e) {
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
             $(this).click();
             return false;
         }
-    } 
-}, '.back1');
+    }
+}, ".back1");
 
 /**
  * @event Click and Keydown Event for responder page
  */
 $(document).on({
-    click: function(e){
+    click: function(e) {
         create_responder_nonresponders();
     },
-    keydown: function(e){
+    keydown: function(e) {
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
@@ -110,24 +110,24 @@ $(document).on({
             return false;
         }
     }
-}, "#show-responders")
+}, "#show-responders");
 
 /**
- * @event Click and Keydown event fetching result of responders 
+ * @event Click and Keydown event fetching result of responders
  */
 $(document).on({
-    click: function(e){
+    click: function(e) {
         let userId = $(this).attr("id");
         $("#root").html("");
         head();
         createQuestionView(userId);
-        if ($(this).attr('data-attr') !== undefined) {
+        if ($(this).attr("data-attr") !== undefined) {
             footer2();
         } else {
             footer(userId);
         }
     },
-    keydown: function(e){
+    keydown: function(e) {
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
@@ -135,8 +135,7 @@ $(document).on({
             return false;
         }
     }
-}, ".getresult")
-
+}, ".getresult");
 
 /**
  * @event Keydown event on responder and non-responders tab
@@ -150,10 +149,10 @@ $(document).on({
             return false;
         }
     }
-}, '.responder-key');
+}, ".responder-key");
 
 $(document).on({
-    keydown: function (e) {
+    keydown: function(e) {
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
@@ -161,13 +160,13 @@ $(document).on({
             return false;
         }
     }
-}, '.non-responder-key');
+}, ".non-responder-key");
 
 /**
  * @event Click event for download CSV
  */
 $(document).on({
-    keydown: function (e) {
+    keydown: function(e) {
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
@@ -175,17 +174,16 @@ $(document).on({
             return false;
         }
     },
-    click: function(e){
-        ActionHelper.downloadCSV(actionId, 'quiz');
+    click: function(e) {
+        ActionHelper.downloadCSV(actionId, "quiz");
     }
-}, '#downloadCSV');
-
+}, "#downloadCSV");
 
 /**
  * @event Click event for download image in png
  */
 $(document).on({
-    keydown: function (e) {
+    keydown: function(e) {
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
@@ -193,17 +191,17 @@ $(document).on({
             return false;
         }
     },
-    click: function (e) {
+    click: function(e) {
         let bodyContainerDiv = document.getElementsByClassName("container")[0];
         let backgroundColorOfResultsImage = theme;
-        $('.footer').hide();
+        $(".footer").hide();
         html2canvas(bodyContainerDiv, {
             width: bodyContainerDiv.scrollWidth,
             height: bodyContainerDiv.scrollHeight,
             backgroundColor: backgroundColorOfResultsImage,
             useCORS: true,
         }).then((canvas) => {
-            let fileName = 'quiz';
+            let fileName = "quiz";
             let base64Image = canvas.toDataURL("image/png");
             if (window.navigator.msSaveBlob) {
                 window.navigator.msSaveBlob(canvas.msToBlob(), fileName);
@@ -218,33 +216,34 @@ $(document).on({
                     document.body.removeChild(a);
                 }
             }
-            $('.footer').show();
+            $(".footer").show();
         });
     }
-}, '#downloadImage');
+}, "#downloadImage");
 
 /**
  * @event Click and Keydown event to show change due by date
  */
 $(document).on({
-    click: function (e) {
-        $('.change-date').remove();
-        $('.close-quiz').remove();
-        $('.delete-quiz').remove();
+    click: function(e) {
+        e.preventDefault();
+        $(".change-date").remove();
+        $(".close-quiz").remove();
+        $(".delete-quiz").remove();
 
         changeDateSection();
 
-        let ddtt = ((actionInstance.customProperties[1].value).split('T'));
-        let dt = ddtt[0].split('-');
-        let weekDateFormat = new Date(dt[1]).toLocaleString('default', { month: 'short' }) + " " + dt[2] + ", " + dt[0];
+        let ddtt = ((actionInstance.customProperties[1].value).split("T"));
+        let dt = ddtt[0].split("-");
+        let weekDateFormat = new Date(dt[1]).toLocaleString("default", { month: "short" }) + " " + dt[2] + ", " + dt[0];
         let timeData = new Date(actionInstance.expiryTime);
         let hourData = timeData.getHours();
         let minuteData = timeData.getMinutes();
-        let currentTime = hourData + ':' + minuteData;
-        $('.form_date input').val(weekDateFormat);
+        let currentTime = hourData + ":" + minuteData;
+        $(".form_date input").val(weekDateFormat);
         $(".form_date").attr({ "data-date": weekDateFormat });
-        $('.form_time').datetimepicker({
-            language: 'en',
+        $(".form_time").datetimepicker({
+            language: "en",
             weekStart: 1,
             todayBtn: 1,
             autoclose: 1,
@@ -255,20 +254,21 @@ $(document).on({
             forceParse: 0
         });
 
-        $('.form_time input').val(currentTime);
+        $(".form_time input").val(currentTime);
 
-        let dateInput = $('input[name="expiry_date"]');
-        let container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+        let dateInput = $("input[name='expiry_date']");
+        let container = $(".bootstrap-iso form").length > 0 ? $(".bootstrap-iso form").parent() : "body";
         let options = {
-            format: 'M dd, yyyy',
+            format: "M dd, yyyy",
             container: container,
             todayHighlight: true,
             autoclose: true,
-            orientation: 'top'
+            orientation: "top"
         };
         dateInput.datepicker(options);
+        return false;
     },
-    keydown: function(e){
+    keydown: function(e) {
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
@@ -276,16 +276,17 @@ $(document).on({
             return false;
         }
     }
-}, '.change-due-by-event');
+}, ".change-due-by-event");
+
 /**
  * @event Click and Keydown event to show close quiz
  */
 $(document).on({
     click: function(e) {
         e.preventDefault();
-        $('.change-date').remove();
-        $('.close-quiz').remove();
-        $('.delete-quiz').remove();
+        $(".change-date").remove();
+        $(".close-quiz").remove();
+        $(".delete-quiz").remove();
         closeQuizSection();
         return false;
     },
@@ -297,22 +298,21 @@ $(document).on({
             return false;
         }
     }
-}, '.close-quiz-event')
-
+}, ".close-quiz-event");
 
 /**
  * @event Click and Keydown event to show delete quiz
  */
 $(document).on({
-    click: function (e) {
+    click: function(e) {
         e.preventDefault();
-        $('.change-date').remove();
-        $('.close-quiz').remove();
-        $('.delete-quiz').remove();
+        $(".change-date").remove();
+        $(".close-quiz").remove();
+        $(".delete-quiz").remove();
         deleteQuizSection();
         return false;
     },
-    keydown: function (e) {
+    keydown: function(e) {
         let key = e.which;
         if (key === 13 || key === 32) {
             e.preventDefault();
@@ -320,46 +320,46 @@ $(document).on({
             return false;
         }
     }
-}, '.delete-quiz-event');
+}, ".delete-quiz-event");
 
 /**
  * @event Click event to close change, close and delete quiz confirm section
  */
-$(document).on('click', '.cancel-question-delete', function() {
-    $('.change-date').remove();
-    $('.close-quiz').remove();
-    $('.delete-quiz').remove();
+$(document).on("click", ".cancel-question-delete", function() {
+    $(".change-date").remove();
+    $(".close-quiz").remove();
+    $(".delete-quiz").remove();
 });
 
 /**
  * @event Click event for close dropdown lists
  */
-$(document).on('click', '.threedots .dropdown-menu a', function(event) {
-    $('.threedots .dropdown-menu').toggleClass('show');
+$(document).on("click", ".threedots .dropdown-menu a", function(event) {
+    $(".threedots .dropdown-menu").toggleClass("show");
 });
 
 /**
  * @event Click event for delete quiz
  */
-$(document).on('click', '#delete-quiz', function() {
+$(document).on("click", "#delete-quiz", function() {
     ActionHelper.deleteActionInstance(actionId);
 });
 
 /**
  * @event Click event for change quiz expiry date
  */
-$(document).on('click', '#change-quiz-question', function() {
+$(document).on("click", "#change-quiz-question", function() {
     ActionHelper.closeActionInstance(actionId, actionInstance.version);
 });
 
 /**
  * @event Change event for expiry date and time
  */
-$(document).on('change', "input[name='expiry_time'], input[name='expiry_date']", function() {
-    $('#change-quiz-date').removeClass('disabled');
+$(document).on("change", "input[name='expiry_time'], input[name='expiry_date']", function() {
+    $("#change-quiz-date").removeClass("disabled");
 });
 
-$(document).on('click', '#change-quiz-date', function(){
+$(document).on("click", "#change-quiz-date", function() {
     let quizExpireDate = $("input[name='expiry_date']").val();
     let quizExpireTime = $("input[name='expiry_time']").val();
     actionInstance.expiryTime = new Date(quizExpireDate + " " + quizExpireTime).getTime();
@@ -386,113 +386,113 @@ getTheme(request);
  * @description Async method for fetching localization strings
  */
 async function getStringKeys() {
-    Localizer.getString('dueBy').then(function(result) {
+    Localizer.getString("dueBy").then(function(result) {
         dueByKey = result;
     });
 
-    Localizer.getString('question').then(function(result) {
+    Localizer.getString("question").then(function(result) {
         questionKey = result;
     });
 
-    Localizer.getString('score', ':').then(function(result) {
+    Localizer.getString("score", ":").then(function(result) {
         scoreKey = result;
     });
 
-    Localizer.getString('expired_on').then(function(result) {
+    Localizer.getString("expired_on").then(function(result) {
         expiredOnKey = result;
     });
 
-    Localizer.getString('correct').then(function(result) {
+    Localizer.getString("correct").then(function(result) {
         correctKey = result;
     });
-    Localizer.getString('incorrect').then(function(result) {
+    Localizer.getString("incorrect").then(function(result) {
         incorrectKey = result;
     });
 
-    Localizer.getString('responders').then(function(result) {
-        $('.responder-key').text(result);
+    Localizer.getString("responders").then(function(result) {
+        $(".responder-key").text(result);
     });
 
-    Localizer.getString('non_responders').then(function(result) {
-        $('.non-responder-key').text(result);
+    Localizer.getString("non_responders").then(function(result) {
+        $(".non-responder-key").text(result);
     });
-    Localizer.getString('back').then(function(result) {
+    Localizer.getString("back").then(function(result) {
         backKey = result;
-        $('.back-key').text(backKey);
+        $(".back-key").text(backKey);
     });
 
-    Localizer.getString('close').then(function(result) {
+    Localizer.getString("close").then(function(result) {
         closeKey = result;
-        $('.close-key').text(closeKey);
+        $(".close-key").text(closeKey);
     });
-    Localizer.getString('you').then(function(result) {
+    Localizer.getString("you").then(function(result) {
         youKey = result;
     });
 
-    Localizer.getString('changeDueBy').then(function(result) {
-        changeDueByKey = result
-        $('.change-due-by-key').text(changeDueByKey);
+    Localizer.getString("changeDueBy").then(function(result) {
+        changeDueByKey = result;
+        $(".change-due-by-key").text(changeDueByKey);
     });
 
-    Localizer.getString('closeQuiz').then(function(result) {
-        closeQuizKey = result
-        $('.close-quiz-key').text(closeQuizKey);
+    Localizer.getString("closeQuiz").then(function(result) {
+        closeQuizKey = result;
+        $(".close-quiz-key").text(closeQuizKey);
     });
 
-    Localizer.getString('deleteQuiz').then(function(result) {
-        deleteQuizKey = result
-        $('.delete-quiz-key').text(deleteQuizKey);
+    Localizer.getString("deleteQuiz").then(function(result) {
+        deleteQuizKey = result;
+        $(".delete-quiz-key").text(deleteQuizKey);
     });
 
-    Localizer.getString('download').then(function(result) {
+    Localizer.getString("download").then(function(result) {
         downloadKey = result;
-        $('#download-key').html(downloadKey);
+        $("#download-key").html(downloadKey);
     });
 
-    Localizer.getString('downloadImage').then(function(result) {
+    Localizer.getString("downloadImage").then(function(result) {
         downloadImageKey = result;
-        $('#download-image-key').html(downloadImageKey);
+        $("#download-image-key").html(downloadImageKey);
     });
 
-    Localizer.getString('downloadCSV').then(function(result) {
+    Localizer.getString("downloadCSV").then(function(result) {
         downloadCSVKey = result;
-        $('#download-csv-key').html(downloadCSVKey);
+        $("#download-csv-key").html(downloadCSVKey);
     });
 
-    Localizer.getString('closeQuizConfirm').then(function(result){
+    Localizer.getString("closeQuizConfirm").then(function(result) {
         closeQuizConfirmKey = result;
-        $('.close-quiz-confirm-key').html(closeQuizConfirmKey);
+        $(".close-quiz-confirm-key").html(closeQuizConfirmKey);
     });
 
-    Localizer.getString('deleteQuizConfirm').then(function (result) {
+    Localizer.getString("deleteQuizConfirm").then(function(result) {
         deleteQuizConfirmKey = result;
-        $('.close-quiz-confirm-key').html(deleteQuizConfirmKey);
+        $(".close-quiz-confirm-key").html(deleteQuizConfirmKey);
     });
 
-    Localizer.getString('cancel').then(function (result) {
+    Localizer.getString("cancel").then(function(result) {
         cancelKey = result;
-        $('.cancel-key').html(cancelKey);
+        $(".cancel-key").html(cancelKey);
     });
 
-    Localizer.getString('confirm').then(function (result) {
+    Localizer.getString("confirm").then(function(result) {
         confirmKey = result;
-        $('.confirm-key').html(confirmKey);
+        $(".confirm-key").html(confirmKey);
     });
 
-    Localizer.getString('change').then(function (result) {
+    Localizer.getString("change").then(function(result) {
         changeKey = result;
-        $('.change-key').html(changeKey);
+        $(".change-key").html(changeKey);
     });
-    
-    Localizer.getString('changeDueDate').then(function (result) {
+
+    Localizer.getString("changeDueDate").then(function(result) {
         changeDueDateKey = result;
-        $('.change-due-date-key').html(changeDueDateKey);
+        $(".change-due-date-key").html(changeDueDateKey);
     });
-    
+
 }
 
 /**
- * @description Method to select theme based on the teams theme  
+ * @description Method to select theme based on the teams theme
  * @param request context request
  */
 
@@ -526,7 +526,7 @@ function OnPageLoad() {
 }
 
 /**
- * @description Method to get data rows  
+ * @description Method to get data rows
  * @param request context action id
  */
 function getDataRows(actionId) {
@@ -569,12 +569,12 @@ async function createBody() {
         isCreator = true;
         headCreator();
 
-        if (actionInstance.status == 'Closed') {
-            $('.close-quiz-event').remove();
-            $('.change-due-by-event').remove();
+        if (actionInstance.status == "Closed") {
+            $(".close-quiz-event").remove();
+            $(".change-due-by-event").remove();
         }
-        if (actionInstance.status == 'Expired') {
-            $('.change-due-by-event').remove();
+        if (actionInstance.status == "Expired") {
+            $(".change-due-by-event").remove();
         }
     } else {
         head();
@@ -586,42 +586,41 @@ async function createBody() {
     );
     let response = await ActionHelper.executeApi(getSubscriptionCount);
 
-    let $pcard = $('<div class="progress-section"></div>');
+    let $pcard = $(`<div class="progress-section"></div>`);
     let memberCount = response.memberCount;
     let participationPercentage = 0;
 
     participationPercentage = Math.round(
         (actionSummary.rowCreatorCount / memberCount) * 100
     );
-    Localizer.getString('participation', participationPercentage).then(function(result) {
+    Localizer.getString("participation", participationPercentage).then(function(result) {
         $pcard.append(
             `<label class="mb--8"><strong classs="semi-bold">${result}</strong></label><div class="progress mb--8"><div class="progress-bar bg-primary" role="progressbar" style="width: ${participationPercentage}%" aria-valuenow="${participationPercentage}" aria-valuemin="0" aria-valuemax="100"></div></div>`
         );
     });
 
     if (isCreator == true) {
-        Localizer.getString('xofy_people_responded', actionSummary.rowCount, memberCount).then(function(result) {
+        Localizer.getString("xofy_people_responded", actionSummary.rowCount, memberCount).then(function(result) {
             let xofy = result;
             $pcard.append(`<p class="date-color cursor-pointer mb--24"> <span id="show-responders" class="under-line" tabindex="0" role="button">${xofy}</span><!--<span class="pull-right send-reminder under-line"> Send reminder</span> --></p>`);
             $pcard.append(`<div class="clearfix"></div>`);
         });
     } else {
-        Localizer.getString('xofy_people_responded', actionSummary.rowCount, memberCount).then(function(result) {
+        Localizer.getString("xofy_people_responded", actionSummary.rowCount, memberCount).then(function(result) {
             let xofy = result;
             $pcard.append(`<p class="date-color mb--24"><span id="show-responders">${xofy}</span></p>`);
             $pcard.append(`<div class="clearfix"></div>`);
         });
     }
 
-
     $("#root").append($pcard);
-    let responderDateLength = Object.keys(ResponderDate).length;
+    let responderDateLength = Object.keys(responderDate).length;
     if (responderDateLength > 0) {
         if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
             createCreatorQuestionView();
         } else if (myUserId == dataResponse.context.userId && myUserId != actionInstance.creatorId) {
             let isResponded = false;
-            ResponderDate.forEach((responder) => {
+            responderDate.forEach((responder) => {
                 if (responder.value2 == myUserId) {
                     createQuestionView(myUserId);
                     isResponded = true;
@@ -633,25 +632,25 @@ async function createBody() {
                     if (nonresponders.value2 == myUserId) {
                         let name = nonresponders.label;
                         let matches = name.match(/\b(\w)/g); // [D,P,R]
-                        let initials = matches.join('').substring(0, 2); // DPR
-                        Localizer.getString('you_yet_respond').then(function(result) {
-                            $('div.progress-section').after(`<div class="d-flex cursor-pointer" id="${nonresponders.value2}">
+                        let initials = matches.join("").substring(0, 2); // DPR
+                        Localizer.getString("you_yet_respond").then(function(result) {
+                            $("div.progress-section").after(`<div class="d-flex cursor-pointer" id="${nonresponders.value2}">
                                         <div class="avtar">
                                             ${initials}
                                         </div>
                                         <div class="avtar-txt">${result}</div>
                                     </div>
                                 `);
-                            $('div.progress-section').after(`<hr class="small">`);
-                            $('div#' + nonresponders.value2).after(`<hr class="small">`);
+                            $("div.progress-section").after(`<hr class="small">`);
+                            $("div#" + nonresponders.value2).after(`<hr class="small">`);
                         });
                     }
                 });
             }
         } else {
-            ResponderDate.forEach((responder) => {
+            responderDate.forEach((responder) => {
                 if (responder.value2 == myUserId) {
-                    createReponderQuestionView(myUserId, responder);
+                    createResponderQuestionView(myUserId, responder);
                 }
             });
         }
@@ -664,25 +663,25 @@ async function createBody() {
                 } else {
                     let name = nonresponders.label;
                     let matches = name.match(/\b(\w)/g); // [D,P,R]
-                    let initials = matches.join('').substring(0, 2); // DPR
-                    Localizer.getString('you_yet_respond').then(function(result) {
-                        $('div.progress-section').after(`<div class="d-flex cursor-pointer" id="${nonresponders.value2}">
+                    let initials = matches.join("").substring(0, 2); // DPR
+                    Localizer.getString("you_yet_respond").then(function(result) {
+                        $("div.progress-section").after(`<div class="d-flex cursor-pointer" id="${nonresponders.value2}">
                                 <div class="avtar">
                                     ${initials}
                                 </div>
                                 <div class="avtar-txt">${result}</div>
                             </div>
                         `);
-                        $('div.progress-section').after(`<hr class="small">`);
-                        $('div#' + nonresponders.value2).after(`<hr class="small">`);
+                        $("div.progress-section").after(`<hr class="small">`);
+                        $("div#" + nonresponders.value2).after(`<hr class="small">`);
                     });
                 }
             }
-        })
+        });
     }
 
     if (isCreator == true) {
-        if (context.hostClientType == 'web') {
+        if (context.hostClientType == "web") {
             footerDownload();
         }
     } else {
@@ -698,31 +697,30 @@ function head() {
     let title = actionInstance.displayName;
     let description = actionInstance.customProperties[0]["value"];
     let dueby = new Date(actionInstance.expiryTime).toDateString();
-
-    let $card = $('<div class=""></div>');
-
-
-    let $title_sec = $(`<h4 class="mb--8">${title}</h4>`);
-    let $description_sec = $(`<p class="mb--8 text-justify text-break font-12">${description}</p>`);
-
-    let current_timestamp = new Date().getTime();
-
-    let $date_sec = $(`<p class="semi-bold mb--16 font-12">${actionInstance.expiryTime > current_timestamp ? dueByKey+' ' : expiredOnKey+' '} ${dueby}</p>`);
-
-    $card.append($title_sec);
-    $card.append($description_sec);
-    $card.append($date_sec);
+    let $card = $(`<div class=""></div>`);
+    let $titleSec = $(`<h4 class="mb--8">${title}</h4>`);
+    let $descriptionSec = $(`<p class="mb--8 text-justify text-break font-12">${description}</p>`);
+    let currentTimestamp = new Date().getTime();
+    let $dateSec = $(`<p class="semi-bold mb--16 font-12">${actionInstance.expiryTime > currentTimestamp ? dueByKey+" " : expiredOnKey+" "} ${dueby}</p>`);
+    $card.append($titleSec);
+    $card.append($descriptionSec);
+    $card.append($dateSec);
     $("#root").append($card);
 
     if (actionInstance.customProperties[4].value.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
         ActionHelper.executeApi(req).then(function(response) {
                 $card.prepend(`
-                    <div class="quiz-updated-img max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16 bg-none bdr-none">
+                    <div class="quiz-updated-img relative max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16 bg-none bdr-none">
+                        <div class="loader-cover">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
                         <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive quiz-template-image smallfit"  crossorigin="anonymous">
                     </div>
                 `);
-                getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
+                getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
             })
             .catch(function(error) {
                 console.error("AttachmentAction - Error7: " + JSON.stringify(error));
@@ -738,10 +736,10 @@ function headCreator() {
     let description = actionInstance.customProperties[0]["value"];
     let dueby = new Date(actionInstance.expiryTime).toDateString();
 
-    let $card = $('<div class=""></div>');
+    let $card = $(`<div class=""></div>`);
 
-    let $titleDiv = $(`<div class="d-table mb--8"></div>`);
-    let $title_sec = $(`<label class="font-12 "><h4>${title}</h4></label>`);
+    let $titleDiv = $(`<div class="d-table mb--4"></div>`);
+    let $titleSec = $(`<label class="font-12 "><h4>${title}</h4></label>`);
     let $creatorButtons = $(`
             <label class="float-right font-12 bold" id="status-1"><span class="semi-bold">
                 <div class="threedots dropdown">
@@ -793,34 +791,39 @@ function headCreator() {
                                     c-0.102,0.005-0.202,0.021-0.3,0.047C7.36,1.085,7.271,1.116,7.186,1.159C7.11,1.194,7.045,1.251,7,1.322v0.679h2v-0.7
                                     c-0.054-0.064-0.123-0.115-0.2-0.148C8.715,1.111,8.625,1.08,8.534,1.06C8.444,1.039,8.352,1.025,8.26,1.021
                                     C8.174,1.009,8.088,1.003,8.002,1.001z"/>
-                            </svg>  
+                            </svg>
                             <span class="delete-quiz-key">${deleteQuizKey}</span>
                         </a>
                     </div>
-                </div>     
+                </div>
             </span></label>
         `);
-    let $description_sec = $(`<p class="mb--8 text-justify text-break font-12">${description}</p>`);
+    let $descriptionSec = $(`<p class="mb--8 text-justify text-break font-12">${description}</p>`);
 
-    let current_timestamp = new Date().getTime();
-    let $date_sec = $(`<p class="semi-bold mb--16 font-12">${actionInstance.expiryTime > current_timestamp ? dueByKey + ' ' : expiredOnKey + ' '} ${dueby}</p>`);
+    let currentTimestamp = new Date().getTime();
+    let $dateSec = $(`<p class="semi-bold mb--16 font-12">${actionInstance.expiryTime > currentTimestamp ? dueByKey + " " : expiredOnKey + " "} ${dueby}</p>`);
 
-    $titleDiv.append($title_sec);
+    $titleDiv.append($titleSec);
     $titleDiv.append($creatorButtons);
     $card.append($titleDiv);
-    $card.append($description_sec);
-    $card.append($date_sec);
+    $card.append($descriptionSec);
+    $card.append($dateSec);
     $("#root").append($card);
 
     if (actionInstance.customProperties[4].value.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
         ActionHelper.executeApi(req).then(function(response) {
                 $card.prepend(`
-                    <div class="quiz-updated-img max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16 bg-none bdr-none">
+                    <div class="quiz-updated-img relative max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16 bg-none bdr-none">
+                        <div class="loader-cover">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
                         <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive quiz-template-image smallfit"  crossorigin="anonymous">
                     </div>
                 `);
-                getClassFromDimension(response.attachmentInfo.downloadUrl, '.quiz-template-image');
+                getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
             })
             .catch(function(error) {
                 console.error("AttachmentAction - Error7: " + JSON.stringify(error));
@@ -833,7 +836,7 @@ function headCreator() {
  */
 async function getUserprofile() {
     let memberIds = [];
-    ResponderDate = [];
+    responderDate = [];
     actionNonResponders = [];
     if (actionDataRowsLength > 0) {
         for (let i = 0; i < actionDataRowsLength; i++) {
@@ -844,7 +847,7 @@ async function getUserprofile() {
 
             let responseResponders = await ActionHelper.executeApi(requestResponders);
             let perUserProfile = responseResponders.members;
-            ResponderDate.push({
+            responderDate.push({
                 label: perUserProfile[0].displayName,
                 value: new Date(actionDataRows[i].updateTime).toDateString(),
                 value2: perUserProfile[0].id,
@@ -875,25 +878,25 @@ async function getUserprofile() {
 function getResponders() {
     $("table#responder-table tbody").html("");
 
-    for (let itr = 0; itr < ResponderDate.length; itr++) {
-        let id = ResponderDate[itr].value2;
+    for (let itr = 0; itr < responderDate.length; itr++) {
+        let id = responderDate[itr].value2;
         let name = "";
-        if (ResponderDate[itr].value2 == myUserId) {
+        if (responderDate[itr].value2 == myUserId) {
             name = youKey;
         } else {
-            name = ResponderDate[itr].label;
+            name = responderDate[itr].label;
         }
-        let date = ResponderDate[itr].value;
+        let date = responderDate[itr].value;
 
-        let matches = ResponderDate[itr].label.match(/\b(\w)/g); // [D,P,R]
-        let initials = matches.join('').substring(0, 2); // DPR
+        let matches = responderDate[itr].label.match(/\b(\w)/g); // [D,P,R]
+        let initials = matches.join("").substring(0, 2); // DPR
 
-        let score = scoreCalculate(ResponderDate[itr].value2);
+        let score = scoreCalculate(responderDate[itr].value2);
 
         $(".tabs-content:first")
             .find("table#responder-table tbody")
             .append(
-                `<tr id="${ResponderDate[itr].value2}" class="getresult cursor-pointer" tabindex="0" rol="button">
+                `<tr id="${responderDate[itr].value2}" class="getresult cursor-pointer" tabindex="0" rol="button">
                     <td>
                         <div class="d-flex ">
                             <div class="avtar">
@@ -935,11 +938,11 @@ function scoreCalculate(userId) {
         for (let i = 0; i < actionDataRowsLength; i++) {
             if (actionDataRows[i].creatorId == userId) {
                 for (let c = 0; c < correctResponse.length; c++) {
-                    let correctAnsString = '';
-                    let userAnsString = '';
+                    let correctAnsString = "";
+                    let userAnsString = "";
                     if ($.isArray(correctResponse[c])) {
                         if (correctResponse[c].length > 1) {
-                            correctAnsString = correctResponse[c].join(',');
+                            correctAnsString = correctResponse[c].join(",");
                         } else {
                             correctAnsString = correctResponse[c][0];
                         }
@@ -950,7 +953,7 @@ function scoreCalculate(userId) {
                     if (ActionHelper.isJson(actionDataRows[i].columnValues[c + 1])) {
                         let responderAnsArr = JSON.parse(actionDataRows[i].columnValues[c + 1]);
                         if (responderAnsArr.length > 1) {
-                            userAnsString = responderAnsArr.join(',');
+                            userAnsString = responderAnsArr.join(",");
                         } else {
                             userAnsString = responderAnsArr[0];
                         }
@@ -966,11 +969,11 @@ function scoreCalculate(userId) {
             }
         }
     });
-    let score_is = (score / total) * 100;
-    if (score_is % 1 != 0) {
-        score_is = score_is.tofixed(2);
+    let scoreIs = (score / total) * 100;
+    if (scoreIs % 1 != 0) {
+        scoreIs = scoreIs.tofixed(2);
     }
-    return score_is;
+    return scoreIs;
 }
 
 /**
@@ -988,7 +991,7 @@ function getNonresponders() {
             name = actionNonResponders[itr].label;
         }
         let matches = actionNonResponders[itr].label.match(/\b(\w)/g); // [D,P,R]
-        let initials = matches.join('').substring(0, 2); // DPR
+        let initials = matches.join("").substring(0, 2); // DPR
 
         let date = actionNonResponders[itr].value;
         $(".tabs-content:first")
@@ -1007,31 +1010,31 @@ function getNonresponders() {
 }
 
 /**
- * @description Method to creat4e responder correct and incorrect quiz responses  
+ * @description Method to creat4e responder correct and incorrect quiz responses
  * @param userId contains user id for identifications
  * @param responder contains responders
  */
-function createReponderQuestionView(userId, responder = '') {
+function createResponderQuestionView(userId, responder = "") {
     total = 0;
     score = 0;
-    
+
     $("div#root > div.question-content").html("");
 
-    if (responder != '') {
+    if (responder != "") {
         let name = responder.label;
         let matches = name.match(/\b(\w)/g); // [D,P,R]
-        let initials = matches.join('').substring(0, 2); // DPR
+        let initials = matches.join("").substring(0, 2); // DPR
 
-        Localizer.getString('you_responded').then(function(result) {
-            $('div.progress-section').after(`<div class="d-flex cursor-pointer getresult" data-attr="home" id="${myUserId}">
+        Localizer.getString("you_responded").then(function(result) {
+            $("div.progress-section").after(`<div class="d-flex cursor-pointer getresult" data-attr="home" id="${myUserId}">
                     <div class="avtar">
                         ${initials}
                     </div>
                     <div class="avtar-txt">${result}</div>
                 </div>
                 <hr class="small">`);
-            $('div.progress-section').after(`<hr class="small">`);
-            $('div#' + myUserId).after(`<hr class="small">`);
+            $("div.progress-section").after(`<hr class="small">`);
+            $("div#" + myUserId).after(`<hr class="small">`);
         });
     }
 
@@ -1040,10 +1043,10 @@ function createReponderQuestionView(userId, responder = '') {
 
         dataTable.dataColumns.forEach((question, ind) => {
             answerIs = "";
-            let $cardDiv = $('<div class="card-box card-bg card-border alert-success mb--8"></div>');
-            let $questionContentDiv = $('<div class="question-content disabled2"></div>');
-            let $rowdDiv = $('<div class="mt--24"></div>');
-            let $dflexDiv = $('<div class="d-table mb--8"></div>');
+            let $cardDiv = $(`<div class="card-box card-bg card-border alert-success mb--8"></div>`);
+            let $questionContentDiv = $(`<div class="question-content disabled2"></div>`);
+            let $rowdDiv = $(`<div class="mt--24"></div>`);
+            let $dflexDiv = $(`<div class="d-table mb--4"></div>`);
             $questionContentDiv.append($rowdDiv);
             $questionContentDiv.append($dflexDiv);
             let count = ind + 1;
@@ -1060,6 +1063,10 @@ function createReponderQuestionView(userId, responder = '') {
                 </div>`);
 
             let optAnsArr = [];
+            let isRadio = true;
+            if (JSON.parse(actionInstance.customProperties[5].value)[ind].length > 1) {
+                isRadio = false;
+            }
             question.options.forEach((option, optind) => {
                 /* User Responded */
                 let userResponse = [];
@@ -1114,30 +1121,42 @@ function createReponderQuestionView(userId, responder = '') {
                 let optName = option.displayName;
                 let optAttachmentId = option.attachments != "" ? option.attachments[0].id : "";
 
-                let $radioOption = getOptions(
-                    optName,
-                    question.name,
-                    option.name,
-                    userResponseAnswer,
-                    correctAnswer,
-                    optAttachmentId
-                );
-                $cardDiv.append($radioOption);
+                if (isRadio) {
+                    let $radioOption = getRadioOptions(
+                        optName,
+                        question.name,
+                        option.name,
+                        userResponseAnswer,
+                        correctAnswer,
+                        optAttachmentId
+                    );
+                    $cardDiv.append($radioOption);
+                } else {
+                    let $checkOption = getCheckOptions(
+                        optName,
+                        question.name,
+                        option.name,
+                        userResponseAnswer,
+                        correctAnswer,
+                        optAttachmentId
+                    );
+                    $cardDiv.append($checkOption);
+                }
 
-                if (answerIs.toLowerCase() == 'correct') {
+                if (answerIs.toLowerCase() == "correct") {
                     optAnsArr[optind] = answerIs;
                 } else {
-                    optAnsArr[optind] = 'incorrect';
+                    optAnsArr[optind] = "incorrect";
                 }
             });
-            $cardDiv.find("#status-" + question.name).html(`<span class="${answerIs == 'Correct' ? 'text-success' : 'text-danger'}">${answerIs == 'Correct' ? correctKey : incorrectKey}</span>`);
-            if (optAnsArr.includes('incorrect') == false) {
+            $cardDiv.find("#status-" + question.name).html(`<span class="${answerIs == "Correct" ? "text-success" : "text-danger"}">${answerIs == "Correct" ? correctKey : incorrectKey}</span>`);
+            if (optAnsArr.includes("incorrect") == false) {
                 score++;
             }
             $("#root").append($cardDiv);
         });
     });
-    $("#root").append('<div class="ht-100"></div>');
+    $("#root").append(`<div class="ht-100"></div>`);
     let scorePercentage = (score / total) * 100;
     if (scorePercentage % 1 != 0) {
         scorePercentage = scorePercentage.tofixed(2);
@@ -1149,7 +1168,7 @@ function createReponderQuestionView(userId, responder = '') {
 }
 
 /**
- * @description Method to create responder correct and incorrect quiz responses  
+ * @description Method to create responder correct and incorrect quiz responses
  */
 function createCreatorQuestionView() {
     total = 0;
@@ -1158,8 +1177,8 @@ function createCreatorQuestionView() {
 
     $("div#root > div.question-content").html("");
 
-    Localizer.getString('aggregrateResult').then(function(result) {
-        $('div.progress-section').after(`
+    Localizer.getString("aggregrateResult").then(function(result) {
+        $("div.progress-section").after(`
             <div class="clearfix"></div>
             <hr class="small">
             <div class="d-flex cursor-pointer" data-attr="home" id="${myUserId}">
@@ -1180,15 +1199,15 @@ function createCreatorQuestionView() {
             answerIs = "";
             let $quesContDiv = $(`<div class="question-content disabled2" id="content-${question.name}"></div>`);
             let $mtDiv = $(`<div class="mt--24"></div>`);
-            let $dflexDiv = $('<div class="d-table mb--8"></div>');
+            let $dflexDiv = $(`<div class="d-table mb--4"></div>`);
 
             $quesContDiv.append($mtDiv);
-            $('#root').append($quesContDiv);
+            $("#root").append($quesContDiv);
             let count = ind + 1;
             let attachmentId = question.attachments != "" ? question.attachments[0].id : "";
 
             $dflexDiv.append(`<label class="font-12 ">
-                    <strong class="question-title semi-bold "> 
+                    <strong class="question-title semi-bold ">
                         <span  class="question-number font-12 bold">${questionKey} # ${count}</span>
                     </strong>
                 </label>`);
@@ -1199,13 +1218,18 @@ function createCreatorQuestionView() {
             $blankQDiv.append(`
                     <div class="semi-bold font-16 mb--16">${question.displayName}</div>
             `);
-            let questionAttachmentId = question.attachments.length > 0 ? question.attachments[0].id : '';
+            let questionAttachmentId = question.attachments.length > 0 ? question.attachments[0].id : "";
             if (questionAttachmentId.length > 0) {
                 let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
                 ActionHelper.executeApi(req).then(function(response) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $blankQDiv.prepend(`
-                            <div class="option-image-section cover-img min-max-132 mb--4"> 
+                            <div class="option-image-section relative cover-img min-max-132 mb--4">
+                                <div class="loader-cover">
+                                    <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
                                 <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive"  crossorigin="anonymous">
                             </div>`);
                         getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-image`);
@@ -1219,8 +1243,8 @@ function createCreatorQuestionView() {
                 let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
                 ActionHelper.executeApi(req).then(function(response) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
-                        $mtDiv.find('d-table').after(`
-                            <div class="quiz-updated-img cover-img min-max-132 mb--8">
+                        $mtDiv.find("d-table").after(`
+                            <div class="quiz-updated-img relative cover-img min-max-132 mb--8">
                                 <img src="${response.attachmentInfo.downloadUrl}" class="image-responsive question-template-image"  crossorigin="anonymous">
                             </div>`);
                         getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-template-image`);
@@ -1235,13 +1259,13 @@ function createCreatorQuestionView() {
 
             /* check for correct answer for each users */
             for (let i = 0; i < actionDataRowsLength; i++) {
-               
+
                 for (let c = 0; c < correctResponse.length; c++) {
-                    let correctAnsString = '';
-                    let userAnsString = '';
+                    let correctAnsString = "";
+                    let userAnsString = "";
                     if ($.isArray(correctResponse[c])) {
                         if (correctResponse[c].length > 1) {
-                            correctAnsString = correctResponse[c].join(',');
+                            correctAnsString = correctResponse[c].join(",");
                         } else {
                             correctAnsString = correctResponse[c][0];
                         }
@@ -1252,7 +1276,7 @@ function createCreatorQuestionView() {
                     if (ActionHelper.isJson(actionDataRows[i].columnValues[count])) {
                         let responderAnsArr = JSON.parse(actionDataRows[i].columnValues[count]);
                         if (responderAnsArr.length > 1) {
-                            userAnsString = responderAnsArr.join(',');
+                            userAnsString = responderAnsArr.join(",");
                         } else {
                             userAnsString = responderAnsArr[0];
                         }
@@ -1267,9 +1291,14 @@ function createCreatorQuestionView() {
                 }
             }
 
+            let isRadio = true;
+            if (JSON.parse(actionInstance.customProperties[5].value)[ind].length > 1) {
+                isRadio = false;
+            }
+
             question.options.forEach((option, iii) => {
                 /* User Responded */
-                let $cardDiv = $('<div class="card-box card-bg card-border mb--8 "></div>');
+                let $cardDiv = $(`<div class="card-box card-bg card-border mb--8 "></div>`);
                 let userResponse = [];
                 let userResponseAnswer = "";
                 for (let i = 0; i < actionDataRowsLength; i++) {
@@ -1299,10 +1328,7 @@ function createCreatorQuestionView() {
                                 userResArr.push(userResponseAnswer);
                             }
                         }
-
-
                     }
-
                 }
 
                 /* Correct Answer */
@@ -1326,23 +1352,38 @@ function createCreatorQuestionView() {
                 let optName = option.displayName;
                 let attachmentId = option.attachments != "" ? option.attachments[0].id : "";
                 let optId = option.name;
-                let $radioOption = '';
-                let result = '';
+                let $radioOption = "";
+                let result = "";
                 for (let j = 0; j < correctResponseLength; j++) {
                     let correctResponseAns = correctResponse[j];
                     if (correctResponseAns.includes(option.name)) {
-                        result = 'correct';
+                        result = "correct";
                     }
                 }
-                $radioOption = getOptionsCreator(optName, optId, ind, result, attachmentId);
-
-                $cardDiv.append($radioOption);
-                /* if (result == 'correct')
+                if (isRadio) {
+                    $radioOption = getRadioOptionsCreator(
+                        optName,
+                        optId,
+                        ind,
+                        result,
+                        attachmentId
+                    );
+                    $cardDiv.append($radioOption);
+                } else {
+                    let $checkOption = getCheckOptionsCreator(
+                        optName,
+                        optId,
+                        ind,
+                        result,
+                        attachmentId
+                    );
+                    $cardDiv.append($checkOption);
+                }
+                /* if (result == "correct")
                     $cardDiv.addClass("alert-success"); */
 
                 $quesContDiv.append($cardDiv);
             });
-
 
             if (actionDataRowsLength == 0) {
                 $dflexDiv.find("#status-" + question.name).html(`<span class="semi-bold">0% Correct</div>`);
@@ -1358,7 +1399,7 @@ function createCreatorQuestionView() {
 }
 
 /**
- * @description Method for Question view based on user id  
+ * @description Method for Question view based on user id
  * @param user id String contains userId
  */
 function createQuestionView(userId) {
@@ -1372,14 +1413,14 @@ function createQuestionView(userId) {
             answerIs = "";
             let $questionDiv = $(`<div class="question-content disabled2" id="content-${question.name}"></div>`);
             let $mtDiv = $(`<div class="mt--24"></div>`);
-            let $dtableDiv = $(`<div class="d-table mb--8 "></div>`);
+            let $dtableDiv = $(`<div class="d-table mb--4 "></div>`);
             let count = ind + 1;
             let questionAttachmentId = question.attachments != "" ? question.attachments[0].id : "";
 
             $questionDiv.append($mtDiv);
             $mtDiv.append($dtableDiv);
             $dtableDiv.append(`<label class="font-12">
-                    <strong class="question-title semi-bold"> 
+                    <strong class="question-title semi-bold">
                         <span  class="question-number font-12 bold">${questionKey} # ${count}</span>
                     </strong>
                 </label>`);
@@ -1397,7 +1438,12 @@ function createQuestionView(userId) {
                 ActionHelper.executeApi(req).then(function(response) {
                         console.info("Attachment - Response: " + JSON.stringify(response));
                         $blankQDiv.prepend(`
-                            <div class="option-image-section cover-img min-max-132 mb--4"> 
+                            <div class="option-image-section relative cover-img min-max-132 mb--4">
+                                <div class="loader-cover">
+                                    <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
                                 <img src="${response.attachmentInfo.downloadUrl} " class="question-image img-responsive"  crossorigin="anonymous">
                             </div>`);
                         getClassFromDimension(response.attachmentInfo.downloadUrl, `#content-${question.name} img.question-image`);
@@ -1407,21 +1453,22 @@ function createQuestionView(userId) {
                     });
             }
 
-
             let $blankDiv = $(`<div class=" "></div>`);
             $mtDiv.append($blankDiv);
             let optAnsArr = [];
+            let isRadio = true;
+            if (JSON.parse(actionInstance.customProperties[5].value)[ind].length > 1) {
+                isRadio = false;
+            }
             question.options.forEach((option, optind) => {
                 /* User Responded */
                 let userResponse = [];
                 let userResponseAnswer = "";
-
+                let correctAnsArr = [];
                 for (let i = 0; i < actionDataRowsLength; i++) {
                     if (actionDataRows[i].creatorId == userId) {
                         userResponse = actionDataRows[i].columnValues;
                         let userResponseLength = Object.keys(userResponse).length;
-
-
                         for (let j = 1; j <= userResponseLength; j++) {
                             if (ActionHelper.isJson(userResponse[j]) == true) {
                                 let userResponseAns = JSON.parse(userResponse[j]);
@@ -1459,6 +1506,7 @@ function createQuestionView(userId) {
                     for (let k = 0; k < correctResponseAnsLen; k++) {
                         if (correctResponseAns[k] == option.name) {
                             correctAnswer = correctResponseAns[k];
+                            correctAnsArr = correctResponseAns;
                         }
                     }
                 }
@@ -1466,25 +1514,36 @@ function createQuestionView(userId) {
                 let optName = option.displayName;
                 let optAttachmentId = option.attachments != 0 ? option.attachments[0].id : "";
 
-                let $radioOption = getOptions(
-                    optName,
-                    question.name,
-                    option.name,
-                    userResponseAnswer,
-                    correctAnswer,
-                    optAttachmentId
-                );
-
-                $blankDiv.append($radioOption);
-                if (answerIs.toLowerCase() == 'correct') {
-                    optAnsArr[optind] = answerIs;
-                } else if (answerIs.toLowerCase() == 'incorrect') {
-                    optAnsArr[optind] = 'incorrect';
+                if (isRadio) {
+                    let $radioOption = getRadioOptions(
+                        optName,
+                        question.name,
+                        option.name,
+                        userResponseAnswer,
+                        correctAnswer,
+                        optAttachmentId
+                    );
+                    $blankDiv.append($radioOption);
+                } else {
+                    let $checkOption = getCheckOptions(
+                        optName,
+                        question.name,
+                        option.name,
+                        userResponseAnswer,
+                        correctAnswer,
+                        optAttachmentId
+                    );
+                    $blankDiv.append($checkOption);
                 }
-                $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold ${answerIs == 'Correct' ? 'text-success' : 'text-danger'}">${answerIs}</span>`);
+                if (answerIs.toLowerCase() == "correct") {
+                    optAnsArr[optind] = answerIs;
+                } else if (answerIs.toLowerCase() == "incorrect") {
+                    optAnsArr[optind] = "incorrect";
+                }
+                $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold ${answerIs == "Correct" ? "text-success" : "text-danger"}">${answerIs}</span>`);
             });
 
-            if (optAnsArr.includes('incorrect') != true) {
+            if (optAnsArr.includes("incorrect") != true) {
                 score++;
             }
             $("div#root").append($questionDiv);
@@ -1502,16 +1561,16 @@ function createQuestionView(userId) {
 }
 
 /**
- * @desc Method for Question view based on user id  
+ * @desc Method for Question view based on user id
  * @param text String contains correct and incorrect message
  * @param name String contains option name
  * @param id String contains option id
  * @param userResponse String contains user response data
- * @param correctAnswer String contains correct answer 
- * @param attachmentId String contains attachment id of option 
+ * @param correctAnswer String contains correct answer
+ * @param attachmentId String contains attachment id of option
  */
-function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
-    let $oDiv = $('<div class=""></div>');
+function getRadioOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
+    let $oDiv = $(`<div class=""></div>`);
     /*  If answer is correct  and answered */
     if ($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) == $.trim(id)) {
         $oDiv.append(
@@ -1520,7 +1579,7 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
                     <label class="custom-radio d-block font-14">
                         <span class="radio-block selected "></span>
                         <div class="pr--32 check-in-div">${text}  &nbsp;
-                            <i class="success-with-img"> 
+                            <i class="success-with-img">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
                                     <defs>
                                         <clipPath id="clip-Custom_Size_1">
@@ -1532,7 +1591,7 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
                                         <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
                                     </g>
                                 </svg>
-                            </i> 
+                            </i>
                         </div>
                     </label>
                 </div>
@@ -1545,7 +1604,7 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
         /* If User Response is correct and answered incorrect */
         $oDiv.append(`<div class="card-box card-bg card-border alert-danger mb--8">
                 <div class="radio-section custom-radio-outer" id="${id}">
-                    <label class="custom-radio d-block selected font-14  "> 
+                    <label class="custom-radio d-block selected font-14">
                         <span class="radio-block selected"></span>
                         <div class="pr--32 check-in-div">
                         ${text}
@@ -1582,7 +1641,7 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
     } else {
         $oDiv.append(`<div class="card-box card-bg card-border mb--8 ">
                 <div class=" radio-section custom-radio-outer " id="${id}" columnid="3 ">
-                    <label class="custom-radio d-block font-14"> 
+                    <label class="custom-radio d-block font-14">
                         <span class="radio-block"></span><div class="pr--32 check-in-div">${text}</div>
                     </label>
                 </div>
@@ -1593,8 +1652,13 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
         let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
-                $oDiv.find('label.custom-radio').prepend(`
-                    <div class="option-image-section cover-img min-max-132 mb--4"> 
+                $oDiv.find("label.custom-radio").prepend(`
+                    <div class="option-image-section relative cover-img min-max-132 mb--4">
+                        <div class="loader-cover">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
                         <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
                     </div>`);
                 getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} .opt-image:last`);
@@ -1607,24 +1671,134 @@ function getOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
 }
 
 /**
- * @description Method for Question view based on user id  
+ * @desc Method for Question view based on user id
  * @param text String contains correct and incorrect message
  * @param name String contains option name
  * @param id String contains option id
  * @param userResponse String contains user response data
- * @param correctAnswer String contains correct answer 
- * @param attachmentId String contains attachment id of option 
+ * @param correctAnswer String contains correct answer
+ * @param attachmentId String contains attachment id of option
  */
-function getOptionsCreator(text, optId, ind, result, attachmentId) {
-    let $oDiv = $('<div class="form-group"></div>');
+function getCheckOptions(text, name, id, userResponse, correctAnswer, attachmentId) {
+    let $oDiv = $(`<div class=""></div>`);
     /*  If answer is correct  and answered */
-    if (result == 'correct') {
+    if ($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) == $.trim(id)) {
+        $oDiv.append(
+            `<div class="card-box card-bg card-border alert-success mb--8">
+                <div class="radio-section custom-check-outer" id="${id} " columnid="3 ">
+                    <label class="custom-check d-block font-14">
+                        <span class="checkmark selected "></span>
+                        <div class="pr--32 check-in-div">${text}  &nbsp;
+                            <i class="success-with-img">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                    <defs>
+                                        <clipPath id="clip-Custom_Size_1">
+                                        <rect width="16" height="16"/>
+                                        </clipPath>
+                                    </defs>
+                                    <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                        <rect width="16" height="16" fill="none"/>
+                                        <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                    </g>
+                                </svg>
+                            </i>
+                        </div>
+                    </label>
+                </div>
+            </div>`
+        );
+        if (answerIs == "") {
+            answerIs = "Correct";
+        }
+    } else if (($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) != $.trim(userResponse))) {
+        /* If User Response is correct and answered incorrect */
+        $oDiv.append(`<div class="card-box card-bg card-border alert-danger mb--8">
+                <div class="radio-section custom-check-outer" id="${id}">
+                    <label class="custom-check d-block selected font-14">
+                        <span class="checkmark selected"></span>
+                        <div class="pr--32 check-in-div">
+                        ${text}
+                        </div>
+                    </label>
+                </div>
+            </div>`);
+        answerIs = "Incorrect";
+    } else if (($.trim(userResponse) != $.trim(id) && $.trim(correctAnswer) == $.trim(id))) {
+        /* If User Response is incorrect and not answered */
+        $oDiv.append(`<div class="card-box card-bg card-border mb--8">
+                <div class="radio-section custom-check-outer" id="${id}">
+                    <label class="custom-check d-block selected font-14">
+                        <span class="checkmark"></span>
+                        <div class="pr--32 check-in-div">${text} &nbsp;
+                            <i class="success-with-img">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                    <defs>
+                                        <clipPath id="clip-Custom_Size_1">
+                                        <rect width="16" height="16"/>
+                                        </clipPath>
+                                    </defs>
+                                    <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                        <rect width="16" height="16" fill="none"/>
+                                        <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                    </g>
+                                </svg>
+                            </i>
+                         </div>
+                    </label>
+                </div>
+            </div>`);
+        answerIs = "Incorrect";
+    } else {
+        $oDiv.append(`<div class="card-box card-bg card-border mb--8 ">
+                <div class=" radio-section custom-check-outer " id="${id}" columnid="3 ">
+                    <label class="custom-check d-block font-14">
+                        <span class="checkmark"></span><div class="pr--32 check-in-div">${text}</div>
+                    </label>
+                </div>
+            </div>`);
+    }
+
+    if (attachmentId.length > 0) {
+        let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
+        ActionHelper.executeApi(req).then(function (response) {
+            console.info("Attachment - Response: " + JSON.stringify(response));
+            $oDiv.find("label.custom-radio").prepend(`
+                    <div class="option-image-section relative cover-img min-max-132 mb--4">
+                        <div class="loader-cover">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
+                    </div>`);
+            getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} .opt-image:last`);
+        })
+            .catch(function (error) {
+                console.error("AttachmentAction - Error: " + JSON.stringify(error));
+            });
+    }
+    return $oDiv;
+}
+
+/**
+ * @description Method for Question view based on user id
+ * @param text String contains correct and incorrect message
+ * @param name String contains option name
+ * @param id String contains option id
+ * @param userResponse String contains user response data
+ * @param correctAnswer String contains correct answer
+ * @param attachmentId String contains attachment id of option
+ */
+function getRadioOptionsCreator(text, optId, ind, result, attachmentId) {
+    let $oDiv = $(`<div class="form-group"></div>`);
+    /*  If answer is correct  and answered */
+    if (result == "correct") {
         $oDiv.append(`
                 <div class="radio-section custom-radio-outer " id="${optId}" columnid="${ind}">
                     <label class="custom-radio d-block font-14 cursor-pointer ">
                         <span class="radio-block"></span>
                         <div class="pr--32 check-in-div">${text} &nbsp;
-                            <i class="success"> 
+                            <i class="success">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
                                     <defs>
                                         <clipPath id="clip-Custom_Size_1">
@@ -1655,8 +1829,13 @@ function getOptionsCreator(text, optId, ind, result, attachmentId) {
         let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
                 console.info("Attachment - Response: " + JSON.stringify(response));
-                $oDiv.find('label.custom-radio').prepend(`
-                    <div class="option-image-section cover-img min-max-132 mb--4"> 
+                $oDiv.find("label.custom-radio").prepend(`
+                    <div class="option-image-section relative cover-img min-max-132 mb--4">
+                        <div class="loader-cover">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
                         <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
                     </div>`);
                 getClassFromDimension(response.attachmentInfo.downloadUrl, `#${optId} .opt-image`);
@@ -1669,11 +1848,90 @@ function getOptionsCreator(text, optId, ind, result, attachmentId) {
 }
 
 /**
- * @description Method for creating footer based on user id  
+ * @description Method for Question view based on user id
+ * @param text String contains correct and incorrect message
+ * @param name String contains option name
+ * @param id String contains option id
+ * @param userResponse String contains user response data
+ * @param correctAnswer String contains correct answer
+ * @param attachmentId String contains attachment id of option
+ */
+function getCheckOptionsCreator(text, optId, ind, result, attachmentId) {
+    let $oDiv = $(`<div class="form-group"></div>`);
+    /*  If answer is correct  and answered */
+    if (result == "correct") {
+        $oDiv.append(`
+                <div class="radio-section custom-check-outer " id="${optId}" columnid="${ind}">
+                    <label class="custom-check d-block font-14 cursor-pointer ">
+                        <span class="checkmark"></span>
+                        <div class="pr--32 check-in-div">${text} &nbsp;
+                            <i class="success">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                                    <defs>
+                                        <clipPath id="clip-Custom_Size_1">
+                                        <rect width="16" height="16"/>
+                                        </clipPath>
+                                    </defs>
+                                    <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+                                        <rect width="16" height="16" fill="none"/>
+                                        <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
+                                    </g>
+                                </svg>
+                            </i>
+                        </div>
+                    </label>
+                </div>
+            `);
+    } else {
+        $oDiv.append(`
+                <div class="radio-section custom-check-outer " id="${optId}" columnid="${ind}">
+                    <label class="custom-check d-block font-14 cursor-pointer ">
+                        <span class="checkmark"></span>
+                        <div class="pr--32 check-in-div">${text}</div>
+                    </label>
+                </div>
+            `);
+    }
+    if (attachmentId.length > 0) {
+        let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
+        ActionHelper.executeApi(req).then(function (response) {
+            console.info("Attachment - Response: " + JSON.stringify(response));
+            $oDiv.find("label.custom-radio").prepend(`
+                    <div class="option-image-section relative cover-img min-max-132 mb--4">
+                        <div class="loader-cover">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <img src="${response.attachmentInfo.downloadUrl} " class="opt-image img-responsive"  crossorigin="anonymous">
+                    </div>`);
+            getClassFromDimension(response.attachmentInfo.downloadUrl, `#${optId} .opt-image`);
+        })
+            .catch(function (error) {
+                console.error("AttachmentAction - Error: " + JSON.stringify(error));
+            });
+    }
+    return $oDiv;
+}
+
+/**
+ * Method to get remove Image loader from image section
+ * @param selector object html on which remove image
+ */
+function removeImageLoader(selector) {
+    let tid = setInterval(() => {
+        if ($(selector).hasClass("heightfit") || $(selector).hasClass("widthfit") || $(selector).hasClass("smallfit")) {
+            $(".loader-cover").hide();
+            clearInterval(tid);
+        }
+    }, 100);
+}
+/**
+ * @description Method for creating footer based on user id
  * @param userId String contains user identifier to load footer based on that
  */
 function footer(userId) {
-    $("div.question-content:first").find('.footer').hide();
+    $("div.question-content:first").find(".footer").hide();
     $("div.question-content").after(`
         <div class="footer">
             <div class="footer-padd bt">
@@ -1707,7 +1965,7 @@ function footerClose() {
             <div class="footer-padd bt">
                 <div class="container">
                     <div class="row">
-                        <div class="col-12 text-right"> 
+                        <div class="col-12 text-right">
                             <button type="button" class="btn btn-primary btn-sm pull-right close-key" id="closeKey"> ${closeKey}</button>
                         </div>
                     </div>
@@ -1729,12 +1987,12 @@ function footerDownload() {
                         <div class="col-12 text-right">
                             <div class="dropdown btn-group">
                                 <button type="button" class="btn btn-primary  dd-btn" id="downloadImage"  data-toggle="dropdown" data-bind="enable: !noResults()">
-                                    <span class="span1 add-content-label" id="download-key">${downloadKey}</span>   
+                                    <span class="span1 add-content-label" id="download-key">${downloadKey}</span>
                                 </button>
                                 <button type="button" class="btn btn-primary   dropdown-toggle dd-btn" data-toggle="dropdown" aria-expanded="false">
                                         <span class="span2">
                                         <svg role="presentation" fill="#fff" width="16" height="16" focusable="false" viewBox="8 5 16 16" ><path class="ui-icon__outline cw" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z"></path><path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z"></path></svg>
-                                    </span>    
+                                    </span>
                                 </button>
                                 <ul class="dropdown-menu" style="top:22px">
                                     <li class="cursur-pointer" id="downloadImage">
@@ -1815,14 +2073,14 @@ function footer2() {
 }
 
 /**
- * @description Method to load non responder page 
+ * @description Method to load non responder page
  */
 function create_responder_nonresponders() {
     if (actionInstance.customProperties[2].value == "Only me") {
         if (actionContext.userId == actionInstance.creatorId) {
             $("#root").html("");
             if ($(".tabs-content:visible").length <= 0) {
-                let $card1 = $('<div class="card-box card-blank"></div>');
+                let $card1 = $(`<div class="card-box card-blank"></div>`);
                 let tabs = $(".tabs-content").clone();
                 $card1.append(tabs.clone());
                 $("#root").append($card1);
@@ -1840,7 +2098,7 @@ function create_responder_nonresponders() {
     } else {
         $("#root").html("");
         if ($(".tabs-content:visible").length <= 0) {
-            let $card1 = $('<div class="card-box card-blank"></div>');
+            let $card1 = $(`<div class="card-box card-blank"></div>`);
             let tabs = $(".tabs-content").clone();
             $card1.append(tabs.clone());
             $("#root").append($card1);
@@ -1856,7 +2114,7 @@ function create_responder_nonresponders() {
 }
 
 /**
- * @description Method to get image dimensions and image div dimensions 
+ * @description Method to get image dimensions and image div dimensions
  * @param imageURL contains image url
  * @param selector contains image where url placed
  */
@@ -1865,24 +2123,32 @@ function getClassFromDimension(imgURL, selector) {
     tmpImg.src = imgURL;
     let imgWidth = 0;
     let imgHeight = 0;
-    $(tmpImg).on('load', function() {
+    $(tmpImg).on("load", function() {
         imgWidth = tmpImg.width;
         imgHeight = tmpImg.height;
         let divWidth = Math.round($(selector).width());
         let divHeight = Math.round($(selector).height());
-        let getClass = '';
+        let getClass = "";
         if (imgHeight > divHeight) {
             /* height is greater than width */
-            getClass = ('heightfit');
+            getClass = ("heightfit");
         } else if (imgWidth > divWidth) {
             /* width is greater than height */
-            getClass = ('widthfit');
+            getClass = ("widthfit");
         } else {
             /* small image */
-            getClass = ('smallfit');
+            getClass = ("smallfit");
         }
         $(selector).addClass(getClass);
 
+        let tid = setInterval(() => {
+            if ($(selector).hasClass(getClass) == true) {
+                setTimeout(() => {
+                    removeImageLoader(selector);
+                    clearInterval(tid);
+                }, 500);
+            }
+        }, 100);
     });
 }
 
@@ -1890,7 +2156,7 @@ function getClassFromDimension(imgURL, selector) {
  * @description Method contains section to date change of quiz
  */
 function changeDateSection() {
-    $('#root .d-table:first').before(`
+    $("#root .d-table:first").before(`
         <div class="change-date">
             <div class="card-box card-bg card-border">
                 <div class="row">
@@ -1910,20 +2176,14 @@ function changeDateSection() {
                             <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
                         </div>
                     </div>
-
                     <div class="col-12">
                         <div class="d-flex-alert mt--16 mb--8">
-                            <div class="pr--8">
-                                <label class="confirm-box text-danger"> </label>
-                            </div>
-                            <div class=" pl--8 text-right">
+                            <div class="pl--8 text-right">
                                 <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8 cancel-key">${cancelKey}</button><button type="button" class="btn btn-primary btn-sm disabled change-key" id="change-quiz-date">${changeKey}</button>
                             </div>
                         </div>
                     </div>
-
                     <div class="clearfix"></div>
-
                 </div>
             </div>
         </div>
@@ -1934,7 +2194,7 @@ function changeDateSection() {
  * @description Method contains section to close quiz
  */
 function closeQuizSection() {
-    $('#root .d-table:first').before(`
+    $("#root .d-table:first").before(`
         <div class="close-quiz">
             <div class="card-box card-bg card-border">
                 <div class="row">
@@ -1942,22 +2202,15 @@ function closeQuizSection() {
                         <h4 class="mb--8"><strong class="due-by-key bold close-quiz-key">${closeQuizKey}</strong></h4>
                     </div>
                     <div class="clearfix"></div>
-
-
                     <div class="col-12">
+                        <label class="confirm-box text-danger close-quiz-confirm-key">${closeQuizConfirmKey}</label>
                         <div class="d-flex-alert mt--16 mb--8">
-                            <div class="pr--8">
-                                <label class="confirm-box text-danger close-quiz-confirm-key">${closeQuizConfirmKey}</label>
-                            </div>
                             <div class=" pl--8 text-right">
                                 <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8 cancel-key">${cancelKey}</button><button type="button" class="btn btn-primary btn-sm" id="change-quiz-question confirm-key">${confirmKey}</button>
                             </div>
-
                         </div>
                     </div>
-
                     <div class="clearfix"></div>
-
                 </div>
             </div>
         </div>
@@ -1968,7 +2221,7 @@ function closeQuizSection() {
  * @description Method contains section to delete quiz
  */
 function deleteQuizSection() {
-    $('#root .d-table:first').before(`
+    $("#root .d-table:first").before(`
         <div class="delete-quiz">
             <div class="card-box card-bg card-border">
                 <div class="row">
@@ -1976,22 +2229,15 @@ function deleteQuizSection() {
                         <h4 class="mb--8"><strong class="due-by-key bold delete-quiz-key">${deleteQuizKey}</strong></h4>
                     </div>
                     <div class="clearfix"></div>
-
-
                     <div class="col-12">
+                        <label class="confirm-box text-danger delete-quiz-confirm-key">${deleteQuizConfirmKey} </label>
                         <div class="d-flex-alert mt--16 mb--8">
-                            <div class="pr--8">
-                                <label class="confirm-box text-danger delete-quiz-confirm-key">${deleteQuizConfirmKey} </label>
-                            </div>
-                            <div class=" pl--8 text-right">
+                            <div class="pl--8 text-right">
                                 <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8 cancel-key">${cancelKey}</button><button type="button" class="btn btn-primary btn-sm confirm-key" id="delete-quiz">${confirmKey}</button>
                             </div>
-
                         </div>
                     </div>
-
                     <div class="clearfix"></div>
-
                 </div>
             </div>
         </div>
