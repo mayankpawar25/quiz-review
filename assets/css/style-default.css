@@ -1263,6 +1263,11 @@ a#back-setting svg {
 .add-options {
     font-size: var(--font-12);
     font-weight: var(--font-weight-600);
+    color: var(--main-bg-color);
+}
+
+.add-options:hover {
+    color: var(--main-bg-color);
 }
 
 #hide1 #due {

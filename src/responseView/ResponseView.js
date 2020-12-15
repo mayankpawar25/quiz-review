@@ -5,7 +5,7 @@ import { ActionHelper, Localizer } from "../common/ActionSdkHelper";
 import { Constants } from "../common/utils/Constants";
 import { UxUtils } from "./../common/utils/UxUtils";
 import { Utils } from "./../common/utils/Utils";
-import { KeyboardUtils } from "./../common/utils/KeyboardUtils";
+import { KeyboardAccess } from "./../common/utils/KeyboardUtils";
 
 // Fetching HTML Elements in Variables by ID.
 let request;
@@ -386,7 +386,7 @@ $(document).on("click", "#close-event", function() {
 /**
  * @event Keydown for disable action on response summary section
  */
-KeyboardUtils.selectCheckOrRadioKeydown(document, ".summary-section input[type='radio'], .summary-section input[type='checkbox']");
+KeyboardAccess.selectCheckOrRadioKeydown(document, ".summary-section input[type='radio'], .summary-section input[type='checkbox']");
 
 /**
  * @event Click for disable action on response summary section
@@ -665,7 +665,7 @@ function createBody() {
 
         let $card = $(`<div class=""></div>`);
         let $title = $(UxUtils.getQuizTitleResponseView(actionInstance.displayName));
-        let $description = $(UxUtils.getQuizTitleResponseView(actionInstance.customProperties[0].value));
+        let $description = $(UxUtils.getQuizDescriptioneResponseView(actionInstance.customProperties[0].value));
         $card.append($title);
         $card.append($description);
         $root.append($card);
