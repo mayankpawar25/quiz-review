@@ -12,7 +12,7 @@ let request;
 let $root = "";
 let row = {};
 let actionInstance = null;
-let isShowAnswerEveryQuestion = '';
+let isShowAnswerEveryQuestion = "";
 let maxQuestionCount = 0;
 let currentPage = 0;
 let summaryAnswerResp = [];
@@ -673,7 +673,7 @@ function createBody() {
         $root.append(textSection1);
 
         if ($.inArray(myUserId, memberIds) > -1) {
-            $("p.text-description").before(Utils.getAlreadyAttempt(alreadyAttemptedKey));
+            $("p.text-description").before(UxUtils.getAlreadyAttempt(alreadyAttemptedKey));
             calculateScore();
             $(".body-outer").after(closeFooter);
         } else  {
@@ -915,26 +915,67 @@ function summarySection() {
     if (Object.keys(row).length > 0) {
         let correctAnswer = $.parseJSON(actionInstance.customProperties[5].value);
         let score = 0;
-        $("#root").find("div.card-box-question").each(function(i, val) {
-            let answerIs = $(val).find(".result-status span").hasClass("text-danger") ? "Incorrect" : "Correct";
-            let cardQuestion = $(val).clone().show();
-            $cardQuestionDiv.append(cardQuestion);
-            if (answerIs == "Correct") {
-                score++;
-            }
-        });
-        let scoreIs = (score / correctAnswer.length) * 100;
-        if (scoreIs % 1 != 0) {
-            scoreIs = scoreIs.tofixed(2);
-        }
+
         if (isShowAnswerEveryQuestion == "Yes") {
+            $("#root").find("div.card-box-question").each(function(i, val) {
+                let answerIs = $(val).find(".result-status span").hasClass("text-danger") ? "Incorrect" : "Correct";
+                let cardQuestion = $(val).clone().show();
+                $cardQuestionDiv.append(cardQuestion);
+                if (answerIs == "Correct") {
+                    score++;
+                }
+            });
+            let scoreIs = (score / correctAnswer.length) * 100;
+            if (scoreIs % 1 != 0) {
+                scoreIs = scoreIs.tofixed(2);
+            }
             Localizer.getString("score", ":").then(function(result) {
                 $($mb16Div2).append(UxUtils.getScoreResponseView(result, scoreIs));
             });
-
         } else {
-            $($mb16Div2).append(`<hr>`);
-        }
+            let correctAnswer = $.parseJSON(actionInstance.customProperties[5].value);
+            console.log(correctAnswer);
+            $("#root").find("div.card-box-question").each(function (i, val) {
+                let cardQuestion = $(val).clone().show();
+                $cardQuestionDiv.append(cardQuestion);
+                let correctAnswerString = "";
+                let userAnswerString = "";
+                let userAnswerArray = [];
+                if (correctAnswer[i].length > 1) {
+                    correctAnswerString = correctAnswer[i].join(",");
+                } else {
+                    correctAnswerString = correctAnswer[i][0];
+                }
+                $(val).find(".option-sec input[type='radio'], .option-sec input[type='checkbox']").each(function (optindex, opt) {
+                    if($(opt).is(":checked")) {
+                        userAnswerArray.push($(opt).attr("id"));
+                    }
+                    if (correctAnswer[i][optindex] == $(opt).attr("id")) {
+                        $(cardQuestion).find("#" + $(opt).attr("id")).parents("label").find(".check-in-div").append(`&nbsp;<i class="success-with-img">
+                            ${Constants.getSuccessTickIcon()}
+                        </i>`);
+                    }
+                });
+                if (userAnswerArray.length > 1) {
+                    userAnswerString = userAnswerArray.join(",");
+                } else {
+                    userAnswerString = userAnswerArray[0];
+                }
+
+                if (correctAnswerString == userAnswerString) {
+                    score++;
+                    $(cardQuestion).find(".result-status").html(UxUtils.getCorrectArea(correctKey));
+                } else {
+                    $(cardQuestion).find(".result-status").html(UxUtils.getIncorrectArea(incorrectKey));
+                }
+            });
+            let scoreIs = (score / correctAnswer.length) * 100;
+            if (scoreIs % 1 != 0) {
+                scoreIs = scoreIs.tofixed(2);
+            }
+            Localizer.getString("score", ":").then(function (result) {
+                $($mb16Div2).append(UxUtils.getScoreResponseView(result, scoreIs));
+            });        }
         $(".summary-section").find(".option-sec .card-box").removeClass("alert-success");
     }
 }
