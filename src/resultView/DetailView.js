@@ -529,6 +529,9 @@ async function createBody() {
     let getSubscriptionCount = "";
     $("#root").html("");
 
+    console.log("actionInstance:");
+    console.log(JSON.stringify(actionInstance));
+
     /*  Head Section  */
     if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
         isCreator = true;
@@ -559,7 +562,7 @@ async function createBody() {
         participationPercentage = Math.round(
             (actionSummary.rowCreatorCount / memberCount) * 100
         );
-        Localizer.getString("participation", participationPercentage).then(function (result) {
+        Localizer.getString("participation", participationPercentage).then(function(result) {
             $pcard.append(UxUtils.getParticipationProgress(result, participationPercentage));
         });
         Localizer.getString("xofy_people_responded", actionSummary.rowCount, memberCount).then(function(result) {
@@ -653,12 +656,12 @@ function head() {
     if (actionInstance.customProperties[4].value.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
         ActionHelper.executeApi(req).then(function(response) {
-            $card.prepend(UxUtils.getQuizBannerImageWithLoader(response.attachmentInfo.downloadUrl));
-            Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
-        })
-        .catch(function(error) {
-            console.error("AttachmentAction - Error7: " + JSON.stringify(error));
-        });
+                $card.prepend(UxUtils.getQuizBannerImageWithLoader(response.attachmentInfo.downloadUrl));
+                Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
+            })
+            .catch(function(error) {
+                console.error("AttachmentAction - Error7: " + JSON.stringify(error));
+            });
     }
 }
 
@@ -685,12 +688,12 @@ function headCreator() {
     if (actionInstance.customProperties[4].value.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
         ActionHelper.executeApi(req).then(function(response) {
-            $card.prepend(UxUtils.getQuizBannerImageWithLoader(response.attachmentInfo.downloadUrl));
-            Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
-        })
-        .catch(function(error) {
-            console.error("AttachmentAction - Error7: " + JSON.stringify(error));
-        });
+                $card.prepend(UxUtils.getQuizBannerImageWithLoader(response.attachmentInfo.downloadUrl));
+                Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
+            })
+            .catch(function(error) {
+                console.error("AttachmentAction - Error7: " + JSON.stringify(error));
+            });
     }
 }
 
@@ -1417,12 +1420,12 @@ function getCheckOptions(text, name, id, userResponse, correctAnswer, attachment
 
     if (attachmentId.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
-        ActionHelper.executeApi(req).then(function (response) {
-            console.info("Attachment - Response: " + JSON.stringify(response));
-            $oDiv.find("label.custom-radio").prepend(UxUtils.getOptionImageWithLoader(response.attachmentInfo.downloadUrl));
-            Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} .opt-image:last`);
-        })
-            .catch(function (error) {
+        ActionHelper.executeApi(req).then(function(response) {
+                console.info("Attachment - Response: " + JSON.stringify(response));
+                $oDiv.find("label.custom-check").prepend(UxUtils.getOptionImageWithLoader(response.attachmentInfo.downloadUrl));
+                Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} .opt-image:last`);
+            })
+            .catch(function(error) {
                 console.error("AttachmentAction - Error: " + JSON.stringify(error));
             });
     }
@@ -1449,13 +1452,13 @@ function getRadioOptionsCreator(text, optId, ind, result, attachmentId) {
     if (attachmentId.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
-            console.info("Attachment - Response: " + JSON.stringify(response));
-            $oDiv.find("label.custom-radio").prepend(UxUtils.getOptionImageWithLoader(response.attachmentInfo.downloadUrl));
-            Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${optId} .opt-image`);
-        })
-        .catch(function(error) {
-            console.error("AttachmentAction - Error: " + JSON.stringify(error));
-        });
+                console.info("Attachment - Response: " + JSON.stringify(response));
+                $oDiv.find("label.custom-radio").prepend(UxUtils.getOptionImageWithLoader(response.attachmentInfo.downloadUrl));
+                Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${optId} .opt-image`);
+            })
+            .catch(function(error) {
+                console.error("AttachmentAction - Error: " + JSON.stringify(error));
+            });
     }
     return $oDiv;
 }
@@ -1479,29 +1482,17 @@ function getCheckOptionsCreator(text, optId, ind, result, attachmentId) {
     }
     if (attachmentId.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
-        ActionHelper.executeApi(req).then(function (response) {
+        ActionHelper.executeApi(req).then(function(response) {
             console.info("Attachment - Response: " + JSON.stringify(response));
-            $oDiv.find("label.custom-radio").prepend(UxUtils.getOptionImageWithLoader(response.attachmentInfo.downloadUrl));
+            $oDiv.find("label.custom-check").prepend(UxUtils.getOptionImageWithLoader(response.attachmentInfo.downloadUrl));
             Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${optId} .opt-image`);
-        }).catch(function (error) {
+        }).catch(function(error) {
             console.error("AttachmentAction - Error: " + JSON.stringify(error));
         });
     }
     return $oDiv;
 }
 
-/**
- * Method to get remove Image loader from image section
- * @param selector object html on which remove image
- */
-function removeImageLoader(selector) {
-    let tid = setInterval(() => {
-        if ($(selector).hasClass("heightfit") || $(selector).hasClass("widthfit") || $(selector).hasClass("smallfit")) {
-            $(".loader-cover").addClass("d-none");
-            clearInterval(tid);
-        }
-    }, 100);
-}
 /**
  * @description Method for creating footer based on user id
  * @param userId String contains user identifier to load footer based on that

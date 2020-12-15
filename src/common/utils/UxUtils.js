@@ -12,8 +12,8 @@ export class UxUtils {
     }
 
     /**
-    * @method for clear fix div
-    */
+     * @method for clear fix div
+     */
     static clearFix() {
         return `<div class="clearfix"></div>`;
     }
@@ -384,7 +384,7 @@ export class UxUtils {
      * @Method for footer section of response view
      */
     static getFooterResponseSection() {
-        return `<div class="footer section-1-footer">
+            return `<div class="footer section-1-footer">
             <div class="footer-padd bt">
                 <div class="container ">
                     <div class="row">
@@ -395,10 +395,10 @@ export class UxUtils {
                 </div>
             </div>
         </div>`;
-    }
-    /**
-     * @Method for question section of response view
-     */
+        }
+        /**
+         * @Method for question section of response view
+         */
     static getResponseQuestionSection() {
         return `<div class="card-box-question">
             <div class="d-table mb--4 pre-none">
@@ -1139,7 +1139,7 @@ export class UxUtils {
                     <span class="sr-only">Loading...</span></div>
                 </div>
             </div>
-            <img src="${url}" class="image-responsive quiz-template-image smallfit" crossorigin="anonymous">
+            <img src="${url}" class="image-responsive quiz-template-image" crossorigin="anonymous">
         </div>`;
     }
 
@@ -1302,7 +1302,7 @@ export class UxUtils {
     static removeImageLoader(selector) {
         let tid = setInterval(() => {
             if ($(selector).hasClass("heightfit") || $(selector).hasClass("widthfit") || $(selector).hasClass("smallfit")) {
-                $(".loader-cover").addClass("d-none");
+                $(selector).parent("div").find(".loader-cover").addClass("d-none");
                 clearInterval(tid);
             }
         }, Constants.setIntervalTimeHundred());
