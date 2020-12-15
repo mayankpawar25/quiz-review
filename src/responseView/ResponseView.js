@@ -195,17 +195,17 @@ $(document).on("click", "#next", function() {
                         });
 
                 } else {
-                    $("#previous").attr("data-prev-id", (parseInt(currentPage)-1));
-                    Localizer.getString("xofy", parseInt(currentPage)+1, maxQuestionCount).then(function(result) {
+                    $("#previous").attr("data-prev-id", (parseInt(currentPage) - 1));
+                    Localizer.getString("xofy", parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
                         $("#xofy").text(result);
                         nextButtonName();
                     });
-                    $("#check").attr("data-next-id", (parseInt(currentPage)+1));
-                    $("#next").attr("data-next-id", (parseInt(currentPage)+1));
-                    $root.find("div.card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").show();
+                    $("#check").attr("data-next-id", (parseInt(currentPage) + 1));
+                    $("#next").attr("data-next-id", (parseInt(currentPage) + 1));
+                    $root.find("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").show();
 
-                    if ($("div.card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").find(".card-box.disabled:first").length == 0) {
-                        if ($("div.card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").find("input[name='" + (parseInt(currentPage)+1) + "']").is(":checked") == false) {
+                    if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find(".card-box.disabled:first").length == 0) {
+                        if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find("input[name='" + (parseInt(currentPage) + 1) + "']").is(":checked") == false) {
                             $(".section-1-footer").find(".next-key").addClass("check-key");
                             $(".section-1-footer").find(".next-key").removeClass("next-key");
                             $(".section-1-footer").find(".check-key").text(checkKey);
@@ -241,19 +241,19 @@ $(document).on("click", "#next", function() {
                         console.log("Error2: " + JSON.stringify(error));
                     });
             } else {
-                $root.find(".card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").show();
+                $root.find(".card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").show();
                 $("#previous").attr("data-prev-id", (parseInt(currentPage) - 1));
                 Localizer.getString("xofy", parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
                     $("#xofy").text(result);
                     nextButtonName();
                 });
-                $("#check").attr("data-next-id", (parseInt(currentPage)+1));
-                $("#next").attr("data-next-id", (parseInt(currentPage)+1));
+                $("#check").attr("data-next-id", (parseInt(currentPage) + 1));
+                $("#next").attr("data-next-id", (parseInt(currentPage) + 1));
                 if ($("#previous").attr("data-prev-id") >= 0) {
                     $("#previous").removeClass("disabled");
                 }
-                if ($("div.card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").find(".card-box.disabled:first").length == 0) {
-                    if ($("div.card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").find("input[name='" + (parseInt(currentPage)+1) + "']").is(":checked") == false) {
+                if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find(".card-box.disabled:first").length == 0) {
+                    if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find("input[name='" + (parseInt(currentPage) + 1) + "']").is(":checked") == false) {
                         $(".section-1-footer").find(".next-key").addClass("check-key");
                         $(".section-1-footer").find(".next-key").removeClass("next-key");
                         $(".section-1-footer").find(".check-key").text(checkKey);
@@ -315,7 +315,7 @@ $(document).on("click", "#check", function() {
  * @event Click handles previous questions
  */
 $(document).on("click", "#previous", function() {
-    if($(this).hasClass("disabled") == false) {
+    if ($(this).hasClass("disabled") == false) {
         $(".check-key").addClass("next-key");
         $(".check-key").removeClass("check-key");
         $(".next-key").text(nextKey);
@@ -619,44 +619,44 @@ function createBody() {
             if (dataTable.attachments.length > 0) {
                 isImage = true;
                 let req = ActionHelper.getAttachmentInfo(contextActionId, dataTable.attachments[0].id);
-                ActionHelper.executeApi(req).then(function (response) {
-                    actionInstance.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
-                    if (actionInstance.dataTables[0].attachments[0].url != null) {
-                        $(".quiz-template-image").attr("src", actionInstance.dataTables[0].attachments[0].url);
-                        getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
-                        $(".quiz-template-image").show();
-                        $(".quiz-updated-img").show();
-                        UxUtils.removeImageLoader(".quiz-template-image");
-                    }
-                    ActionHelper.hideLoader();
+                ActionHelper.executeApi(req).then(function(response) {
+                        actionInstance.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
+                        if (actionInstance.dataTables[0].attachments[0].url != null) {
+                            $(".quiz-template-image").attr("src", actionInstance.dataTables[0].attachments[0].url);
+                            getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
+                            $(".quiz-template-image").show();
+                            $(".quiz-updated-img").show();
+                            UxUtils.removeImageLoader(".quiz-template-image");
+                        }
+                        ActionHelper.hideLoader();
 
-                })
-                .catch(function (error) {
-                    console.error("AttachmentAction - Errorquiz: " + JSON.stringify(error));
-                });
+                    })
+                    .catch(function(error) {
+                        console.error("AttachmentAction - Errorquiz: " + JSON.stringify(error));
+                    });
             }
             dataTable.dataColumns.forEach((questions, qindex) => {
                 if (questions.attachments.length > 0) {
                     isImage = true;
                     let req = ActionHelper.getAttachmentInfo(contextActionId, questions.attachments[0].id);
-                    ActionHelper.executeApi(req).then(function (response) {
-                        actionInstance.dataTables[ind].dataColumns[qindex].attachments[0].url = response.attachmentInfo.downloadUrl;
-                    })
-                    .catch(function (error) {
-                        console.error("AttachmentAction - Errorquestion: " + JSON.stringify(error));
-                    });
+                    ActionHelper.executeApi(req).then(function(response) {
+                            actionInstance.dataTables[ind].dataColumns[qindex].attachments[0].url = response.attachmentInfo.downloadUrl;
+                        })
+                        .catch(function(error) {
+                            console.error("AttachmentAction - Errorquestion: " + JSON.stringify(error));
+                        });
                 }
 
                 questions.options.forEach((option, optindex) => {
-                    if(option.attachments.length > 0) {
+                    if (option.attachments.length > 0) {
                         isImage = true;
                         let req = ActionHelper.getAttachmentInfo(contextActionId, option.attachments[0].id);
-                        ActionHelper.executeApi(req).then(function (response) {
-                            actionInstance.dataTables[ind].dataColumns[qindex].options[optindex].attachments[0].url = response.attachmentInfo.downloadUrl;
-                        })
-                        .catch(function (error) {
-                            console.error("AttachmentAction - Erroroptions: " + JSON.stringify(error));
-                        });
+                        ActionHelper.executeApi(req).then(function(response) {
+                                actionInstance.dataTables[ind].dataColumns[qindex].options[optindex].attachments[0].url = response.attachmentInfo.downloadUrl;
+                            })
+                            .catch(function(error) {
+                                console.error("AttachmentAction - Erroroptions: " + JSON.stringify(error));
+                            });
                     }
                 });
             });
@@ -676,7 +676,7 @@ function createBody() {
             $("p.text-description").before(UxUtils.getAlreadyAttempt(alreadyAttemptedKey));
             calculateScore();
             $(".body-outer").after(closeFooter);
-        } else  {
+        } else {
             if (counter > 1) {
                 Localizer.getString("questions").then(function(result) {
                     Localizer.getString("totalQuestionQuiz", counter, result).then(function(res) {
@@ -934,32 +934,38 @@ function summarySection() {
             });
         } else {
             let correctAnswer = $.parseJSON(actionInstance.customProperties[5].value);
-            console.log(correctAnswer);
-            $("#root").find("div.card-box-question").each(function (i, val) {
+            $("#root").find("div.card-box-question").each(function(i, val) {
                 let cardQuestion = $(val).clone().show();
                 $cardQuestionDiv.append(cardQuestion);
                 let correctAnswerString = "";
                 let userAnswerString = "";
-                let userAnswerArray = [];
-                if (correctAnswer[i].length > 1) {
-                    correctAnswerString = correctAnswer[i].join(",");
-                } else {
+                let userAnswerArray = row[i + 1];
+                if ($(val).find(".option-sec input[type='radio']").length > 0) {
                     correctAnswerString = correctAnswer[i][0];
-                }
-                $(val).find(".option-sec input[type='radio'], .option-sec input[type='checkbox']").each(function (optindex, opt) {
-                    if($(opt).is(":checked")) {
-                        userAnswerArray.push($(opt).attr("id"));
-                    }
-                    if (correctAnswer[i][optindex] == $(opt).attr("id")) {
-                        $(cardQuestion).find("#" + $(opt).attr("id")).parents("label").find(".check-in-div").append(`&nbsp;<i class="success-with-img">
-                            ${Constants.getSuccessTickIcon()}
-                        </i>`);
-                    }
-                });
-                if (userAnswerArray.length > 1) {
-                    userAnswerString = userAnswerArray.join(",");
+                    $(val).find(".option-sec input[type='radio']").each(function(optindex, opt) {
+                        let optId = $(opt).attr("id");
+                        if (correctAnswer[i].includes(optId)) {
+                            $(cardQuestion).find("input[type='radio']#" + optId).parent("label.custom-radio").find(".check-in-div").append(`&nbsp;<i class="success-with-img">
+                                ${Constants.getSuccessTickIcon()}
+                            </i>`);
+                        }
+                    });
                 } else {
-                    userAnswerString = userAnswerArray[0];
+                    correctAnswerString = correctAnswer[i].join(",");
+                    $(val).find(".option-sec input[type='checkbox']").each(function(optindex, opt) {
+                        let optId = $(opt).attr("id");
+                        if (correctAnswer[i].includes(optId)) {
+                            $(cardQuestion).find("input[type='checkbox']#" + optId).parent("label.custom-check").find(".check-in-div").append(`&nbsp;<i class="success-with-img">
+                                ${Constants.getSuccessTickIcon()}
+                            </i>`);
+                        }
+                    });
+                }
+
+                if (Utils.isJson(userAnswerArray)) {
+                    userAnswerString = JSON.parse(userAnswerArray).join(",");
+                } else {
+                    userAnswerString = userAnswerArray;
                 }
 
                 if (correctAnswerString == userAnswerString) {
@@ -973,9 +979,10 @@ function summarySection() {
             if (scoreIs % 1 != 0) {
                 scoreIs = scoreIs.tofixed(2);
             }
-            Localizer.getString("score", ":").then(function (result) {
+            Localizer.getString("score", ":").then(function(result) {
                 $($mb16Div2).append(UxUtils.getScoreResponseView(result, scoreIs));
-            });        }
+            });
+        }
         $(".summary-section").find(".option-sec .card-box").removeClass("alert-success");
     }
 }

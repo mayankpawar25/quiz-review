@@ -1309,6 +1309,19 @@ export class UxUtils {
     }
 
     /**
+     * Method to get remove Image loader from image section
+     * @param selector object html on which remove image
+     */
+    static removeImageLoaderCreationView(selector) {
+        let tid = setInterval(() => {
+            if ($(selector).hasClass("heightfit") || $(selector).hasClass("widthfit") || $(selector).hasClass("smallfit")) {
+                $(".loader-cover").addClass("d-none");
+                clearInterval(tid);
+            }
+        }, Constants.setIntervalTimeHundred());
+    }
+
+    /**
      * @Method contains spinner on button showed when upload image
      */
     static getButtonSpinner() {

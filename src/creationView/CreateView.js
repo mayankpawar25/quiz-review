@@ -58,7 +58,7 @@ KeyboardAccess.keydownClick(document, "#add-questions");
  * @event Click for add Question Section
  */
 $(document).on({
-    click: function (e) {
+    click: function(e) {
         e.preventDefault();
         let questionCounter;
         $(this).parents("div.container").before(quesContainer.clone());
@@ -66,13 +66,13 @@ $(document).on({
         $(".section-2").find(".question-required-err").remove();
         $(".section-2").find(".confirm-box").remove();
 
-        Localizer.getString("option", "").then(function (result) {
+        Localizer.getString("option", "").then(function(result) {
             $(".opt-cls").attr("placeholder", result);
         });
 
-        $("div.container").each(function (ind, el) {
+        $("div.container").each(function(ind, el) {
             $(el).find("div.option-div > div.input-group > input[type='text']")
-                .each(function (index, elem) {
+                .each(function(index, elem) {
                     let counter = index + 1;
                     $(elem).attr({
                         placeholder: optionKey,
@@ -90,11 +90,11 @@ $(document).on({
                 });
         });
 
-        Localizer.getString("enterTheQuestion").then(function (result) {
+        Localizer.getString("enterTheQuestion").then(function(result) {
             $("div.container").find("#question-title").attr({ "placeholder": result });
         });
 
-        $("div.question-container:visible").each(function (index, elem) {
+        $("div.question-container:visible").each(function(index, elem) {
             questionCounter = index + 1;
             $(elem)
                 .find("span.question-number")
@@ -117,7 +117,7 @@ $(document).on({
 /**
  * @event Click for cancel button on confirm box of question deletion
  */
-$(document).on("click", ".cancel-question-delete", function () {
+$(document).on("click", ".cancel-question-delete", function() {
     $(this).parents(".question-container").find(".add-options").show();
     $(this).parents(".confirm-box").remove();
 });
@@ -159,10 +159,10 @@ $(document).on({
 
             $(this).parents(".question-container").find(".confirm-box #delete-question").focus();
 
-            $(document).on("click", "#delete-question", function () {
+            $(document).on("click", "#delete-question", function() {
                 $(this).parents("div.question-container").remove();
                 let questionCounter;
-                $("div.question-container:visible").each(function (index, elem) {
+                $("div.question-container:visible").each(function(index, elem) {
                     questionCounter = index + 1;
                     $(elem).find("span.question-number").text("Question # " + questionCounter);
                     $(elem).find("input[name='question_image']").attr({ id: "question-image-" + questionCounter });
@@ -190,7 +190,7 @@ KeyboardAccess.keydownClick(document, ".add-options");
  * @event Click to add the Option under question
  */
 $(document).on({
-    click: function (e) {
+    click: function(e) {
         e.preventDefault();
         if ($(this).parents("div#options").find("div.option-div input[type='text'][id^=option]").length >= Constants.getOptionLimit()) {
             $(this).parents(".question-container").find(".add-options").hide();
@@ -209,7 +209,7 @@ $(document).on({
         let counter = 0;
         $(selector)
             .find("div.option-div div.input-group input[type='text']")
-            .each(function (index, elem) {
+            .each(function(index, elem) {
                 counter = index + 1;
                 $(elem).attr({
                     placeholder: optionKey,
@@ -234,7 +234,7 @@ $(document).on({
 /**
  * @event Click for remove the Option
  */
-$(document).on("click", ".remove-option", function (eve) {
+$(document).on("click", ".remove-option", function(eve) {
     $(this).parents("div.question-container").find(".option-required-err").remove();
     /* Remove Error Message and show add option button */
     if ($(this).parents(".question-container").find(".max-option-err-box").length > 0) {
@@ -248,7 +248,7 @@ $(document).on("click", ".remove-option", function (eve) {
 
         $(selector)
             .find("div.option-div div.input-group input[type='text']")
-            .each(function (index, elem) {
+            .each(function(index, elem) {
                 let counter = index + 1;
                 $(elem).attr({
                     placeholder: optionKey,
@@ -281,14 +281,14 @@ $(document).on("click", ".remove-option", function (eve) {
     }
 });
 
- /**
+/**
  * @event Click to Submit Quiz
  */
-$(document).on("click", "#submit", function (e) {
+$(document).on("click", "#submit", function(e) {
     e.preventDefault();
     $("#submit").prop("disabled", true);
     $(".loader-overlay").show();
-    $(".loader-overlay").show("fast", function () {
+    $(".loader-overlay").show("fast", function() {
         submitForm();
     });
 });
@@ -296,7 +296,7 @@ $(document).on("click", "#submit", function (e) {
 /**
  * @event Change on quiz title
  */
-$(document).on("change", "#quiz-title", function () {
+$(document).on("change", "#quiz-title", function() {
     if ($("#quiz-title").val().length > 0) {
         $("#next").prop("disabled", false);
         $(this).parents(".form-group").find(".label-alert.d-block:first").remove();
@@ -307,7 +307,7 @@ $(document).on("change", "#quiz-title", function () {
 /**
  * @event Click on clear button on training section
  */
-$(document).on("click", ".quiz-clear", function () {
+$(document).on("click", ".quiz-clear", function() {
     $(".error-msg").remove();
     $("div.section-1 .photo-box").show();
     $("div.section-1 .quiz-updated-img").hide();
@@ -328,12 +328,12 @@ $(document).on("click", ".quiz-clear", function () {
 /**
  * @event Click for next section at Quiz title and description page
  */
-$(document).on("click", "#next", function () {
+$(document).on("click", "#next", function() {
     let isError = false;
     $(".section-2").find(".question-required-err").remove();
     $(".section-2").find(".confirm-box").remove();
 
-    $("form").find("input[type='text']").each(function () {
+    $("form").find("input[type='text']").each(function() {
         let element = $(this);
         if (element.val() == "") {
             if (element.attr("id") == "quiz-title") {
@@ -392,7 +392,7 @@ $(document).on({
 /**
  * @event Change event for setting inputs
  */
-$(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], .visible-to, #show-correct-answer", function () {
+$(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], .visible-to, #show-correct-answer", function() {
     $(".invalid-date-err").remove();
     let end = new Date($("input[name='expiry_date']").val() + " " + $("input[name='expiry_time']").val());
     $(".text-danger").parent("div.col-12").remove();
@@ -408,7 +408,7 @@ $(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], 
         let resultVisible = $(".visible-to:checked").val() == "Everyone" ? resultEveryoneKey : resultMeKey;
         let correctAnswer = $("#show-correct-answer:eq(0)").is(":checked") == true ? correctAnswerKey : "";
 
-        Localizer.getString("dueIn", days, correctAnswer).then(function (result) {
+        Localizer.getString("dueIn", days, correctAnswer).then(function(result) {
             settingText = result;
         });
     }
@@ -423,7 +423,7 @@ KeyboardAccess.keydownClick(document, ".check-me-title");
  * @event Click event for correct answer inputs
  */
 $(document).on({
-    click: function (e) {
+    click: function(e) {
         e.preventDefault();
         if ($(this).parents("div.col-12").find("input[type='checkbox']").prop("checked") == false) {
             $(this).parents("div.col-12").find("input[type='checkbox']").prop("checked", true);
@@ -444,7 +444,7 @@ KeyboardAccess.removeOptionKeydown(document, ".remove-option-href");
 /**
  * @event Click when click on class then open hidden file
  */
-$(document).on("click", ".upvj", function (event) {
+$(document).on("click", ".upvj", function(event) {
     event.preventDefault();
     if ($(this).parents("div.section-1").length > 0) {
         $(".section-2").find("div.card-box:first").find("input[type='file']").click();
@@ -456,33 +456,33 @@ $(document).on("click", ".upvj", function (event) {
 /**
  * @event Focusin to show trash on focusin at input
  */
-$(document).on("focusin", ".option-div, .input-group-append, .input-group, .input-group input[type='text'], .input-tpt, .input-tpt .remove-option", function () {
+$(document).on("focusin", ".option-div, .input-group-append, .input-group, .input-group input[type='text'], .input-tpt, .input-tpt .remove-option", function() {
     $(this).parents("div.row").find(".remove-option").show();
 });
 
 /**
  * @event Focusout to hide trash on focusout at input
  */
-$(document).on("focusout", ".option-div, .input-tpt, .input-tpt .remove-option, .check-me-title, .input-group input[type='text']", function () {
+$(document).on("focusout", ".option-div, .input-tpt, .input-tpt .remove-option, .check-me-title, .input-group input[type='text']", function() {
     $(this).parents("div.row").find(".remove-option").hide();
 });
 
 /**
  * @event Hover to show trash on focusin at input
  */
-$(document).on("hover", ".remove-option", function () {
+$(document).on("hover", ".remove-option", function() {
     $(this).show();
 });
 
 /**
  * @event Change when quiz cover image changes
  */
-$(document).on("change", "#cover-image", function () {
+$(document).on("change", "#cover-image", function() {
     $(".error-msg").remove();
     $(".invalid-image-format").remove();
     let urlResponse = Utils.readURL(this, "#quiz-img-preview, #quiz-title-image");
     if (urlResponse == true) {
-        UxUtils.removeImageLoader("#quiz-img-preview");
+        UxUtils.removeImageLoaderCreationView("#quiz-img-preview");
 
         /* Perform image upload for quiz template */
         let fileData = this;
@@ -496,22 +496,22 @@ $(document).on("change", "#cover-image", function () {
             }
             attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
             ActionHelper.executeApi(attachmentRequest)
-            .then(function (response) {
-                let attachmentData = { "name": "quiz-banner", type: "Image", id: response.attachmentId };
-                attachmentSet.push(attachmentData);
-                if ($("#quiz-attachment-set").length > 0) {
-                    $("#quiz-attachment-set").val(JSON.stringify(attachmentData));
-                } else {
-                    if ($(fileData).val() != "") {
-                        $(fileData).after(UxUtils.createQuizTextarea(attachmentData));
+                .then(function(response) {
+                    let attachmentData = { "name": "quiz-banner", type: "Image", id: response.attachmentId };
+                    attachmentSet.push(attachmentData);
+                    if ($("#quiz-attachment-set").length > 0) {
+                        $("#quiz-attachment-set").val(JSON.stringify(attachmentData));
+                    } else {
+                        if ($(fileData).val() != "") {
+                            $(fileData).after(UxUtils.createQuizTextarea(attachmentData));
+                        }
                     }
-                }
-                $("#submit").removeClass("disabled");
-                $("#submit").find(`.spinner-border.spinner-border-sm`).remove();
-            })
-            .catch(function (error) {
-                console.log("GetContext - Error2: " + JSON.stringify(error));
-            });
+                    $("#submit").removeClass("disabled");
+                    $("#submit").find(`.spinner-border.spinner-border-sm`).remove();
+                })
+                .catch(function(error) {
+                    console.log("GetContext - Error2: " + JSON.stringify(error));
+                });
         }
 
         $(".photo-box").hide();
@@ -535,7 +535,7 @@ KeyboardAccess.keydownClick(document, ".question-image, .option-image");
  * @event Click when question cover image changes
  */
 $(document).on({
-    click: function (e) {
+    click: function(e) {
         e.preventDefault();
         $(this).parents(".input-group").find("input[type='file']").click();
         return false;
@@ -545,7 +545,7 @@ $(document).on({
 /**
  * @event Change when question cover image changes
  */
-$(document).on("change", "input[name='question_image']", function () {
+$(document).on("change", "input[name='question_image']", function() {
     $(".invalid-file-question").remove();
     let urlReturn = Utils.readURL(this, $(this).parents("div.form-group-question").find(".question-preview-image"));
     if (urlReturn == true) {
@@ -564,7 +564,7 @@ $(document).on("change", "input[name='question_image']", function () {
             let attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
             let imgIndex = $(this).attr("id");
             ActionHelper.executeApi(attachmentRequest)
-                .then(function (response) {
+                .then(function(response) {
                     let attachmentData = { "name": "question-banner-" + imgIndex, type: "Image", id: response.attachmentId };
                     let selector = $(this).parents(".question-container").attr("id");
                     if ($("#" + selector).find("#question-attachment-set").length > 0) {
@@ -577,7 +577,7 @@ $(document).on("change", "input[name='question_image']", function () {
                     $("#submit").removeClass("disabled");
                     $("#submit").find(`.spinner-border.spinner-border-sm`).remove();
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.log("GetContext - Error3: " + JSON.stringify(error));
                 });
         }
@@ -592,7 +592,7 @@ $(document).on("change", "input[name='question_image']", function () {
 /**
  * @event Change when option cover image changes
  */
-$(document).on("change", "input[name='option_image']", function () {
+$(document).on("change", "input[name='option_image']", function() {
     $(".invalid-file-option").remove();
     let urlReturn = Utils.readURL(this, $(this).parents("div.row").find(".option-preview-image"));
     $(this).parents("div.row").find(".option-preview-image").show();
@@ -609,7 +609,7 @@ $(document).on("change", "input[name='option_image']", function () {
             let attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
             let imgIndex = $(this).attr("id");
             ActionHelper.executeApi(attachmentRequest)
-                .then(function (response) {
+                .then(function(response) {
                     let attachmentData = { "name": "option-banner-" + imgIndex, type: "Image", id: response.attachmentId };
                     let selector = $(this).parents(".row");
                     if ($(selector).find("textarea#option-attachment-set").length > 0) {
@@ -622,7 +622,7 @@ $(document).on("change", "input[name='option_image']", function () {
                     $("#submit").removeClass("disabled");
                     $("#submit").find(`.spinner-border.spinner-border-sm`).remove();
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.log("GetContext - Error4: " + JSON.stringify(error));
                 });
         }
@@ -664,7 +664,7 @@ KeyboardAccess.keydownClick(document, ".show-setting");
  * @event Click to show setting section
  */
 $(document).on({
-   click: function (e) {
+    click: function(e) {
         e.preventDefault();
         $(".section-1").hide();
         $(".section-1-footer").hide();
@@ -701,7 +701,7 @@ KeyboardAccess.keydownClick(document, "#back-section2");
 /**
  * @event Event to back button on question area
  */
-$(document).on("click", "#back-section2", function () {
+$(document).on("click", "#back-section2", function() {
     $(".section-2").hide();
     $(".section-2-footer").hide();
     $(".section-1").show();
@@ -727,9 +727,9 @@ function submitForm() {
     $(".section-2").find(".question-required-err").remove();
     $(".section-2").find(".confirm-box").remove();
 
-    $(".question-container:visible").each(function (qind, quest) {
+    $(".question-container:visible").each(function(qind, quest) {
         let isChecked = false;
-        $(quest).find("#options").find("input[type='checkbox']").each(function (optind, opt) {
+        $(quest).find("#options").find("input[type='checkbox']").each(function(optind, opt) {
             if ($(opt).prop("checked") == true) {
                 isChecked = true;
             }
@@ -757,7 +757,7 @@ function submitForm() {
 
     $("form")
         .find("input[type='text']")
-        .each(function () {
+        .each(function() {
             let element = $(this);
             if (element.val() == "") {
                 if (element.attr("id") == "quiz-title") {
@@ -778,7 +778,7 @@ function submitForm() {
                             $(this).parents("div.card-box").removeClass("card-box").addClass("card-box-alert");
                         }
                         $(element).addClass("danger");
-                        Localizer.getString("questionLeftBlank").then(function (result) {
+                        Localizer.getString("questionLeftBlank").then(function(result) {
                             $(".question-blank-key").text(result);
                             $(element)
                                 .parents("div.form-group-question").find(".question-number").parent("div")
@@ -812,10 +812,10 @@ function submitForm() {
     if ($.trim(errorText).length <= 0) {
         ActionHelper
             .executeApi(request)
-            .then(function (response) {
+            .then(function(response) {
                 createAction(response.context.actionPackageId);
             })
-            .catch(function (error) {
+            .catch(function(error) {
                 console.error("GetContext - Error1: " + JSON.stringify(error));
             });
     } else {
@@ -843,7 +843,7 @@ function getQuestionSet() {
         /* Looping for options */
         $("#question" + i)
             .find("div.option-div")
-            .each(function (index, elem) {
+            .each(function(index, elem) {
                 let count = index + 1;
                 let optId = "question" + i + "option" + count;
                 let optTitle = $("#question" + i).find("#option" + count).val();
@@ -932,7 +932,7 @@ function getCorrectAnswer() {
         /* Looping for options */
         $("#question" + i)
             .find("div.option-div")
-            .each(function (index, elem) {
+            .each(function(index, elem) {
                 let count = index + 1;
 
                 if ($("#question" + i).find("#check" + count).is(":checked")) {
@@ -1026,10 +1026,10 @@ function createAction(actionPackageId) {
     let request = ActionHelper.createAction(action);
     ActionHelper
         .executeApi(request)
-        .then(function (response) {
+        .then(function(response) {
             console.info("CreateAction - Response: " + JSON.stringify(response));
         })
-        .catch(function (error) {
+        .catch(function(error) {
             console.error("CreateAction - Error: " + JSON.stringify(error));
         });
 }
@@ -1037,7 +1037,7 @@ function createAction(actionPackageId) {
 /**
  * Initiate Method
  */
-$(document).ready(function () {
+$(document).ready(function() {
     request = ActionHelper.getContextRequest();
     getStringKeys();
     loadCreationPage(request);
@@ -1047,160 +1047,160 @@ $(document).ready(function () {
  * @description Async method for fetching localization strings
  */
 async function getStringKeys() {
-    Localizer.getString("quizTitle").then(function (result) {
+    Localizer.getString("quizTitle").then(function(result) {
         $("#quiz-title").attr({ "placeholder": result });
     });
 
-    Localizer.getString("quizDescription").then(function (result) {
+    Localizer.getString("quizDescription").then(function(result) {
         $("#quiz-description").attr({ "placeholder": result });
     });
 
-    Localizer.getString("enterTheQuestion").then(function (result) {
+    Localizer.getString("enterTheQuestion").then(function(result) {
         $("#question-title").attr({ "placeholder": result });
         questionTitleKey = result;
     });
 
-    Localizer.getString("option", "").then(function (result) {
+    Localizer.getString("option", "").then(function(result) {
         optionKey = result;
         $(".opt-cls").attr("placeholder", optionKey);
     });
-    Localizer.getString("dueIn", " 1 week", "").then(function (result) {
+    Localizer.getString("dueIn", " 1 week", "").then(function(result) {
         settingText = result;
         $("#due").text(settingText);
     });
 
-    Localizer.getString("addMoreOptions").then(function (result) {
+    Localizer.getString("addMoreOptions").then(function(result) {
         addMoreOptionsKey = result;
         $(".add-options").html(`
             ${Constants.getPlusIcon()} ${addMoreOptionsKey}`);
     });
 
-    Localizer.getString("choices").then(function (result) {
+    Localizer.getString("choices").then(function(result) {
         choicesKey = result;
         $(".choice-label").text(choicesKey);
     });
 
-    Localizer.getString("checkMe").then(function (result) {
+    Localizer.getString("checkMe").then(function(result) {
         checkMeKey = result;
         $(".check-me").text(checkMeKey);
         $(".check-me-title").attr({ "title": checkMeKey });
     });
 
-    Localizer.getString("next").then(function (result) {
+    Localizer.getString("next").then(function(result) {
         nextKey = result;
         $(".next-key").text(nextKey);
     });
 
-    Localizer.getString("back").then(function (result) {
+    Localizer.getString("back").then(function(result) {
         backKey = result;
         $(".back-key").text(backKey);
     });
 
-    Localizer.getString("required").then(function (result) {
+    Localizer.getString("required").then(function(result) {
         requiredKey = result;
         $(".required-key").text(requiredKey);
     });
 
-    Localizer.getString("dueBy").then(function (result) {
+    Localizer.getString("dueBy").then(function(result) {
         dueByKey = result;
         $(".due-by-key").text(dueByKey);
     });
 
-    Localizer.getString("resultVisibleTo").then(function (result) {
+    Localizer.getString("resultVisibleTo").then(function(result) {
         resultVisibleToKey = result;
         $(".result-visible-key").text(resultVisibleToKey);
     });
 
-    Localizer.getString("resultEveryone").then(function (result) {
+    Localizer.getString("resultEveryone").then(function(result) {
         resultEveryoneKey = result;
     });
 
-    Localizer.getString("resultMe").then(function (result) {
+    Localizer.getString("resultMe").then(function(result) {
         resultMeKey = result;
     });
 
-    Localizer.getString("correctAnswer", ", ").then(function (result) {
+    Localizer.getString("correctAnswer", ", ").then(function(result) {
         correctAnswerKey = result;
     });
 
-    Localizer.getString("everyone", ", ").then(function (result) {
+    Localizer.getString("everyone", ", ").then(function(result) {
         everyoneKey = result;
         $(".everyone-key").text(everyoneKey);
     });
 
-    Localizer.getString("onlyMe", ", ").then(function (result) {
+    Localizer.getString("onlyMe", ", ").then(function(result) {
         onlyMeKey = result;
         $(".onlyme-key").text(onlyMeKey);
     });
 
-    Localizer.getString("showCorrectAnswer").then(function (result) {
+    Localizer.getString("showCorrectAnswer").then(function(result) {
         showCorrectAnswerKey = result;
         $(".show-correct-key").text(showCorrectAnswerKey);
     });
 
-    Localizer.getString("answerCannotChange").then(function (result) {
+    Localizer.getString("answerCannotChange").then(function(result) {
         answerCannotChangeKey = result;
         $(".answer-cannot-change-key").text(answerCannotChangeKey);
     });
 
-    Localizer.getString("invalidDateTime").then(function (result) {
+    Localizer.getString("invalidDateTime").then(function(result) {
         invalidDateTimeKey = result;
     });
 
-    Localizer.getString("sureDeleteThis").then(function (result) {
+    Localizer.getString("sureDeleteThis").then(function(result) {
         sureDeleteThisKey = result;
     });
 
-    Localizer.getString("ok").then(function (result) {
+    Localizer.getString("ok").then(function(result) {
         okKey = result;
     });
 
-    Localizer.getString("cancel").then(function (result) {
+    Localizer.getString("cancel").then(function(result) {
         cancelKey = result;
     });
 
-    Localizer.getString("forQuizAtleastOneQuestion").then(function (result) {
+    Localizer.getString("forQuizAtleastOneQuestion").then(function(result) {
         forQuizAtleastOneQuestionKey = result;
     });
 
-    Localizer.getString("maxTenOption").then(function (result) {
+    Localizer.getString("maxTenOption").then(function(result) {
         maxTenOptionKey = result;
     });
 
-    Localizer.getString("atLeastTwoOptionsRequired").then(function (result) {
+    Localizer.getString("atLeastTwoOptionsRequired").then(function(result) {
         atLeastTwoOptionsRequiredKey = result;
     });
 
-    Localizer.getString("questionLeftBlank").then(function (result) {
+    Localizer.getString("questionLeftBlank").then(function(result) {
         questionLeftBlankKey = result;
         $(".question-blank-key").text(result);
     });
 
-    Localizer.getString("selectCorrectChoice").then(function (result) {
+    Localizer.getString("selectCorrectChoice").then(function(result) {
         selectCorrectChoiceKey = result;
     });
 
-    Localizer.getString("addQuestion").then(function (result) {
+    Localizer.getString("addQuestion").then(function(result) {
         addQuestionKey = result;
         $(".add-question-key").text(addQuestionKey);
     });
 
-    Localizer.getString("uploadCoverImage").then(function (result) {
+    Localizer.getString("uploadCoverImage").then(function(result) {
         uploadCoverImageKey = result;
         $(".upload-cover-image-key").text(uploadCoverImageKey);
     });
 
-    Localizer.getString("coverImage").then(function (result) {
+    Localizer.getString("coverImage").then(function(result) {
         coverImageKey = result;
         $(".cover-image-key").text(coverImageKey);
     });
 
-    Localizer.getString("clear").then(function (result) {
+    Localizer.getString("clear").then(function(result) {
         clearKey = result;
         $(".clear-key").text(clearKey);
     });
 
-    Localizer.getString("invalidFileFormat").then(function (result) {
+    Localizer.getString("invalidFileFormat").then(function(result) {
         invalidFileFormatKey = result;
         $(".invalid-file-key").text(invalidFileFormatKey);
     });
@@ -1239,37 +1239,38 @@ async function loadCreationPage(request) {
                 imageCounter++;
                 isImage = true;
                 let req = ActionHelper.getAttachmentInfoDraft(dataTable.attachments[0].id);
-                ActionHelper.executeApi(req).then(function (response) {
-                    lastSession.action.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
-                    if (lastSession.action.dataTables[0].attachments[0].url != null) {
-                        UxUtils.loadQuizTemplateImage(response.attachmentInfo.downloadUrl, lastSession.action.dataTables[0].attachments);
-                        let tid = setInterval(() => {
-                            if ($("#quiz-img-preview, #quiz-title-image").attr("src").length > 0) {
-                                Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, "#quiz-img-preview, #quiz-title-image");
-                                UxUtils.removeImageLoader("#quiz-img-preview, #quiz-title-image");
-                                clearInterval(tid);
-                            }
-                        }, Constants.setIntervalTimeHundred());
-                        imageSuccessCounter++;
-                    }
-                    ActionHelper.hideLoader();
-                })
-                .catch(function (error) {
-                    console.error("AttachmentAction - Errorquiz: " + JSON.stringify(error));
-                });
+                ActionHelper.executeApi(req).then(function(response) {
+                        lastSession.action.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
+                        if (lastSession.action.dataTables[0].attachments[0].url != null) {
+                            UxUtils.loadQuizTemplateImage(response.attachmentInfo.downloadUrl, lastSession.action.dataTables[0].attachments);
+                            let tid = setInterval(() => {
+                                if ($("#quiz-img-preview, #quiz-title-image").attr("src").length > 0) {
+                                    Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, "#quiz-img-preview, #quiz-title-image");
+                                    UxUtils.removeImageLoaderCreationView("#quiz-img-preview");
+                                    UxUtils.removeImageLoaderCreationView("#quiz-title-image");
+                                    clearInterval(tid);
+                                }
+                            }, Constants.setIntervalTimeHundred());
+                            imageSuccessCounter++;
+                        }
+                        ActionHelper.hideLoader();
+                    })
+                    .catch(function(error) {
+                        console.error("AttachmentAction - Errorquiz: " + JSON.stringify(error));
+                    });
             }
             dataTable.dataColumns.forEach((questions, qindex) => {
                 if (questions.attachments.length > 0) {
                     imageCounter++;
                     isImage = true;
                     let req = ActionHelper.getAttachmentInfoDraft(questions.attachments[0].id);
-                    ActionHelper.executeApi(req).then(function (response) {
-                        lastSession.action.dataTables[ind].dataColumns[qindex].attachments[0].url = response.attachmentInfo.downloadUrl;
-                        imageSuccessCounter++;
-                    })
-                    .catch(function (error) {
-                        console.error("AttachmentAction - Errorquestion: " + JSON.stringify(error));
-                    });
+                    ActionHelper.executeApi(req).then(function(response) {
+                            lastSession.action.dataTables[ind].dataColumns[qindex].attachments[0].url = response.attachmentInfo.downloadUrl;
+                            imageSuccessCounter++;
+                        })
+                        .catch(function(error) {
+                            console.error("AttachmentAction - Errorquestion: " + JSON.stringify(error));
+                        });
                 }
 
                 questions.options.forEach((option, optindex) => {
@@ -1277,13 +1278,13 @@ async function loadCreationPage(request) {
                         imageCounter++;
                         isImage = true;
                         let req = ActionHelper.getAttachmentInfoDraft(option.attachments[0].id);
-                        ActionHelper.executeApi(req).then(function (response) {
-                            lastSession.action.dataTables[ind].dataColumns[qindex].options[optindex].attachments[0].url = response.attachmentInfo.downloadUrl;
-                            imageSuccessCounter++;
-                        })
-                        .catch(function (error) {
-                            console.error("AttachmentAction - Erroroptions: " + JSON.stringify(error));
-                        });
+                        ActionHelper.executeApi(req).then(function(response) {
+                                lastSession.action.dataTables[ind].dataColumns[qindex].options[optindex].attachments[0].url = response.attachmentInfo.downloadUrl;
+                                imageSuccessCounter++;
+                            })
+                            .catch(function(error) {
+                                console.error("AttachmentAction - Erroroptions: " + JSON.stringify(error));
+                            });
                     }
                 });
             });
@@ -1331,7 +1332,7 @@ async function loadCreationPage(request) {
         let days = Utils.calcDateDiff(start, end);
         let correctAnswerSetting = lastSession.action.customProperties[3].value;
         let correctAnswer = correctAnswerSetting == "Yes" ? correctAnswerKey : "";
-        Localizer.getString("dueIn", days, correctAnswer).then(function (result) {
+        Localizer.getString("dueIn", days, correctAnswer).then(function(result) {
             settingText = result;
             $("#due").text(settingText);
         });
@@ -1417,7 +1418,7 @@ async function loadCreationPage(request) {
                                     .attr({ id: "check" + counter });
                             }
 
-                            $.each(correctAnsArr, function (cindex, cAns) {
+                            $.each(correctAnsArr, function(cindex, cAns) {
                                 if ($.inArray("question1option" + counter, cAns) != -1) {
                                     $("#question1").find("#check" + counter).prop("checked", true);
                                     $("#question1").find("#option" + counter).parents("div.input-group.input-group-tpt.mb--8").find(".check-me-title").addClass("checked-112");
@@ -1437,7 +1438,7 @@ async function loadCreationPage(request) {
                         let questionTitleData = e.displayName;
                         let questionAttachmentData = e.attachments.length > 0 ? e.attachments[0].id : "";
                         $(".section-2").find("div.container.question-container:last").attr("id", "question" + qcounter);
-                        Localizer.getString("question").then(function (result) {
+                        Localizer.getString("question").then(function(result) {
                             $("#question" + qcounter).find("span.question-number").text(result + " # " + qcounter);
                         });
                         $("#question" + qcounter).find("#question-title").val(questionTitleData);
@@ -1447,7 +1448,7 @@ async function loadCreationPage(request) {
                             Utils.getClassFromDimension(attachmentData.url, $("#question" + qcounter).find(".question-preview-image"));
                         }
 
-                        Localizer.getString("enterTheQuestion").then(function (result) {
+                        Localizer.getString("enterTheQuestion").then(function(result) {
                             $("div.container.question-container:visible:last").find("input[type='text']").attr({
                                 placeholder: result,
                             });
