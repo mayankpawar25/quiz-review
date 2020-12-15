@@ -20,7 +20,8 @@
                 "$when": "${equals(action.status, 'Active')}",
                 "text": "${formatString(strings.due_by_date, ('' + dateString(action.expiryTime, 'SHORT') + ' ' + timeString(action.expiryTime)))}",
                 "_text.comment": "due date if quiz is active",
-                "color": "default",
+                "color": "Default",
+                "isSubtle": true,
                 "size": "small",
                 "wrap": true
             },

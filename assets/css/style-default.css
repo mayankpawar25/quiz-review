@@ -538,7 +538,6 @@ form {
 }
 
 .teams-link {
-    color: var(--main-bg-color);
     border: none;
     background-color: transparent;
     font-weight: var(--font-weight-400);
@@ -1184,8 +1183,9 @@ a#back-setting svg {
     background-color: var(--app-white);
 }
 
-.custom-check:focus input~.checkmark {
-    box-shadow: 0px 0px 1px 1px var(--main-bg-color);
+.custom-check input:focus~.checkmark {
+    outline: -webkit-focus-ring-color auto 5px !important;
+    outline: revert;
 }
 
 .custom-check input:checked~.checkmark {
@@ -1257,6 +1257,7 @@ a#back-setting svg {
     margin-top: -4px;
     width: 1rem;
     height: 1rem;
+    margin-right: 8px;
 }
 
 .add-options {
@@ -1288,15 +1289,15 @@ a#back-setting svg {
 }
 
 .in-t::-webkit-input-placeholder {
-    color: #6e6e6e;
+    color: var(--app-gray-sub-text);
 }
 
 .in-t:-ms-input-placeholder {
-    color: #6e6e6e;
+    color: var(--app-gray-sub-text);
 }
 
 .in-t::placeholder {
-    color: #6e6e6e;
+    color: var(--app-gray-sub-text);
 }
 
 .in-t {
@@ -1678,14 +1679,18 @@ a#back-setting svg {
     margin-right: 16px;
     width: 16px;
     height: 16px;
-    float: left;
     min-width: 16px;
     min-height: 16px;
-    margin-bottom: 8px;
+    /* margin-bottom: 8px; */
 }
 
 .show-setting {
     display: inline-flex;
+}
+
+.show-setting span {
+    display: flex;
+    align-items: center;
 }
 
 body::-webkit-scrollbar {
@@ -1718,7 +1723,6 @@ body::-webkit-scrollbar-thumb:hover {
 /* Track */
 
 ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px var(--app-white);
     border-radius: 10px;
 }
 
@@ -1932,7 +1936,7 @@ body {
     width: 100%;
     text-align: center;
     bottom: 48px;
-    color: #6e6e6e;
+    color: var(--app-gray-sub-text);
     font-size: var(--font-12);
 }
 
@@ -2169,7 +2173,7 @@ body {
 .carousel-control-prev,
 .carousel-control-next {
     position: absolute;
-    top: 90px;
+    top: 56px;
     height: 32px;
 }
 
@@ -2311,7 +2315,7 @@ span.file-counter {
 } */
 
 .min-max-132 {
-    max-height: 264px;
+    max-height: 272px;
     overflow: hidden;
     border-radius: 0px;
     background-color: var(--app-white);
@@ -2368,7 +2372,7 @@ span.file-counter {
 
 .btn-primary.disabled,
 .btn-primary:disabled {
-    color: #fff;
+    color: var(--bg-white);
     background-color: transparent;
     border-color: transparent;
 }
@@ -2432,6 +2436,10 @@ div#xofy {
     max-height: 264px;
 }
 
+label h4 {
+    word-break: break-all;
+}
+
 .quiz-updated-img .heightfit {
     max-height: 148px;
 }
@@ -2449,6 +2457,7 @@ div#xofy {
     outline: none;
     width: 16px;
     margin-left: 16px;
+    height: 16px;
 }
 
 .btn-plain svg {
@@ -2520,7 +2529,7 @@ div#xofy {
 
 .dropdown-item.active,
 .dropdown-item:active {
-    color: #fff;
+    color: var(--bg-white);
     text-decoration: none;
     background-color: transparent;
     color: var(--app-gray-sub-text);
@@ -2530,10 +2539,9 @@ div#xofy {
     box-shadow: var(--app-black-shadow-2) -4px -0.8rem 1rem -0.2rem;
 }
 
-
-/* .quiz-updated-img {
+.quiz-updated-img {
     min-height: 12px;
-} */
+}
 
 #xofy {
     color: var(--app-gray-02);
@@ -2604,10 +2612,11 @@ div#xofy {
     width: 100%;
     position: absolute;
     height: 100%;
-    background-color: #fff;
+    background-color: var(--bg-white);
     text-align: center;
     display: table;
     z-index: 1;
+    min-height: 146px;
 }
 
 .change-date .d-flex-alert {
@@ -2650,6 +2659,31 @@ div#xofy {
 
 .relative .d-table.d-none {
     display: none !important;
+}
+
+.btn-primary svg {
+    fill: var(--bg-white);
+}
+
+.add-options svg {
+    fill: var(--main-bg-color);
+}
+
+.smallfit {
+    max-height: 146px;
+}
+
+.in-t::-webkit-scrollbar-track {
+    background-color: var(--app-white);
+}
+
+#add-questions svg {
+    margin-right: 8px;
+}
+
+.footer .d-table a {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 @media screen and (max-width: 576px) {
@@ -2735,9 +2769,12 @@ div#xofy {
         height: 120px;
         max-height: 120px;
     }
+    .smallfit {
+        max-height: 120px;
+    }
     .max-min-220 {
         max-height: 120px;
-        min-height: 120px;
+        /* min-height: 120px; */
     }
     .photo-box span {
         bottom: 34px;

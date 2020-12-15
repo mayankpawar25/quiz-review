@@ -1,6 +1,14 @@
 {
+    "schemaVersion": 1,
     "properties": {
-        "canAddMore": true
+        "canAddMore": true,
+        "values": [
+            {
+                "name": "Locale",
+                "valueType": "Text",
+                "isOptional": true
+            }
+        ]
     },
     "dataTables": {
         "canAddMore": false,

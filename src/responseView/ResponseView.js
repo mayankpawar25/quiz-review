@@ -1,10 +1,18 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import { ActionHelper, Localizer } from "../common/ActionSdkHelper";
+import { Constants } from "../common/utils/Constants";
+import { UxUtils } from "./../common/utils/UxUtils";
+import { Utils } from "./../common/utils/Utils";
+import { KeyboardUtils } from "./../common/utils/KeyboardUtils";
 
 // Fetching HTML Elements in Variables by ID.
 let request;
 let $root = "";
 let row = {};
 let actionInstance = null;
+let isShowAnswerEveryQuestion = '';
 let maxQuestionCount = 0;
 let currentPage = 0;
 let summaryAnswerResp = [];
@@ -25,7 +33,6 @@ let correctKey = "";
 let yourAnswerKey = "";
 let incorrectKey = "";
 let correctAnswerKey = "";
-let yourAnswerRightKey = "";
 let yourAnswerIsKey = "";
 let rightAnswerIsKey = "";
 let submitKey = "";
@@ -114,11 +121,11 @@ $(document).on("click", "#next", function() {
         });
 
         nextButtonName();
-        if (actionInstance.customProperties[3].value == "Yes") {
+        if (isShowAnswerEveryQuestion == "Yes") {
 
             if ($(this).find("span").attr("class") == "check-key") {
                 if (correctAnswer == true) {
-                    $("div.card-box-question:visible").find(".result-status").html(`<span class="text-success semi-bold">${correctKey}</span>`);
+                    $("div.card-box-question:visible").find(".result-status").html(UxUtils.getCorrectArea(correctKey));
 
                     $("input[type='radio']:visible, input[type='checkbox']:visible").each(function(optindex, opt) {
                         if ($(opt).is(":checked")) {
@@ -126,24 +133,14 @@ $(document).on("click", "#next", function() {
                             $(opt).parents(".card-box").addClass("alert-success");
                             $(`div#${optId}`).find("div.pr--32.check-in-div").append(`
                                 <i class="success-with-img">
-                                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
-                                        <defs>
-                                            <clipPath id="clip-Custom_Size_1">
-                                            <rect width="16" height="16"/>
-                                            </clipPath>
-                                        </defs>
-                                        <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
-                                            <rect width="16" height="16" fill="none"/>
-                                            <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
-                                        </g>
-                                    </svg>
+                                    ${Constants.getSuccessTickIcon()}
                                 </i>`);
                             $(`div#${optId}`).find("div.pr--32.check-in-div").addClass("mh--20");
                         }
                         $(opt).parents("div.card-box").addClass("disabled");
                     });
                 } else {
-                    $("div.card-box-question:visible").find(".result-status").html(`<span class="text-danger semi-bold">${incorrectKey}</span>`);
+                    $("div.card-box-question:visible").find(".result-status").html(UxUtils.getIncorrectArea(incorrectKey));
 
                     $("input[type='radio']:visible, input[type='checkbox']:visible").each(function(optindex, opt) {
                         $(opt).parents("div.card-box").addClass("disabled");
@@ -156,72 +153,20 @@ $(document).on("click", "#next", function() {
                         }
                         if ($(opt).is(":checked") && ansKey.includes(optval)) {
                             if ($(opt).parents("label.selector-inp").length > 0) {
-                                $(opt).parents("label.selector-inp").find("div.check-in-div").append(`
-                                    <i class="success-with-img">
-                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
-                                            <defs>
-                                                <clipPath id="clip-Custom_Size_1">
-                                                <rect width="16" height="16"/>
-                                                </clipPath>
-                                            </defs>
-                                            <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
-                                                <rect width="16" height="16" fill="none"/>
-                                                <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
-                                            </g>
-                                        </svg>
-                                    </i>`);
+                                $(opt).parents("label.selector-inp").find("div.check-in-div").append(UxUtils.getSuccessTick());
                                 $(opt).parents("label.selector-inp").find("div.check-in-div").addClass("mh--20");
                             } else {
-                                $(opt).parents("label.d-block").find("div.check-in-div").append(`
-                                    <i class="success-with-img">
-                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
-                                            <defs>
-                                                <clipPath id="clip-Custom_Size_1">
-                                                <rect width="16" height="16"/>
-                                                </clipPath>
-                                            </defs>
-                                            <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
-                                                <rect width="16" height="16" fill="none"/>
-                                                <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
-                                            </g>
-                                        </svg>
-                                    </i>`);
+                                $(opt).parents("label.d-block").find("div.check-in-div").append(UxUtils.getSuccessTick());
                                 $(opt).parents("label.d-block").find("div.check-in-div").addClass("mh--20");
                             }
                         } else if ($(opt).is(":checked") && ansKey.includes(optval) == false) {
                             $(opt).parents(".card-box").addClass("alert-danger");
                         } else if (ansKey.includes(optval)) {
                             if ($(opt).parents("label.selector-inp").length > 0) {
-                                $(opt).parents("label.selector-inp").find("div.check-in-div").append(`
-                                    <i class="success-with-img">
-                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
-                                            <defs>
-                                                <clipPath id="clip-Custom_Size_1">
-                                                <rect width="16" height="16"/>
-                                                </clipPath>
-                                            </defs>
-                                            <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
-                                                <rect width="16" height="16" fill="none"/>
-                                                <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
-                                            </g>
-                                        </svg>
-                                    </i>`);
+                                $(opt).parents("label.selector-inp").find("div.check-in-div").append(UxUtils.getSuccessTick());
                                 $(opt).parents("label.selector-inp").find("div.check-in-div").addClass("mh--20");
                             } else {
-                                $(opt).parents("label.d-block").find("div.check-in-div").append(`
-                                    <i class="success-with-img">
-                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
-                                            <defs>
-                                                <clipPath id="clip-Custom_Size_1">
-                                                <rect width="16" height="16"/>
-                                                </clipPath>
-                                            </defs>
-                                            <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
-                                                <rect width="16" height="16" fill="none"/>
-                                                <path id="Path_1" data-name="Path 1" d="M16.026,0a.535.535,0,0,1,.392.165.535.535,0,0,1,.165.392.535.535,0,0,1-.165.392L7.23,10.136a.546.546,0,0,1-.783,0l-5.29-5.29a.546.546,0,0,1,0-.783.546.546,0,0,1,.783,0l4.9,4.889,8.8-8.787A.535.535,0,0,1,16.026,0Z" transform="translate(-0.787 2.475)" />
-                                            </g>
-                                        </svg>
-                                    </i>`);
+                                $(opt).parents("label.d-block").find("div.check-in-div").append(UxUtils.getSuccessTick());
                                 $(opt).parents("label.d-block").find("div.check-in-div").addClass("mh--20");
 
                             }
@@ -250,17 +195,17 @@ $(document).on("click", "#next", function() {
                         });
 
                 } else {
-                    $("#previous").attr("data-prev-id", (parseInt(currentPage) - 1));
-                    Localizer.getString("xofy", parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
+                    $("#previous").attr("data-prev-id", (parseInt(currentPage)-1));
+                    Localizer.getString("xofy", parseInt(currentPage)+1, maxQuestionCount).then(function(result) {
                         $("#xofy").text(result);
                         nextButtonName();
                     });
-                    $("#check").attr("data-next-id", (parseInt(currentPage) + 1));
-                    $("#next").attr("data-next-id", (parseInt(currentPage) + 1));
-                    $root.find("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").show();
+                    $("#check").attr("data-next-id", (parseInt(currentPage)+1));
+                    $("#next").attr("data-next-id", (parseInt(currentPage)+1));
+                    $root.find("div.card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").show();
 
-                    if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1 + ")")).find(".card-box.disabled:first").length == 0) {
-                        if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1 + ")")).find("input[name='" + (parseInt(currentPage) + 1 + "']")).is(":checked") == false) {
+                    if ($("div.card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").find(".card-box.disabled:first").length == 0) {
+                        if ($("div.card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").find("input[name='" + (parseInt(currentPage)+1) + "']").is(":checked") == false) {
                             $(".section-1-footer").find(".next-key").addClass("check-key");
                             $(".section-1-footer").find(".next-key").removeClass("next-key");
                             $(".section-1-footer").find(".check-key").text(checkKey);
@@ -296,19 +241,19 @@ $(document).on("click", "#next", function() {
                         console.log("Error2: " + JSON.stringify(error));
                     });
             } else {
-                $root.find(".card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").show();
+                $root.find(".card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").show();
                 $("#previous").attr("data-prev-id", (parseInt(currentPage) - 1));
                 Localizer.getString("xofy", parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
                     $("#xofy").text(result);
                     nextButtonName();
                 });
-                $("#check").attr("data-next-id", (parseInt(currentPage) + 1));
-                $("#next").attr("data-next-id", (parseInt(currentPage) + 1));
+                $("#check").attr("data-next-id", (parseInt(currentPage)+1));
+                $("#next").attr("data-next-id", (parseInt(currentPage)+1));
                 if ($("#previous").attr("data-prev-id") >= 0) {
                     $("#previous").removeClass("disabled");
                 }
-                if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1 + ")")).find(".card-box.disabled:first").length == 0) {
-                    if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1 + ")")).find("input[name='" + (parseInt(currentPage) + 1 + "']")).is(":checked") == false) {
+                if ($("div.card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").find(".card-box.disabled:first").length == 0) {
+                    if ($("div.card-box-question:nth-child(" + (parseInt(currentPage)+1) + ")").find("input[name='" + (parseInt(currentPage)+1) + "']").is(":checked") == false) {
                         $(".section-1-footer").find(".next-key").addClass("check-key");
                         $(".section-1-footer").find(".next-key").removeClass("next-key");
                         $(".section-1-footer").find(".check-key").text(checkKey);
@@ -324,7 +269,7 @@ $(document).on("click", "#next", function() {
 
     } else {
         $(".choice-required-err").remove();
-        $(".card-box-question:visible").append(`<p class="mt--32 text-danger choice-required-err"><font>${choiceAnyChoiceKey}</font></p>`);
+        $(".card-box-question:visible").append(UxUtils.getSelectChoiceOptionError(choiceAnyChoiceKey));
     }
 });
 
@@ -333,7 +278,7 @@ $(document).on("click", "#next", function() {
  */
 $(document).on("change", "input[type='radio'], input[type='checkbox']", function() {
     $(this).each(function(ind, opt) {
-        if (actionInstance.customProperties[3].value == "Yes" && $("div.card-box:visible").find("label.custom-radio").hasClass("disabled") !== "disabled") {
+        if (isShowAnswerEveryQuestion == "Yes" && $("div.card-box:visible").find("label.custom-radio").hasClass("disabled") !== "disabled") {
             if ($(opt).is(":checked")) {
                 $(".choice-required-err").remove();
                 $(".check-key").parents("button").attr("id", "next");
@@ -439,22 +384,18 @@ $(document).on("click", "#close-event", function() {
 });
 
 /**
- * @event Click and Keydown for disable action on response summary section
+ * @event Keydown for disable action on response summary section
+ */
+KeyboardUtils.selectCheckOrRadioKeydown(document, ".summary-section input[type='radio'], .summary-section input[type='checkbox']");
+
+/**
+ * @event Click for disable action on response summary section
  */
 $(document).on({
     click: function(e) {
         e.preventDefault();
         if ($(this).hasClass("disabled")) {
             return false;
-        }
-    },
-    keydown: function(e) {
-        let key = e.which;
-        if (key === 13 || key === 32) {
-            e.preventDefault();
-            if ($(this).hasClass("disabled")) {
-                return false;
-            }
         }
     }
 }, ".summary-section input[type='radio'], .summary-section input[type='checkbox']");
@@ -575,7 +516,7 @@ async function getStringKeys() {
  * @description Method to select theme based on the teams theme
  * @param request context request
  */
-async function getTheme(request) {
+async function loadResponsView(request) {
     let response = await ActionHelper.executeApi(request);
     let context = response.context;
     $("form.section-1").show();
@@ -583,18 +524,7 @@ async function getTheme(request) {
     $("link#theme").attr("href", "css/style-" + theme + ".css");
 
     $("div.section-1").append(`<div class="row"><div class="col-12"><div id="root"></div></div></div>`);
-    $("div.section-1 div.row").prepend(`
-            <div class="col-12 quiz-img-sec">
-                <div class="quiz-updated-img bg-none bdr-none max-min-220 card-bg card-border cover-img upvj cursur-pointer mb--16 relative" style="display: none">
-                    <div class="loader-cover d-table">
-                        <div class="d-table-cell">
-                            <div class="spinner-border" role="status">
-                            <span class="sr-only">Loading...</span></div>
-                        </div>
-                    </div>
-                    <img src="" class="image-responsive quiz-template-image" style="display:none" />
-                </div>
-            </div>`);
+    $("div.section-1 div.row").prepend(UxUtils.getQuizTemplateImageResponseView());
     $root = $("#root");
 
     setTimeout(() => {
@@ -608,7 +538,7 @@ async function getTheme(request) {
 /* Initiate Method */
 $(document).ready(function() {
     request = ActionHelper.getContextRequest();
-    getTheme(request);
+    loadResponsView(request);
 });
 
 /**
@@ -621,7 +551,6 @@ function OnPageLoad() {
             myUserId = response.context.userId;
             contextActionId = response.context.actionId;
             getResponderIds(contextActionId);
-
         })
         .catch(function(error) {
             console.error("GetContext - Error4: " + JSON.stringify(error));
@@ -638,7 +567,6 @@ async function getResponderIds(actionId) {
         .then(function(batchResponse) {
             actionDataRows = batchResponse.dataRows;
             actionDataRowsLength = actionDataRows == null ? 0 : actionDataRows.length;
-
             if (actionDataRowsLength > 0) {
                 for (let i = 0; i < actionDataRowsLength; i++) {
                     memberIds.push(actionDataRows[i].creatorId);
@@ -673,7 +601,9 @@ function getActionInstance(actionId) {
 function createBody() {
     /*  Check Expiry date time  */
     let currentTime = new Date().getTime();
-    if (actionInstance.expiryTime <= currentTime) {
+    let expireTime = actionInstance.expiryTime;
+    isShowAnswerEveryQuestion = actionInstance.customProperties[3].value;
+    if (expireTime <= currentTime) {
         let $card = $(`<div class="card"></div>`);
         let $spDiv = $(`<div class="col-sm-12"></div>`);
         let $sDiv = $(`<div class="form-group" id="quiz-expired-key">${quizExpiredKey}</div>`);
@@ -681,7 +611,6 @@ function createBody() {
         $spDiv.append($sDiv);
         $root.append($card);
         getStringKeys();
-
     } else {
         getStringKeys();
         let isImage = false;
@@ -697,7 +626,7 @@ function createBody() {
                         getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
                         $(".quiz-template-image").show();
                         $(".quiz-updated-img").show();
-                        removeImageLoader(".quiz-template-image");
+                        UxUtils.removeImageLoader(".quiz-template-image");
                     }
                     ActionHelper.hideLoader();
 
@@ -732,13 +661,11 @@ function createBody() {
                 });
             });
         });
-
-        // if(isImage == false) {
         ActionHelper.hideLoader();
-        // }
+
         let $card = $(`<div class=""></div>`);
-        let $title = $(`<h4 class="mb--8"> ${actionInstance.displayName} </h4>`);
-        let $description = $(`<p class="mb--16 text-justify text-break font-12">${actionInstance.customProperties[0].value}</p>`);
+        let $title = $(UxUtils.getQuizTitleResponseView(actionInstance.displayName));
+        let $description = $(UxUtils.getQuizTitleResponseView(actionInstance.customProperties[0].value));
         $card.append($title);
         $card.append($description);
         $root.append($card);
@@ -746,7 +673,7 @@ function createBody() {
         $root.append(textSection1);
 
         if ($.inArray(myUserId, memberIds) > -1) {
-            $("p.text-description").before(`<p class="already-attempt already-attempt semi-bold mb--16 font-12">${alreadyAttemptedKey}</p>`);
+            $("p.text-description").before(Utils.getAlreadyAttempt(alreadyAttemptedKey));
             calculateScore();
             $(".body-outer").after(closeFooter);
         } else  {
@@ -798,7 +725,7 @@ function calculateScore() {
                         correctAnsString = correctResponse[c];
                     }
 
-                    if (ActionHelper.isJson(actionDataRows[i].columnValues[c + 1])) {
+                    if (Utils.isJson(actionDataRows[i].columnValues[c + 1])) {
                         let responderAnsArr = JSON.parse(actionDataRows[i].columnValues[c + 1]);
                         if (responderAnsArr.length > 1) {
                             userAnsString = responderAnsArr.join(",");
@@ -832,30 +759,6 @@ function calculateScore() {
 }
 
 /**
- * @description Method for Question view based on user id
- * @param text String contains correct and incorrect message
- * @param name String contains option name
- * @param id String contains option id
- * @param userResponse String contains user response data
- * @param correctAnswer String contains correct answer
- */
-function getOptions(text, name, id, userResponse, correctAnswer) {
-    /*  If answer is correct  and answered */
-    if ($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) == $.trim(id)) {
-        if (answerIs == "") {
-            answerIs = "Correct";
-        }
-    } else if ($.trim(userResponse) != $.trim(id) && $.trim(correctAnswer) == $.trim(id)) {
-        /* If User Response is incorrect and not answered */
-
-    } else if ($.trim(userResponse) == $.trim(id) && $.trim(correctAnswer) != $.trim(id)) {
-        /* If User Response is incorrect and answered */
-        answerIs = "Incorrect";
-    }
-
-}
-
-/**
  * @description Method for creating Question
  */
 function createQuestionView() {
@@ -886,22 +789,18 @@ function createQuestionView() {
         }
         let count = parseInt(currentPage) + 1;
         $root.append(questionSection);
-        $("#root div.card-box-question:visible .question-number-title").html(`
-            <label class="font-12">
-                <span class="question-number">Question # ${count}</span>
-            </label>
-        `);
+        $("#root div.card-box-question:visible .question-number-title").html(UxUtils.getQuestionNumberResponseView(questionKey, count));
 
         if (question.attachments.length > 0) {
             $("#root div.card-box-question:visible .question-template-image").attr("src", question.attachments[0].url);
             $("#root div.card-box-question:visible .question-template-image").show();
             $("#root div.card-box-question:visible .quiz-updated-img").show();
             getClassFromDimension(question.attachments[0].url, "#root div.card-box-question:visible .question-template-image");
-            removeImageLoader("#root div.card-box-question:visible .question-template-image");
+            UxUtils.removeImageLoader("#root div.card-box-question:visible .question-template-image");
         }
 
         $("#root div.card-box-question:visible .question-title").html(`<p class="">${question.displayName}</p>`);
-        let choiceOccurance = 0;
+        let choiceOccurance = 1;
         /* Check multichoice or single choice options  */
         if (question.valueType == "SingleOption") {
             choiceOccurance = 1;
@@ -910,21 +809,7 @@ function createQuestionView() {
         }
 
         //add checkbox input
-        if (choiceOccurance > 1) {
-            question.options.forEach((option) => {
-                let displayName = option.displayName;
-                let attachmentURL = option.attachments.length > 0 ? option.attachments[0].url : "";
-                let $radioOption = getCheckboxButton(
-                    displayName,
-                    question.name,
-                    option.name,
-                    attachmentURL
-                );
-                $("div.card-box-question:visible > .option-sec").append($radioOption);
-                getClassFromDimension(attachmentURL, "div.radio-section#" + option.name + " .opt-image");
-                removeImageLoader("div.radio-section#" + option.name + " .opt-image");
-            });
-        } else {
+        if (question.valueType == "SingleOption") {
             //add radio input
             question.options.forEach((option) => {
                 let displayName = option.displayName;
@@ -937,7 +822,21 @@ function createQuestionView() {
                 );
                 $("div.card-box-question:visible > .option-sec").append($radioOption);
                 getClassFromDimension(attachmentURL, "div.radio-section#" + option.name + " .opt-image");
-                removeImageLoader("div.radio-section#" + option.name + " .opt-image");
+                UxUtils.removeImageLoader("div.radio-section#" + option.name + " .opt-image");
+            });
+        } else {
+            question.options.forEach((option) => {
+                let displayName = option.displayName;
+                let attachmentURL = option.attachments.length > 0 ? option.attachments[0].url : "";
+                let $radioOption = getCheckboxButton(
+                    displayName,
+                    question.name,
+                    option.name,
+                    attachmentURL
+                );
+                $("div.card-box-question:visible > .option-sec").append($radioOption);
+                getClassFromDimension(attachmentURL, "div.radio-section#" + option.name + " .opt-image");
+                UxUtils.removeImageLoader("div.radio-section#" + option.name + " .opt-image");
             });
         }
     });
@@ -952,24 +851,10 @@ function createQuestionView() {
  */
 function getRadioButton(text, name, id, attachmentURL) {
     let $cardBox = $(`<div class="card-box card-bg card-border mb--8"></div>`);
-    $cardBox.append(`<div class="radio-section custom-radio-outer" id="${id}" columnId="${name}">
-                        <label class="custom-radio d-block font-12 cursor-pointer selector-inp">
-                            <input type="radio" name="${name}" id="${id}">
-                            <span class="radio-block"></span>
-                            <div class="pr--32 check-in-div">${text}</div>
-                        </label>
-                    </div>`);
+    $cardBox.append(UxUtils.getRadioResponseView(id, name, text));
     if (attachmentURL != "") {
-        $cardBox.find(".custom-radio").prepend(`<div class="option-image-section cover-img min-max-132 mb--4 relative">
-                <div class="loader-cover d-table">
-                    <div class="d-table-cell">
-                        <div class="spinner-border" role="status">
-                        <span class="sr-only">Loading...</span></div>
-                    </div>
-                </div>
-                <img src="${attachmentURL}" class="opt-image img-responsive"/>
-            </div>`);
-     }
+        $cardBox.find(".custom-radio").prepend(UxUtils.getOptionImageWithLoader(attachmentURL));
+    }
     return $cardBox;
 }
 
@@ -982,29 +867,10 @@ function getRadioButton(text, name, id, attachmentURL) {
  */
 function getCheckboxButton(text, name, id, attachmentURL) {
     let $cardBox = $(`<div class="card-box card-bg card-border mb--8"></div>`);
-    $cardBox.append(`<div class="radio-section custom-check-outer selector-inp" id="${id}" columnId="${name}" >
-                        <label class="custom-check font-12 form-check-label d-block">
-                            <input type="checkbox" class="radio-block" name="${name}" id="${id}">
-                            <span class="checkmark"></span>
-                            <div class="pr--32 check-in-div">${text}
-                            </div>
-                        </label>
-                    </div>`);
+    $cardBox.append(UxUtils.getCheckResponseView(id, name, text));
 
     if (attachmentURL != "") {
-        $cardBox.find(".custom-check").prepend(`
-            <label class="custom-radio d-block font-12 cursor-pointer selector-inp">
-                <div class="option-image-section updated-img cover-img min-max-132 mb--8 relative">
-                    <div class="loader-cover d-table">
-                        <div class="d-table-cell">
-                            <div class="spinner-border" role="status">
-                            <span class="sr-only">Loading...</span></div>
-                        </div>
-                    </div>
-                    <img src="${attachmentURL}" class="opt-image img-responsive"/>
-                </div>
-            </label>
-        `);
+        $cardBox.find(".custom-check").prepend(UxUtils.getOptionImageWithLoader(attachmentURL));
     }
     return $cardBox;
 }
@@ -1030,9 +896,7 @@ function nextButtonName() {
  */
 function summarySection() {
     getStringKeys();
-
     $root.find(".card-box-question").hide();
-
     $("#root").append(summarySectionArea);
     let $mb16Div = $(`<div class="mb--16"></div>`);
     Localizer.getString("quiz_summary").then(function(result) {
@@ -1063,14 +927,9 @@ function summarySection() {
         if (scoreIs % 1 != 0) {
             scoreIs = scoreIs.tofixed(2);
         }
-        if (actionInstance.customProperties[3].value == "Yes") {
+        if (isShowAnswerEveryQuestion == "Yes") {
             Localizer.getString("score", ":").then(function(result) {
-                $($mb16Div2).append(`
-                            <label>
-                                <strong class="semi-bold">${result} </strong>${scoreIs}%
-                            </label>
-                            <hr>
-                        `);
+                $($mb16Div2).append(UxUtils.getScoreResponseView(result, scoreIs));
             });
 
         } else {
@@ -1108,18 +967,6 @@ function radiobuttonclick() {
             row[col] = $(this).attr("id");
         }
     });
-
-}
-
-/**
- * @description Method to generate GUID
- */
-function generateGUID() {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-        let r = (Math.random() * 16) | 0,
-            v = c == "x" ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-    });
 }
 
 /**
@@ -1128,9 +975,9 @@ function generateGUID() {
  */
 function getDataRow(actionId) {
     let data = {
-        id: generateGUID(),
+        id: Utils.generateGUID(),
         actionId: actionId,
-        dataTableId: "TestDataSet",
+        dataTableId: "QuizDataSet",
         columnValues: row,
     };
     return data;
@@ -1164,142 +1011,41 @@ function getClassFromDimension(imgURL, selector) {
             getClass = ("smallfit");
         }
         $(selector).addClass(getClass);
-
     });
 }
 
-/**
- * Method to get remove Image loader from image section
- * @param selector object html on which remove image
- */
-function removeImageLoader(selector) {
-    let tid = setInterval(() => {
-        if ($(selector).hasClass("heightfit") || $(selector).hasClass("widthfit") || $(selector).hasClass("smallfit")) {
-            $(".loader-cover").addClass("d-none");
-            clearInterval(tid);
-        }
-    }, 100);
-}
 // *********************************************** HTML SECTION ***********************************************
 /**
  * @description HTML section for landing page
  */
-let textSection1 = `<div class="text-counter-ques">
-                        <div class="">
-                            <div class="hover-btn ">
-                                <!-- <label><strong><span class="training-type question-key">${questionKey}</span></strong> </label> -->
-                                <span class="float-right result"></span>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                        <p class="mb--16 text-description semi-bold font-12"></p>
-                    </div>`;
+let textSection1 = UxUtils.getResponseLandingSection();
 
 /**
  * @description HTML Footer section for start quiz
  */
-let footerSection1 = `<div class="footer section-1-footer">
-                            <div class="footer-padd bt">
-                                <div class="container ">
-                                    <div class="row">
-                                        <div class="col-4"> </div>
-                                        <div class="col-4 text-center"> </div>
-                                        <div class="col-4 text-right"> <button type="button" class="btn btn-primary btn-sm pull-right" id="start"> ${startKey}</button></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
+let footerSection1 = UxUtils.getFooterResponseSection();
 
 /**
  * @description HTML section for question area
  */
-let questionSection = `<div class="card-box-question">
-                            <div class="d-table mb--4 pre-none">
-                                <label class="font-12">
-                                    <strong class="question-number-title bold">1. ksklaskdl</strong>
-                                </label>
-                                <label class="float-right result-status" id="status-1">
-                                </label>
-                            </div>
-                            <div>
-                                <div class="quiz-updated-img bg-none bdr-none cover-img min-max-132 mb--8 relative" style="display: none">
-                                    <div class="loader-cover d-table">
-                                        <div class="d-table-cell">
-                                            <div class="spinner-border" role="status">
-                                            <span class="sr-only">Loading...</span></div>
-                                        </div>
-                                    </div>
-                                    <img src="" class="image-responsive question-template-image" style="display: none" />
-                                </div>
-                                <div class="semi-bold font-16 mb--16 question-title"><p class="">How many days in a week?</p></div>
-                            </div>
-                            <div class="option-sec"></div>
-                        </div>`;
+let questionSection = UxUtils.getResponseQuestionSection();
 
 /**
  * @description HTML section for footer quiz area with pagination
  */
-let paginationFooterSection = `<div class="footer section-1-footer">
-            <div class="footer-padd bt">
-                <div class="container ">
-                    <div class="row">
-                        <div class="col-4">
-                            <button type="button" class="tpt-btn disabled" id="previous"  data-prev-id="0"  tabindex="0" role="button">
-                                <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="back-btn">
-                                    <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
-                                    </path>
-                                    <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z">
-                                    </path>
-                                </svg> <span class="prev-key">${prevKey}/span>
-                            </button>
-                        </div>
-                        <div class="col-4 text-center" id="xofy"> 1 of 4</div>
-                        <div class="col-4 text-right">
-                            <button type="button" class="tpt-btn pull-right" id="check" data-next-id="1" tabindex="0" role="button"> <span class="check-key">${checkKey}</span>
-                                <svg role="presentation" focusable="false" viewBox="8 8 16 16 " class="next-btn">
-                                    <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z"></path>
-                                    <path class="ui-icon__filled" d="M16.74 21.21l7-7c.19-.19.29-.43.29-.71 0-.14-.03-.26-.08-.38-.06-.12-.13-.23-.22-.32s-.2-.17-.32-.22a.995.995 0 0 0-.38-.08c-.13 0-.26.02-.39.07a.85.85 0 0 0-.32.21l-6.29 6.3-6.29-6.3a.988.988 0 0 0-.32-.21 1.036 1.036 0 0 0-.77.01c-.12.06-.23.13-.32.22s-.17.2-.22.32c-.05.12-.08.24-.08.38 0 .28.1.52.29.71l7 7c.19.19.43.29.71.29.28 0 .52-.1.71-.29z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>`;
+let paginationFooterSection = UxUtils.getPaginationFooterSection();
 
 /**
  * @description HTML section for summary
  */
-let summarySectionArea = `<div class="summary-section"></div>`;
+let summarySectionArea = UxUtils.getSummarySection();
 
 /**
  * @description HTML section for summary footer
  */
-let summaryFooter = `<div class="footer section-1-footer">
-                            <div class="footer-padd bt">
-                                <div class="container ">
-                                    <div class="row">
-                                        <div class="col-4"> </div>
-                                        <div class="col-4 text-center"> </div>
-                                        <div class="col-4 text-right"> <button type="button" class="btn btn-primary btn-sm pull-right submit-key" id="submit"> ${submitKey}</button></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
+let summaryFooter = UxUtils.getSummaryFooterSection();
 
 /**
  * @description Variable contains close button at footer
  */
-let closeFooter = `
-        <div class="footer section-1-footer">
-            <div class="footer-padd bt">
-                <div class="container ">
-                    <div class="row">
-                        <div class="col-4"> </div>
-                        <div class="col-4 text-center"> </div>
-                        <div class="col-4 text-right"> <button type="button" class="btn btn-primary btn-sm pull-right close-key" id="close-event" tabindex="0" role="button"> ${closeKey}</button></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+let closeFooter = UxUtils.getCloseFooterSection();

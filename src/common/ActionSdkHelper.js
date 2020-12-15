@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import * as actionSDK from "@microsoft/m365-action-sdk";
 
 export class Localizer {
@@ -243,19 +246,6 @@ export class ActionHelper {
      */
     static createAction(action) {
         return new actionSDK.CreateAction.Request(action);
-    }
-
-    /*
-     * @desc Method to return the input is json object
-     * @param str object contains json values
-     */
-    static isJson(str) {
-        try {
-            JSON.parse(str);
-        } catch (e) {
-            return false;
-        }
-        return true;
     }
 
     static async downloadCSV(actionId, fileName) {
