@@ -18,15 +18,15 @@
             "sourceLocation": "json/cardView.json"
         },
         "LaunchView": {
-            "sourceLocation": "html/createView.html",
+            "sourceLocation": "createView.html",
             "header": "Create a new quiz"
         },
         "UpdateView": {
-            "sourceLocation": "html/updateView.html",
+            "sourceLocation": "updateView.html",
             "header": "Attempt quiz"
         },
         "DetailView": {
-            "sourceLocation": "html/detailView.html",
+            "sourceLocation": "detailView.html",
             "header": "Quiz results"
         }
     },

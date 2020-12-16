@@ -189,7 +189,7 @@
     "_changeDueDate.comment": "Change due date label in summary view",
     "$manifest.description": "Create a new quiz",
     "_$manifest.description.comment": "{maxLength=4000}",
-    "$manifest.name": "Quiz-edog",
+    "$manifest.name": "Quiz-edognew",
     "_$manifest.name.comment": "{MaxLength=30}, Name of the quiz",
     "$manifest.msTeamsProps.name.full": "Quiz",
     "_$manifest.msTeamsProps.name.full.comment": "{maxLength=100}",
