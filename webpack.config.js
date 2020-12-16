@@ -46,7 +46,7 @@ module.exports = env => {
         // Exclude other entries from this html
         var excludeChunks = entries.filter(x => x != entry);
         config.plugins.push(new HtmlWebpackPlugin({
-            templateContent: '',
+            templateContent: '<div class="body-outer"></div>',
             filename: `${entry}.html`,
             excludeChunks: excludeChunks
         }));

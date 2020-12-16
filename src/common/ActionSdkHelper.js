@@ -115,7 +115,7 @@ export class ActionHelper {
      * @param attachment objet identifier
      */
     static requestAttachmentUploadDraft(attachment) {
-        return new actionSDK.UploadAttachmentDraft.Request(attachment, function(status) {
+        return new actionSDK.UploadAttachmentDraft.Request(attachment, null, function(status) {
             console.log("Status: " + status);
         });
     }
