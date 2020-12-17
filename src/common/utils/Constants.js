@@ -258,6 +258,13 @@ export class Constants {
     }
 
     /**
+     * @Method for getting interval of 100 microsecond
+     */
+    static setIntervalTimeFiveHundred() {
+        return 500;
+    }
+
+    /**
      * @Method for getting interval of 1000 microsecond
      */
     static setIntervalTimeThousand() {

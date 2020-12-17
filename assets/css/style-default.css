@@ -2691,6 +2691,10 @@ label h4 {
     vertical-align: middle;
 }
 
+.min-max-132 img.heightfit {
+    max-height: 272px;
+}
+
 @media screen and (max-width: 576px) {
     .container {
         width: 100%;

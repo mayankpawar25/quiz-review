@@ -529,9 +529,6 @@ async function createBody() {
     let getSubscriptionCount = "";
     $("#root").html("");
 
-    console.log("actionInstance:");
-    console.log(JSON.stringify(actionInstance));
-
     /*  Head Section  */
     if (myUserId == dataResponse.context.userId && myUserId == actionInstance.creatorId) {
         isCreator = true;
@@ -653,7 +650,7 @@ function head() {
     $card.append($descriptionSec);
     $card.append($dateSec);
     $("#root").append($card);
-    if (actionInstance.customProperties[4].value.length > 0) {
+    if (actionInstance.customProperties[4].value != null) {
         let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
         ActionHelper.executeApi(req).then(function(response) {
                 $card.prepend(UxUtils.getQuizBannerImageWithLoader(response.attachmentInfo.downloadUrl));
@@ -685,7 +682,9 @@ function headCreator() {
     $card.append($descriptionSec);
     $card.append($dateSec);
     $("#root").append($card);
-    if (actionInstance.customProperties[4].value.length > 0) {
+    console.log("actionInstance.customProperties");
+    console.log(actionInstance.customProperties);
+    if (actionInstance.customProperties[4].value != null) {
         let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
         ActionHelper.executeApi(req).then(function(response) {
                 $card.prepend(UxUtils.getQuizBannerImageWithLoader(response.attachmentInfo.downloadUrl));
@@ -1378,13 +1377,15 @@ function getRadioOptions(text, name, id, userResponse, correctAnswer, attachment
     if (attachmentId.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
-                console.info("Attachment - Response: " + JSON.stringify(response));
-                $oDiv.find("label.custom-radio").prepend(UxUtils.getOptionImageWithLoader(response.attachmentInfo.downloadUrl));
-                Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} .opt-image:last`);
-            })
-            .catch(function(error) {
-                console.error("AttachmentAction - Error: " + JSON.stringify(error));
-            });
+            console.info("Attachment - Response: " + JSON.stringify(response));
+            console.log("id: ");
+            console.log(id);
+            $oDiv.find("label.custom-radio").prepend(UxUtils.getOptionImage(response.attachmentInfo.downloadUrl));
+            Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} img.opt-image`);
+        })
+        .catch(function(error) {
+            console.error("AttachmentAction - Error: " + JSON.stringify(error));
+        });
     }
     return $oDiv;
 }
@@ -1421,13 +1422,15 @@ function getCheckOptions(text, name, id, userResponse, correctAnswer, attachment
     if (attachmentId.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
-                console.info("Attachment - Response: " + JSON.stringify(response));
-                $oDiv.find("label.custom-check").prepend(UxUtils.getOptionImageWithLoader(response.attachmentInfo.downloadUrl));
-                Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} .opt-image:last`);
-            })
-            .catch(function(error) {
-                console.error("AttachmentAction - Error: " + JSON.stringify(error));
-            });
+            console.info("Attachment - Response: " + JSON.stringify(response));
+            console.log("id: ");
+            console.log(id);
+            $oDiv.find("label.custom-check").prepend(UxUtils.getOptionImage(response.attachmentInfo.downloadUrl));
+            Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} img.opt-image`);
+        })
+        .catch(function(error) {
+            console.error("AttachmentAction - Error: " + JSON.stringify(error));
+        });
     }
     return $oDiv;
 }

@@ -47,11 +47,11 @@ export class Utils {
             let tid = setInterval(() => {
                 if ($(selector).hasClass(getClass) == true) {
                     setTimeout(() => {
-                        UxUtils.removeImageLoader(selector);
+                        UxUtils.removeImageLoader($(selector));
                         clearInterval(tid);
-                    }, 500);
+                    }, Constants.setIntervalTimeFiveHundred());
                 }
-            }, 100);
+            }, Constants.setIntervalTimeHundred());
         });
     }
 

@@ -1033,6 +1033,16 @@ export class UxUtils {
     }
 
     /**
+     * @Method contains option Image with loader
+     * @param imageUrl string contains image url
+     */
+    static getOptionImage(imageUrl) {
+        return `<div class="option-image-section relative cover-img min-max-132 mb--4">
+            <img src="${imageUrl}" class="opt-image img-responsive" crossorigin="anonymous">
+        </div>`;
+    }
+
+    /**
      * @Method contains radio
      * @param optId string contains option id
      * @param ind string contains index number

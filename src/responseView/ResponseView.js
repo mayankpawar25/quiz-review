@@ -764,7 +764,6 @@ function calculateScore() {
 function createQuestionView() {
     $(".footer.section-1-footer").remove();
     $root.after(paginationFooterSection);
-
     if (currentPage > 0) {
         if ($("#previous").attr("data-prev-id") >= 0) {
             $("#previous").removeClass("disabled");
@@ -840,6 +839,14 @@ function createQuestionView() {
             });
         }
     });
+
+    if (isShowAnswerEveryQuestion != "Yes") {
+        setTimeout(() => {
+            console.log('hello:')
+            $(".check-key").text(nextKey);
+        }, 100);
+    }
+        console.log('hello123:')
 }
 
 /**
