@@ -1578,19 +1578,19 @@ function create_responder_nonresponders() {
  * @description Method contains section to date change of quiz
  */
 function changeDateSection() {
-    $("#root .d-table:first").before(UxUtils.getChangeDateSection(changeDueDateKey, cancelKey, changeKey));
+    $("#root .d-table:first").parents('div.container').prepend(UxUtils.getChangeDateSection(changeDueDateKey, cancelKey, changeKey));
 }
 
 /**
  * @description Method contains section to close quiz
  */
 function closeQuizSection() {
-    $("#root .d-table:first").before(UxUtils.getCloseQuizSection(closeQuizKey, closeQuizConfirmKey, cancelKey, confirmKey));
+    $("#root .d-table:first").parents('div.container').prepend(UxUtils.getCloseQuizSection(closeQuizKey, closeQuizConfirmKey, cancelKey, confirmKey));
 }
 
 /**
  * @description Method contains section to delete quiz
  */
 function deleteQuizSection() {
-    $("#root .d-table:first").before(UxUtils.deleteQuizSection(deleteQuizKey, deleteQuizConfirmKey, cancelKey, confirmKey));
+    $("#root .d-table:first").parents('div.container').prepend(UxUtils.deleteQuizSection(deleteQuizKey, deleteQuizConfirmKey, cancelKey, confirmKey));
 }
