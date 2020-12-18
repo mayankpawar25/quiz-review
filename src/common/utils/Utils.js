@@ -59,14 +59,21 @@ export class Utils {
      * @description Method for calculating date diff from current date in weeks, days, hours, minutes
      * @param start - Date type
      * @param end - Date type
+     * @param weekKey - Week Locale
+     * @param hoursKey - hours Locale
+     * @param hourKey - hour Locale
+     * @param minutesKey - minutes Locale
+     * @param minuteKey - minute Locale
+     * @param daysKey - days Locale
+     * @param dayKey - day Locale
      */
-    static calcDateDiff(start, end) {
+    static calcDateDiff(start, end, weekKey, hoursKey, hourKey, minutesKey, minuteKey, daysKey){
         let days = (end - start) / (1000 * 60 * 60 * 24);
         let hourText = "hour";
         let minuteText = "minute";
         if (days > 6) {
             let weeks = Math.ceil(days) / 7;
-            return Math.floor(weeks) + " week";
+            return Math.floor(weeks) + weekKey;
         } else {
             if (days < 1) {
                 let t1 = start.getTime();
@@ -77,14 +84,14 @@ export class Utils {
                 minsDiff = minsDiff % 60;
 
                 if (hourDiff > 1) {
-                    hourText = "hours";
+                    hourText = hoursKey;
                 } else {
-                    hourText = "hour";
+                    hourText = hourKey;
                 }
                 if (hourDiff > 1) {
-                    minuteText = "minutes";
+                    minuteText = minutesKey;
                 } else {
-                    minuteText = "minute";
+                    minuteText = minuteKey;
                 }
                 if (hourDiff > 0 && minsDiff > 0) {
                     return hourDiff + " " + hourText + ", " + minsDiff + " " + minuteText;
@@ -94,7 +101,7 @@ export class Utils {
                     return minsDiff + " " + minuteText;
                 }
             } else {
-                return Math.ceil(days) + " days";
+                return Math.ceil(days) + daysKey;
             }
         }
     }

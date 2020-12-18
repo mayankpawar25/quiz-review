@@ -47,6 +47,15 @@ let coverImageKey = "";
 let clearKey = "";
 let invalidFileFormatKey = "";
 let questionLeftBlankKey = "";
+let nweekKey = "";
+let weekKey = "";
+let hourKey = "";
+let hoursKey = "";
+let minuteKey = "";
+let minutesKey = "";
+let dayKey = "";
+let daysKey = "";
+let questionKey = "";
 
 /* ******************************** Events ************************************** */
 /**
@@ -98,7 +107,7 @@ $(document).on({
             questionCounter = index + 1;
             $(elem)
                 .find("span.question-number")
-                .text("Question # " + questionCounter);
+                .html(questionKey + "&nbsp;#&nbsp;" + questionCounter);
             $(elem).find("input[name='question_image']").attr({ id: "question-image-" + questionCounter });
             $(elem).attr({ id: "question" + questionCounter });
         });
@@ -164,7 +173,7 @@ $(document).on({
                 let questionCounter;
                 $("div.question-container:visible").each(function(index, elem) {
                     questionCounter = index + 1;
-                    $(elem).find("span.question-number").text("Question # " + questionCounter);
+                    $(elem).find("span.question-number").html(questionKey + "&nbsp;#&nbsp;" + questionCounter);
                     $(elem).find("input[name='question_image']").attr({ id: "question-image-" + questionCounter });
                     $(elem).attr({ id: "question" + questionCounter });
                 });
@@ -399,7 +408,7 @@ $(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], 
     $("#back").removeClass("disabled");
 
     let start = new Date();
-    let days = Utils.calcDateDiff(start, end);
+    let days = Utils.calcDateDiff(start, end, weekKey, hoursKey, hourKey, minutesKey, minuteKey, daysKey);
 
     if (days == undefined || days == NaN) {
         $(".setting-section .row:first").append(`<div class="col-12 mt--32 invalid-date-err"><p class="text-danger">${invalidDateTimeKey}</p></div>`);
@@ -1064,6 +1073,43 @@ async function getStringKeys() {
         optionKey = result;
         $(".opt-cls").attr("placeholder", optionKey);
     });
+
+    Localizer.getString("questions").then(function (result) {
+        questionsKey = result;
+    });
+
+    Localizer.getString("nWeek", "1").then(function (result) {
+        nweekKey = result;
+    });
+
+    Localizer.getString("nWeek", "").then(function (result) {
+        weekKey = result;
+    });
+
+    Localizer.getString("hours").then(function (result) {
+        hoursKey = result;
+    });
+
+    Localizer.getString("hour").then(function (result) {
+        hourKey = result;
+    });
+
+    Localizer.getString("minutes").then(function (result) {
+        minutesKey = result;
+    });
+
+    Localizer.getString("minute").then(function (result) {
+        minuteKey = result;
+    });
+
+    Localizer.getString("days").then(function (result) {
+        daysKey = result;
+    });
+
+    Localizer.getString("day").then(function (result) {
+        dayKey = result;
+    });
+
     Localizer.getString("dueIn", " 1 week", "").then(function(result) {
         settingText = result;
         $("#due").text(settingText);
@@ -1329,7 +1375,7 @@ async function loadCreationPage(request) {
         /* Due Setting String */
         let end = new Date(weekDateFormat + " " + currentTime);
         let start = new Date();
-        let days = Utils.calcDateDiff(start, end);
+        let days = Utils.calcDateDiff(start, end, weekKey, hoursKey, hourKey, minutesKey, minuteKey, daysKey);
         let correctAnswerSetting = lastSession.action.customProperties[3].value;
         let correctAnswer = correctAnswerSetting == "Yes" ? correctAnswerKey : "";
         Localizer.getString("dueIn", days, correctAnswer).then(function(result) {
@@ -1505,7 +1551,11 @@ let questionsContainer = UxUtils.getQuestionContainerLanding();
 /**
  * @description Question Section
  */
-let questionArea = UxUtils.getQuestionArea();
+let questionArea = "";
+Localizer.getString("question").then(function(result){
+    questionKey = result;
+    questionArea = UxUtils.getQuestionArea(result);
+});
 
 /**
  * @description Option Section

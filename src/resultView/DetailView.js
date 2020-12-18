@@ -1325,7 +1325,9 @@ function createQuestionView(userId) {
                 } else if (answerIs.toLowerCase() == "incorrect") {
                     optAnsArr[optind] = "incorrect";
                 }
-                $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold ${answerIs == "Correct" ? "text-success" : "text-danger"}">${answerIs}</span>`);
+                Localizer.getString(answerIs.toLowerCase()).then(function(result){
+                    $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold ${answerIs == "Correct" ? "text-success" : "text-danger"}">${result}</span>`);
+                });
             });
 
             if (optAnsArr.includes("incorrect") != true) {

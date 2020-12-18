@@ -134,14 +134,15 @@ export class UxUtils {
 
     /**
      * @Method for creation view Question Section
+     * @param questionKey string for question locale
      */
-    static getQuestionArea() {
+    static getQuestionArea(questionKey) {
         return `<div style="display: none;" id="question-section">
             <div class="container question-container" id="question1">
                 <div class="card-box card-border card-bg">
                     <div class="form-group-question">
                         <div>
-                            <span class="question-number font-12 bold input-group-text mb--8 input-tpt pl-0 strong cursor-pointer">Question # 1</span>
+                            <span class="question-number font-12 bold input-group-text mb--8 input-tpt pl-0 strong cursor-pointer">${questionKey} # 1</span>
                             <span class="input-group-text remove-question remove-option-q input-tpt cursor-pointer" aria-hidden="true" >
                                 ${Constants.getDeleteIcon()}
                             </span>
@@ -878,7 +879,7 @@ export class UxUtils {
                         <label class="confirm-box text-danger close-quiz-confirm-key">${closeQuizConfirmKey}</label>
                         <div class="d-flex-alert mt--16 mb--8">
                             <div class=" pl--8 text-right">
-                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8 cancel-key">${cancelKey}</button><button type="button" class="btn btn-primary btn-sm" id="change-quiz-question confirm-key">${confirmKey}</button>
+                                <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8 cancel-key">${cancelKey}</button><button type="button" class="btn btn-primary btn-sm confirm-key" id="change-quiz-question">${confirmKey}</button>
                             </div>
                         </div>
                     </div>
