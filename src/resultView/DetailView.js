@@ -815,7 +815,7 @@ function scoreCalculate(userId) {
     });
     let scoreIs = (score / total) * 100;
     if (scoreIs % 1 != 0) {
-        scoreIs = scoreIs.tofixed(2);
+        scoreIs = scoreIs.toFixed(2);
     }
     return scoreIs;
 }
@@ -984,7 +984,7 @@ function createResponderQuestionView(userId, responder = "") {
     $("#root").append(`<div class="ht-100"></div>`);
     let scorePercentage = (score / total) * 100;
     if (scorePercentage % 1 != 0) {
-        scorePercentage = scorePercentage.tofixed(2);
+        scorePercentage = scorePercentage.toFixed(2);
     }
 
     Localizer.getString("score", ":").then(function(result) {
@@ -1340,7 +1340,7 @@ function createQuestionView(userId) {
 
     let scorePercentage = (score / total) * 100;
     if (scorePercentage % 1 != 0) {
-        scorePercentage = scorePercentage.tofixed(2);
+        scorePercentage = scorePercentage.toFixed(2);
     }
     Localizer.getString("score", ":").then(function(result) {
         $("#root > div.progress-section").after(UxUtils.getScoreContainer(result, scorePercentage));

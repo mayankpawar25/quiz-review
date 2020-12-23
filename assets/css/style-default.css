@@ -1037,7 +1037,7 @@ a#back-setting svg {
     display: block;
     padding: 0.25rem 0rem;
     margin-right: 1rem;
-    color: var(--app-black);
+    color: var(--app-gray-02);
 }
 
 
@@ -1386,11 +1386,11 @@ a#back-setting svg {
 }
 
 .nav-tabs {
-    border-bottom: 1px solid var(--app-gray-08);
+    border-bottom: 0.125rem solid var(--app-gray-09);
 }
 
 .nav-tabs .nav-item {
-    margin-bottom: 0px;
+    margin-bottom: 1px;
     font-size: var(--font-12);
 }
 
@@ -2231,7 +2231,7 @@ span.file-counter {
     top: 0;
     bottom: 72px;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: overlay;
 }
 
 .body-outer::before {
@@ -2781,9 +2781,9 @@ label h4 {
     .smallfit {
         max-height: 120px;
     }
-    .max-min-220 {
+    .photo-box {
         max-height: 120px;
-        /* min-height: 120px; */
+        min-height: 120px !important;
     }
     .photo-box span {
         bottom: 34px;
@@ -2795,7 +2795,7 @@ label h4 {
 
 @media screen and (max-width: 767px) {
     .container {
-        width: 536px;
+        width: 100%;
     }
 }
 
