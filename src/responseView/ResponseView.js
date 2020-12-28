@@ -208,7 +208,20 @@ $(document).on("click", "#next", function() {
                         if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find("input[name='" + (parseInt(currentPage) + 1) + "']").is(":checked") == false) {
                             $(".section-1-footer").find(".next-key").addClass("check-key");
                             $(".section-1-footer").find(".next-key").removeClass("next-key");
-                            $(".section-1-footer").find(".check-key").text(checkKey);
+                            $(".footer.section-1-footer").hide();
+                            if (isShowAnswerEveryQuestion != "Yes") {
+                                let timeid = setInterval(() => {
+                                    if($(".section-1-footer").find(".check-key").length > 0) {
+                                        console.log("test 71");
+                                        $(".section-1-footer").find(".check-key").text(nextKey);
+                                        $(".footer.section-1-footer").show();
+                                        clearInterval(timeid);
+                                    }
+                                }, Constants.setIntervalTimeOne());
+                            } else {
+                                $(".section-1-footer").find(".check-key").text(checkKey);
+                                $(".footer.section-1-footer").show();
+                            }
                         }
                     }
                     if ($("#previous").attr("data-prev-id") >= 0) {
@@ -256,7 +269,30 @@ $(document).on("click", "#next", function() {
                     if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find("input[name='" + (parseInt(currentPage) + 1) + "']").is(":checked") == false) {
                         $(".section-1-footer").find(".next-key").addClass("check-key");
                         $(".section-1-footer").find(".next-key").removeClass("next-key");
-                        $(".section-1-footer").find(".check-key").text(checkKey);
+                        $(".footer.section-1-footer").hide();
+                        if (isShowAnswerEveryQuestion != "Yes") {
+                            let checked = false;
+                            if($root.find("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find("input[type='radio']:checked").length > 0) {
+                                checked = true;
+                            }
+                            if($root.find("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find("input[type='checkbox']:checked").length > 0) {
+                                checked = true;
+                            }
+                            if(checked == false) {
+                                $("#next").attr("id", "check");
+                            }
+                            let timeid = setInterval(() => {
+                                if($(".section-1-footer").find(".check-key").length > 0) {
+                                    console.log("test 72");
+                                    $(".section-1-footer").find(".check-key").text(nextKey);
+                                    $(".footer.section-1-footer").show();
+                                    clearInterval(timeid);
+                                }
+                            }, Constants.setIntervalTimeOne());
+                        } else { 
+                            $(".section-1-footer").find(".check-key").text(checkKey);
+                            $(".footer.section-1-footer").show();
+                        }
                     }
                 }
 
@@ -278,12 +314,14 @@ $(document).on("click", "#next", function() {
  */
 $(document).on("change", "input[type='radio'], input[type='checkbox']", function() {
     $(this).each(function(ind, opt) {
-        if (isShowAnswerEveryQuestion == "Yes" && $("div.card-box:visible").find("label.custom-radio").hasClass("disabled") !== "disabled") {
+        if (isShowAnswerEveryQuestion == "Yes" && ($("div.card-box:visible").find("label.custom-radio").hasClass("disabled") !== "disabled" || $("div.card-box:visible").find("label.custom-check").hasClass("disabled") !== "disabled")) {
             if ($(opt).is(":checked")) {
+                console.log("test: 1");
                 $(".choice-required-err").remove();
                 $(".check-key").parents("button").attr("id", "next");
                 return false;
             } else {
+                console.log("test: 2");
                 $(".choice-required-err").remove();
                 $(".next-key").text(`${checkKey}`);
                 $(".next-key").parents("button").attr("id", "check");
@@ -291,8 +329,20 @@ $(document).on("change", "input[type='radio'], input[type='checkbox']", function
             }
         } else {
             if ($(opt).is(":checked")) {
+                console.log("test: 3");
                 $(".choice-required-err").remove();
-                $(".check-key").text(`${nextKey}`);
+                let currentPage = "";
+                if($("#next").attr("data-next-id") != undefined) {
+                    currentPage = $("#next").attr("data-next-id");
+                } else {
+                    currentPage = $("#check").attr("data-next-id");
+                }
+                console.log(`${parseInt(currentPage)} >= ${maxQuestionCount}`);
+                if (parseInt(currentPage) >= maxQuestionCount) {
+                    $(".check-key").text(`${doneKey}`);
+                } else {
+                    $(".check-key").text(`${nextKey}`);
+                }
                 $(".check-key").parents("button").attr("id", "next");
                 return false;
             }
@@ -327,7 +377,10 @@ $(document).on("click", "#previous", function() {
         getStringKeys();
 
         $root.find(".card-box-question").hide();
+        $(".footer.section-1-footer").hide();
         $root.find(".card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").show();
+        $(".footer.section-1-footer").show();
+
         $("#previous").attr("data-prev-id", (parseInt(currentPage) - 1));
         $("#next").attr("data-next-id", (parseInt(currentPage) + 1));
         $("#check").attr("data-next-id", (parseInt(currentPage) + 1));
@@ -478,7 +531,7 @@ async function getStringKeys() {
 
     Localizer.getString("done").then(function(result) {
         doneKey = result;
-        $(".next-key").text(doneKey);
+        // $(".next-key").text(doneKey);
     });
 
     Localizer.getString("back").then(function(result) {
@@ -749,7 +802,7 @@ function calculateScore() {
             scorePercentage = (score / total) * 100;
         }
         if (scorePercentage % 1 != 0) {
-            scorePercentage = scorePercentage.tofixed(2);
+            scorePercentage = scorePercentage.toFixed(2);
         }
 
         Localizer.getString("score", ":").then(function(result) {
@@ -764,6 +817,18 @@ function calculateScore() {
 function createQuestionView() {
     $(".footer.section-1-footer").remove();
     $root.after(paginationFooterSection);
+    $(".footer.section-1-footer").hide();
+    if (isShowAnswerEveryQuestion != "Yes") {
+        let timeid = setInterval(() => {
+            if($(".section-1-footer").find(".check-key").length > 0) {
+                $(".section-1-footer").find(".check-key").text(nextKey);
+                $(".footer.section-1-footer").show();
+                clearInterval(timeid);
+            }
+        }, Constants.setIntervalTimeOne());
+    } else {
+        $(".footer.section-1-footer").show();
+    }
     if (currentPage > 0) {
         if ($("#previous").attr("data-prev-id") >= 0) {
             $("#previous").removeClass("disabled");
@@ -839,14 +904,6 @@ function createQuestionView() {
             });
         }
     });
-
-    if (isShowAnswerEveryQuestion != "Yes") {
-        setTimeout(() => {
-            console.log('hello:')
-            $(".check-key").text(nextKey);
-        }, 100);
-    }
-        console.log('hello123:')
 }
 
 /**
@@ -886,15 +943,29 @@ function getCheckboxButton(text, name, id, attachmentURL) {
  * @description Method handles button text
  */
 function nextButtonName() {
-    let currentPage = $("#next").attr("data-next-id");
-    if (parseInt(currentPage) >= maxQuestionCount) {
-        setTimeout(function() {
-            $(".section-1-footer").find(".next-key").text(`${doneKey}`);
-        }, 100);
+    let currentPage = "";
+    if($("#next").attr("data-next-id") != undefined) {
+        currentPage = $("#next").attr("data-next-id");
     } else {
-        setTimeout(function() {
-            $(".section-1-footer").find(".next-key").text(`${nextKey}`);
-        }, 100);
+        currentPage = $("#check").attr("data-next-id");
+    }
+    console.log(`${parseInt(currentPage)} >= ${maxQuestionCount}`);
+    if (parseInt(currentPage) >= maxQuestionCount) {
+        let timeid = setInterval(() => {
+            if($(".section-1-footer").find(".next-key").length > 0) {
+                console.log("test 8");
+                $(".section-1-footer").find(".next-key").text(`${doneKey}`);
+                clearInterval(timeid);
+            }
+        }, Constants.setIntervalTimeOne());
+    } else {
+        let timeid = setInterval(() => {
+            if($(".section-1-footer").find(".next-key").length > 0) {
+                console.log("test 9");
+                $(".section-1-footer").find(".next-key").text(`${nextKey}`);
+                clearInterval(timeid);
+            }
+        }, Constants.setIntervalTimeOne());
     }
 }
 
@@ -934,7 +1005,7 @@ function summarySection() {
             });
             let scoreIs = (score / correctAnswer.length) * 100;
             if (scoreIs % 1 != 0) {
-                scoreIs = scoreIs.tofixed(2);
+                scoreIs = scoreIs.toFixed(2);
             }
             Localizer.getString("score", ":").then(function(result) {
                 $($mb16Div2).append(UxUtils.getScoreResponseView(result, scoreIs));
@@ -984,7 +1055,7 @@ function summarySection() {
             });
             let scoreIs = (score / correctAnswer.length) * 100;
             if (scoreIs % 1 != 0) {
-                scoreIs = scoreIs.tofixed(2);
+                scoreIs = scoreIs.toFixed(2);
             }
             Localizer.getString("score", ":").then(function(result) {
                 $($mb16Div2).append(UxUtils.getScoreResponseView(result, scoreIs));

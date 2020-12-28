@@ -6,6 +6,7 @@ import * as html2canvas from "html2canvas";
 import { UxUtils } from "./../common/utils/UxUtils";
 import { Utils } from "./../common/utils/Utils";
 import { KeyboardAccess } from "./../common/utils/KeyboardUtils";
+import "../../assets/js/bootstrap-localefile";
 
 let actionContext = null;
 let actionInstance = null;
@@ -25,6 +26,7 @@ let root = document.getElementById("root");
 let theme = "";
 let isCreator = false;
 let context = "";
+let memberCount = 0;
 
 let dueByKey = "";
 let expiredOnKey = "";
@@ -213,26 +215,26 @@ $(document).on({
         $(".delete-quiz").remove();
 
         changeDateSection();
-
-        let ddtt = ((actionInstance.customProperties[1].value).split("T"));
-        let dt = ddtt[0].split("-");
-        let weekDateFormat = new Date(dt[1]).toLocaleString("default", { month: "short" }) + " " + dt[2] + ", " + dt[0];
-        let timeData = new Date(actionInstance.expiryTime);
-        let hourData = timeData.getHours();
-        let minuteData = timeData.getMinutes();
-        let currentTime = hourData + ":" + minuteData;
-        $(".form_date input").val(weekDateFormat);
-        $(".form_date").attr({ "data-date": weekDateFormat });
+        let currentTime = new Date(actionInstance.expiryTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).toLowerCase();
+        let setDate = new Date(actionInstance.expiryTime);
+        $(".form_date").attr({ "data-date": setDate });
+        let langObj = Utils.getLocaleForCalendar(context.locale);
+        let lang = langObj.lang;
         $(".form_time").datetimepicker({
-            language: "en",
-            weekStart: 1,
-            todayBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
+            format: "HH:ii",
+            pickDate: "false",
+            autoclose: true,
             startView: 1,
+            maxView: 1,
+            useCurrent: false,
+            autoclose: 1,
             minView: 0,
             maxView: 1,
-            forceParse: 0
+            forceParse: 0,
+            todayHighlight: 1,
+            todayBtn: 1,
+            meridiem: '',
+            language: lang
         });
 
         $(".form_time input").val(currentTime);
@@ -240,13 +242,14 @@ $(document).on({
         let dateInput = $("input[name='expiry_date']");
         let container = $(".bootstrap-iso form").length > 0 ? $(".bootstrap-iso form").parent() : "body";
         let options = {
-            format: "M dd, yyyy",
             container: container,
+            language: lang,
             todayHighlight: true,
             autoclose: true,
             orientation: "top"
         };
         dateInput.datepicker(options);
+        dateInput.datepicker("setDate", setDate);
         return false;
     }
 }, ".change-due-by-event");
@@ -327,10 +330,12 @@ $(document).on("change", "input[name='expiry_time'], input[name='expiry_date']",
 });
 
 $(document).on("click", "#change-quiz-date", function() {
-    let quizExpireDate = $("input[name='expiry_date']").val();
-    let quizExpireTime = $("input[name='expiry_time']").val();
-    actionInstance.expiryTime = new Date(quizExpireDate + " " + quizExpireTime).getTime();
-    actionInstance.customProperties[1].value = new Date(quizExpireDate + " " + quizExpireTime);
+    let getExpiryDate = $("input[name='expiry_date']").val();
+    let getExpiryDateData = getExpiryDate.toString().split(" ");
+    getExpiryDateData[5] = $("input[name='expiry_time']").val() + ":00";
+    let end = new Date(getExpiryDateData.join(" "));
+    actionInstance.expiryTime = new Date(end).getTime();
+    actionInstance.customProperties[1].value = end;
     ActionHelper.updateActionInstance(actionInstance);
 });
 
@@ -553,7 +558,7 @@ async function createBody() {
 
     if (isCreator == true) {
         let $pcard = $(`<div class="progress-section"></div>`);
-        let memberCount = response.memberCount;
+        memberCount = response.memberCount;
         let participationPercentage = 0;
 
         participationPercentage = Math.round(
@@ -590,8 +595,8 @@ async function createBody() {
                         let matches = name.match(/\b(\w)/g); // [D,P,R]
                         let initials = matches.join("").substring(0, 2); // DPR
                         Localizer.getString("you_yet_respond").then(function(result) {
-                            $("div.progress-section").after(UxUtils.getInitials(nonresponders.value2, initials, result));
-                            $("div.progress-section").after(UxUtils.breakline());
+                            $("div#root div:first").append(UxUtils.getInitials(nonresponders.value2, initials, result));
+                            $("div#root div:first").append(UxUtils.breakline());
                             $("div#" + nonresponders.value2).after(UxUtils.breakline());
                         });
                     }
@@ -615,8 +620,8 @@ async function createBody() {
                     let matches = name.match(/\b(\w)/g); // [D,P,R]
                     let initials = matches.join("").substring(0, 2); // DPR
                     Localizer.getString("you_yet_respond").then(function(result) {
-                        $("div.progress-section").after(UxUtils.getInitials(nonresponders.value2, initials, result));
-                        $("div.progress-section").after(UxUtils.breakline());
+                        $("div#root div:first").append(UxUtils.getInitials(nonresponders.value2, initials, result));
+                        $("div#root div:first").apend(UxUtils.breakline());
                         $("div#" + nonresponders.value2).after(UxUtils.breakline());
                     });
                 }
@@ -650,15 +655,15 @@ function head() {
     $card.append($descriptionSec);
     $card.append($dateSec);
     $("#root").append($card);
-    if (actionInstance.customProperties[4].value != null) {
-        let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
+    if (actionInstance.dataTables[0].attachments.length > 0 ) {
+        let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.dataTables[0].attachments[0].id);
         ActionHelper.executeApi(req).then(function(response) {
-                $card.prepend(UxUtils.getQuizBannerImageWithLoader(response.attachmentInfo.downloadUrl));
-                Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
-            })
-            .catch(function(error) {
-                console.error("AttachmentAction - Error7: " + JSON.stringify(error));
-            });
+            $card.prepend(UxUtils.getQuizBannerImageWithLoader(response.attachmentInfo.downloadUrl));
+            Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
+        })
+        .catch(function(error) {
+            console.error("AttachmentAction - Error7: " + JSON.stringify(error));
+        });
     }
 }
 
@@ -682,17 +687,15 @@ function headCreator() {
     $card.append($descriptionSec);
     $card.append($dateSec);
     $("#root").append($card);
-    console.log("actionInstance.customProperties");
-    console.log(actionInstance.customProperties);
-    if (actionInstance.customProperties[4].value != null) {
-        let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.customProperties[4].value);
+    if (actionInstance.dataTables[0].attachments.length > 0) {
+        let req = ActionHelper.getAttachmentInfo(actionId, actionInstance.dataTables[0].attachments[0].id);
         ActionHelper.executeApi(req).then(function(response) {
-                $card.prepend(UxUtils.getQuizBannerImageWithLoader(response.attachmentInfo.downloadUrl));
-                Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
-            })
-            .catch(function(error) {
-                console.error("AttachmentAction - Error7: " + JSON.stringify(error));
-            });
+            $card.prepend(UxUtils.getQuizBannerImageWithLoader(response.attachmentInfo.downloadUrl));
+            Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, ".quiz-template-image");
+        })
+        .catch(function(error) {
+            console.error("AttachmentAction - Error7: " + JSON.stringify(error));
+        });
     }
 }
 
@@ -742,22 +745,14 @@ async function getUserprofile() {
  */
 function getResponders() {
     $("table#responder-table tbody").html("");
-
     for (let itr = 0; itr < responderDate.length; itr++) {
         let id = responderDate[itr].value2;
         let name = "";
-        if (responderDate[itr].value2 == myUserId) {
-            name = youKey;
-        } else {
-            name = responderDate[itr].label;
-        }
+        name = responderDate[itr].label;
         let date = responderDate[itr].value;
-
         let matches = responderDate[itr].label.match(/\b(\w)/g); // [D,P,R]
         let initials = matches.join("").substring(0, 2); // DPR
-
         let score = scoreCalculate(responderDate[itr].value2);
-
         $(".tabs-content:first")
             .find("table#responder-table tbody")
             .append(UxUtils.getResponderScoreWithDate(responderDate[itr].value2, initials, name, date, scoreKey, score));
@@ -829,11 +824,7 @@ function getNonresponders() {
     for (let itr = 0; itr < actionNonResponders.length; itr++) {
         let id = actionNonResponders[itr].value2;
         let name = "";
-        if (actionNonResponders[itr].value2 == myUserId) {
-            name = "You";
-        } else {
-            name = actionNonResponders[itr].label;
-        }
+        name = actionNonResponders[itr].label;
         let matches = actionNonResponders[itr].label.match(/\b(\w)/g); // [D,P,R]
         let initials = matches.join("").substring(0, 2); // DPR
 
@@ -852,9 +843,7 @@ function getNonresponders() {
 function createResponderQuestionView(userId, responder = "") {
     total = 0;
     score = 0;
-
     $("div#root > div.question-content").html("");
-
     if (responder != "") {
         let name = responder.label;
         let matches = name.match(/\b(\w)/g); // [D,P,R]
@@ -869,7 +858,6 @@ function createResponderQuestionView(userId, responder = "") {
 
     actionInstance.dataTables.forEach((dataTable) => {
         total = Object.keys(dataTable.dataColumns).length;
-
         dataTable.dataColumns.forEach((question, ind) => {
             answerIs = "";
             let $cardDiv = $(`<div class="card-box card-bg card-border alert-success mb--8"></div>`);
@@ -974,7 +962,7 @@ function createResponderQuestionView(userId, responder = "") {
                     optAnsArr[optind] = "incorrect";
                 }
             });
-            $cardDiv.find("#status-" + question.name).html(`<span class="${answerIs == "Correct" ? "text-success" : "text-danger"}">${answerIs == "Correct" ? correctKey : incorrectKey}</span>`);
+            $cardDiv.find("#status-" + question.name).html(`<span class="${answerIs.toLowerCase() == "correct" ? "text-success" : "text-danger"}">${answerIs.toLowerCase() == "correct" ? correctKey : incorrectKey}</span>`);
             if (optAnsArr.includes("incorrect") == false) {
                 score++;
             }
@@ -1325,9 +1313,17 @@ function createQuestionView(userId) {
                 } else if (answerIs.toLowerCase() == "incorrect") {
                     optAnsArr[optind] = "incorrect";
                 }
-                Localizer.getString(answerIs.toLowerCase()).then(function(result){
-                    $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold ${answerIs == "Correct" ? "text-success" : "text-danger"}">${result}</span>`);
-                });
+                if ($questionDiv.find("#status-" + question.name));
+                if (answerIs.toLowerCase() == "correct"){
+                    Localizer.getString(answerIs.toLowerCase()).then(function (result) {
+                        $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold text-success">${result}</span>`);
+                    });
+                }else{
+                    Localizer.getString(answerIs.toLowerCase()).then(function (result) {
+                        $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold text-danger">${result}</span>`);
+                    });
+
+                }
             });
 
             if (optAnsArr.includes("incorrect") != true) {
@@ -1343,7 +1339,9 @@ function createQuestionView(userId) {
         scorePercentage = scorePercentage.toFixed(2);
     }
     Localizer.getString("score", ":").then(function(result) {
-        $("#root > div.progress-section").after(UxUtils.getScoreContainer(result, scorePercentage));
+        $("#root div:first").after(UxUtils.breakline());
+        $("#root div:first").after(UxUtils.getScoreContainer(result, scorePercentage));
+        $("#root div:first").after(UxUtils.breakline());
     });
 }
 
@@ -1380,8 +1378,6 @@ function getRadioOptions(text, name, id, userResponse, correctAnswer, attachment
         let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
             console.info("Attachment - Response: " + JSON.stringify(response));
-            console.log("id: ");
-            console.log(id);
             $oDiv.find("label.custom-radio").prepend(UxUtils.getOptionImage(response.attachmentInfo.downloadUrl));
             Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} img.opt-image`);
         })
@@ -1425,8 +1421,6 @@ function getCheckOptions(text, name, id, userResponse, correctAnswer, attachment
         let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);
         ActionHelper.executeApi(req).then(function(response) {
             console.info("Attachment - Response: " + JSON.stringify(response));
-            console.log("id: ");
-            console.log(id);
             $oDiv.find("label.custom-check").prepend(UxUtils.getOptionImage(response.attachmentInfo.downloadUrl));
             Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, `#${id} img.opt-image`);
         })
@@ -1574,6 +1568,11 @@ function create_responder_nonresponders() {
         // Add Non-reponders
         getNonresponders();
     }
+    Localizer.getString("xofy_people_responded", actionSummary.rowCount, memberCount).then(function (result) {
+        let xofy = result;
+        $(".card-box.card-blank").before(UxUtils.getTotalPeopleRespondedStringOnResNonRes(xofy));
+        $(".card-box.card-blank").before(UxUtils.clearFix());
+    });
 }
 
 /**

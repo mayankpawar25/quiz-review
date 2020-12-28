@@ -803,8 +803,8 @@ export class UxUtils {
                 <div class="container">
                     <div class="row">
                         <div class="col-9 d-table">
-                            <a class="cursor-pointer back d-table-cell" id="hide2">
-                                <span tabindex="0" role="button">
+                            <a>
+                                <span tabindex="0" role="button" class="cursor-pointer back d-table-cell" id="hide2">
                                     <svg role="presentation" focusable="false" viewBox="8 8 16 16" class="back-btn">
                                         <path class="ui-icon__outline gr" d="M16.38 20.85l7-7a.485.485 0 0 0 0-.7.485.485 0 0 0-.7 0l-6.65 6.64-6.65-6.64a.485.485 0 0 0-.7 0 .485.485 0 0 0 0 .7l7 7c.1.1.21.15.35.15.14 0 .25-.05.35-.15z">
                                         </path>
@@ -1243,6 +1243,18 @@ export class UxUtils {
         return `<p class="date-color cursor-pointer mb--24">
             <span id="show-responders" class="under-line" tabindex="0" role="button">${xofy}</span>
         </p>`;
+    }
+
+    /**
+     * @Method contains total people responded area in summary view
+     * @param xofy string total number of responders out of total members in the group
+     */
+    static getTotalPeopleRespondedStringOnResNonRes(xofy) {
+        return `<div class="row">
+            <div class="col-12">
+                <p class="font-12 semi-bold mb--4">${xofy}</p>
+            </div>
+        </div>`;
     }
 
     /**

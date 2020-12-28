@@ -1036,7 +1036,8 @@ a#back-setting svg {
 .nav-link {
     display: block;
     padding: 0.25rem 0rem;
-    margin-right: 1rem;
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
     color: var(--app-gray-02);
 }
 
@@ -1051,7 +1052,7 @@ a#back-setting svg {
 
 .table td,
 .table th {
-    font-size: var(--font-14);
+    font-size: var(--font-12);
 }
 
 .btn {
@@ -1323,7 +1324,7 @@ a#back-setting svg {
     color: var(--app-gray-02);
     transform: rotate(90deg);
     margin-top: -2px;
-    margin-right: 12px;
+    margin-right: 16px;
 }
 
 .back-key {
@@ -1366,6 +1367,7 @@ a#back-setting svg {
 .avtar-txt {
     line-height: 2.25rem;
     color: var(--app-black);
+    font-size: var(--font-regular);
 }
 
 .table td {
@@ -1379,6 +1381,13 @@ a#back-setting svg {
     height: .5rem;
     transform: rotate(-90deg);
     margin-top: -3px;
+    fill: var(--app-gray-10);
+    margin-left: 0.625rem;
+}
+
+td.text-right.date-text p {
+    padding-right: 20px !important;
+    font-weight: var(--font-weight-400);
 }
 
 .date-text {
@@ -1386,11 +1395,11 @@ a#back-setting svg {
 }
 
 .nav-tabs {
-    border-bottom: 0.125rem solid var(--app-gray-09);
+    border-bottom: 0.125rem solid var(--app-gray-08);
 }
 
 .nav-tabs .nav-item {
-    margin-bottom: 1px;
+    margin-bottom: 0px;
     font-size: var(--font-12);
 }
 
