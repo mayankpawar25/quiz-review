@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-// import "./bootstrap";
 import { Localizer, ActionHelper } from "./../common/ActionSdkHelper";
 import { UxUtils } from "../common/utils/UxUtils";
 import { Constants } from "../common/utils/Constants";
@@ -776,9 +775,9 @@ function submitForm() {
             .then(function(response) {
                 createAction(response.context.actionPackageId);
             })
-            .catch(function(error) {
+            /* .catch(function(error) {
                 console.error("GetContext - Error1: " + JSON.stringify(error));
-            });
+            }); */
     } else {
         $(".loader-overlay").hide();
         UxUtils.setText(".required-key", requiredKey);
@@ -918,14 +917,15 @@ function getCorrectAnswer() {
 function createAction(actionPackageId) {
     let quizTitle = $("#quiz-title").val();
     let quizDescription = $("#quiz-description").val();
-    let quizExpireDate = $("input[name='expiry_date']").val();
+    let quizExpireDate = $("input[name='expiry_date']").datepicker("getDate");
     let quizExpireTime = $("#setting").find("div.form_time").find("input").val();
+    let getExpiryDateData = quizExpireDate.toString().split(" ");
+    getExpiryDateData[4] = quizExpireTime + ":00";
+    let expiryDate = new Date(getExpiryDateData.join(" "));
     let quizAttachementSet = $("#quiz-attachment-set").length > 0 ? $("#quiz-attachment-set").val() : "";
     let quizAttachementId = (quizAttachementSet != "") ? JSON.parse(quizAttachementSet).id : "";
     let resultVisible = $("input[name='visible_to']:checked").val();
-    let showCorrectAnswer = $("#show-correct-answer").is(":checked") ?
-        "Yes" :
-        "No";
+    let showCorrectAnswer = $("#show-correct-answer").is(":checked") ? "Yes" : "No";
     let questionsSet = getQuestionSet();
     let getcorrectanswers = getCorrectAnswer();
 
@@ -943,7 +943,7 @@ function createAction(actionPackageId) {
         name: "Quiz Expire Date Time",
         canAddMore: false,
         type: "DateTime",
-        value: new Date(quizExpireDate + " " + quizExpireTime),
+        value: expiryDate,
     }, {
         name: "Result Visible",
         canAddMore: false,
@@ -968,7 +968,7 @@ function createAction(actionPackageId) {
         version: 1,
         displayName: quizTitle,
         description: quizDescription,
-        expiryTime: new Date(quizExpireDate + " " + quizExpireTime).getTime(),
+        expiryTime: new Date(expiryDate).getTime(),
         customProperties: properties,
         dataTables: [{
             name: "QuizDataSet",
@@ -1237,7 +1237,7 @@ async function loadCreationPage(request) {
                         lastSession.action.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
                         if (lastSession.action.dataTables[0].attachments[0].url != null) {
                             UxUtils.loadQuizTemplateImage(response.attachmentInfo.downloadUrl, lastSession.action.dataTables[0].attachments);
-                            let tid = setInterval(() => {
+                            let tid = setInterval(function() {
                                 if ($("#quiz-img-preview, #quiz-title-image").attr("src").length > 0) {
                                     Utils.getClassFromDimension(response.attachmentInfo.downloadUrl, "#quiz-img-preview, #quiz-title-image");
                                     UxUtils.removeImageLoaderCreationView("#quiz-img-preview");
@@ -1334,6 +1334,7 @@ async function loadCreationPage(request) {
         setDate = new Date(todayDate.setDate(weekAgoDate));
         currentTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false }).toLowerCase();
     }
+    console.log(setDate, "setDate: ");
     UxUtils.setAppend("form", $("#setting").clone());
     $("#add-questions").click();
     $(".form_date").attr({ "data-date": setDate });
@@ -1366,9 +1367,10 @@ async function loadCreationPage(request) {
     };
     dateInput.datepicker(options);
     dateInput.datepicker("setDate", setDate);
+
     if (lastSession != null) {
         $("#next").addClass("disabled");
-        let tid = setInterval(() => {
+        let tid = setInterval(function() {
             if (imageSuccessCounter == imageCounter) {
                 $("#next").removeClass("disabled");
                 let option = $("div#option-section .option-div").clone();

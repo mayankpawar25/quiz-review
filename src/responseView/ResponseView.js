@@ -207,7 +207,6 @@ $(document).on("click", "#next", function() {
                             if (isShowAnswerEveryQuestion != "Yes") {
                                 let timeids = setInterval(function() {
                                     if($(".section-1-footer").find(".check-key").length > 0) {
-                                        console.log("test 71");
                                         $(".section-1-footer").find(".check-key").text(nextKey);
                                         $(".footer.section-1-footer").show();
                                         clearInterval(timeids);
@@ -276,7 +275,6 @@ $(document).on("click", "#next", function() {
                             }
                             let timeid = setInterval(function() {
                                 if($(".section-1-footer").find(".check-key").length > 0) {
-                                    console.log("test 72");
                                     $(".section-1-footer").find(".check-key").text(nextKey);
                                     $(".footer.section-1-footer").show();
                                     clearInterval(timeid);
@@ -940,7 +938,7 @@ function nextButtonName() {
     }
     console.log(`${parseInt(currentPage)} >= ${maxQuestionCount}`);
     if (parseInt(currentPage) >= maxQuestionCount) {
-        let timeid = setInterval(() => {
+        let timeid = setInterval(function() {
             if($(".section-1-footer").find(".next-key").length > 0) {
                 console.log("test 8");
                 $(".section-1-footer").find(".next-key").text(`${doneKey}`);
@@ -948,7 +946,7 @@ function nextButtonName() {
             }
         }, Constants.setIntervalTimeOne());
     } else {
-        let timeid = setInterval(() => {
+        let timeid = setInterval(function() {
             if($(".section-1-footer").find(".next-key").length > 0) {
                 console.log("test 9");
                 $(".section-1-footer").find(".next-key").text(`${nextKey}`);

@@ -333,9 +333,9 @@ $(document).on("change", "input[name='expiry_time'], input[name='expiry_date']",
 });
 
 $(document).on("click", "#change-quiz-date", function() {
-    let getExpiryDate = $("input[name='expiry_date']").val();
+    let getExpiryDate = $("input[name='expiry_date']").datepicker("getDate");
     let getExpiryDateData = getExpiryDate.toString().split(" ");
-    getExpiryDateData[5] = $("input[name='expiry_time']").val() + ":00";
+    getExpiryDateData[4] = $("input[name='expiry_time']").val() + ":00";
     let end = new Date(getExpiryDateData.join(" "));
     actionInstance.expiryTime = new Date(end).getTime();
     actionInstance.customProperties[1].value = end;
