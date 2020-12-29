@@ -289,7 +289,7 @@ $(document).on("click", "#next", function() {
                                     clearInterval(timeid);
                                 }
                             }, Constants.setIntervalTimeOne());
-                        } else { 
+                        } else {
                             $(".section-1-footer").find(".check-key").text(checkKey);
                             $(".footer.section-1-footer").show();
                         }

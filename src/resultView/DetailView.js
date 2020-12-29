@@ -215,7 +215,7 @@ $(document).on({
         $(".delete-quiz").remove();
 
         changeDateSection();
-        let currentTime = new Date(actionInstance.expiryTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }).toLowerCase();
+        let currentTime = new Date(actionInstance.expiryTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false }).toLowerCase();
         let setDate = new Date(actionInstance.expiryTime);
         $(".form_date").attr({ "data-date": setDate });
         let langObj = Utils.getLocaleForCalendar(context.locale);
@@ -233,7 +233,7 @@ $(document).on({
             forceParse: 0,
             todayHighlight: 1,
             todayBtn: 1,
-            meridiem: '',
+            meridiem: "",
             language: lang
         });
 
@@ -1313,16 +1313,14 @@ function createQuestionView(userId) {
                 } else if (answerIs.toLowerCase() == "incorrect") {
                     optAnsArr[optind] = "incorrect";
                 }
-                if ($questionDiv.find("#status-" + question.name));
-                if (answerIs.toLowerCase() == "correct"){
+                if (answerIs.toLowerCase() == "correct") {
                     Localizer.getString(answerIs.toLowerCase()).then(function (result) {
                         $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold text-success">${result}</span>`);
                     });
-                }else{
+                } else {
                     Localizer.getString(answerIs.toLowerCase()).then(function (result) {
                         $questionDiv.find("#status-" + question.name).html(`<span class="semi-bold text-danger">${result}</span>`);
                     });
-
                 }
             });
 
@@ -1579,19 +1577,19 @@ function create_responder_nonresponders() {
  * @description Method contains section to date change of quiz
  */
 function changeDateSection() {
-    $("#root .d-table:first").parents('div.container').prepend(UxUtils.getChangeDateSection(changeDueDateKey, cancelKey, changeKey));
+    $("#root .d-table:first").parents("div.container").prepend(UxUtils.getChangeDateSection(changeDueDateKey, cancelKey, changeKey));
 }
 
 /**
  * @description Method contains section to close quiz
  */
 function closeQuizSection() {
-    $("#root .d-table:first").parents('div.container').prepend(UxUtils.getCloseQuizSection(closeQuizKey, closeQuizConfirmKey, cancelKey, confirmKey));
+    $("#root .d-table:first").parents("div.container").prepend(UxUtils.getCloseQuizSection(closeQuizKey, closeQuizConfirmKey, cancelKey, confirmKey));
 }
 
 /**
  * @description Method contains section to delete quiz
  */
 function deleteQuizSection() {
-    $("#root .d-table:first").parents('div.container').prepend(UxUtils.deleteQuizSection(deleteQuizKey, deleteQuizConfirmKey, cancelKey, confirmKey));
+    $("#root .d-table:first").parents("div.container").prepend(UxUtils.deleteQuizSection(deleteQuizKey, deleteQuizConfirmKey, cancelKey, confirmKey));
 }

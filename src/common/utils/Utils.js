@@ -67,7 +67,7 @@ export class Utils {
      * @param daysKey - days Locale
      * @param dayKey - day Locale
      */
-    static calcDateDiff(start, end, weekKey, hoursKey, hourKey, minutesKey, minuteKey, daysKey){
+    static calcDateDiff(start, end, weekKey, hoursKey, hourKey, minutesKey, minuteKey, daysKey) {
         let days = (end - start) / (1000 * 60 * 60 * 24);
         let hourText = hourKey;
         let minuteText = minuteKey;
@@ -169,7 +169,7 @@ export class Utils {
         let lang = "gb";
         switch (language.toLowerCase()) {
             case "en-in":
-                lang = "en-GB"; 
+                lang = "en-GB";
                 break;
             case "en-gb":
                 lang = "en-GB";
