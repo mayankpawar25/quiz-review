@@ -72,7 +72,7 @@ $(document).on({
     click: function(e) {
         e.preventDefault();
         let questionCounter;
-        $(this).parents("div.container").before(quesContainer.clone());
+        UxUtils.setBefore($(this).parents("div.container"), quesContainer.clone());
 
         $(".section-2").find(".question-required-err").remove();
         $(".section-2").find(".confirm-box").remove();
@@ -85,39 +85,27 @@ $(document).on({
             $(el).find("div.option-div > div.input-group > input[type='text']")
                 .each(function(index, elem) {
                     let counter = index + 1;
-                    $(elem).attr({
-                        placeholder: optionKey,
-                    });
+                    $(elem).attr({placeholder: optionKey});
                     $(elem).attr({ id: "option" + counter });
-                    $(elem)
-                        .parents(".option-div")
-                        .find("input[type='file']")
-                        .attr({ id: "option-image-" + counter });
-                    $(elem)
-                        .parents(".option-div")
-                        .find("input.form-check-input")
-                        .attr({ id: "check" + counter });
-
+                    $(elem).parents(".option-div").find("input[type='file']").attr({ id: "option-image-" + counter });
+                    $(elem).parents(".option-div").find("input.form-check-input").attr({ id: "check" + counter });
                 });
         });
 
         Localizer.getString("enterTheQuestion").then(function(result) {
-            $("div.container").find("#question-title").attr({ "placeholder": result });
+            $("div.container").find("#question-title").attr({"placeholder": result});
         });
 
         $("div.question-container:visible").each(function(index, elem) {
             questionCounter = index + 1;
-            $(elem)
-                .find("span.question-number")
-                .html(questionKey + "&nbsp;#&nbsp;" + questionCounter);
+            UxUtils.setHtml($(elem).find("span.question-number"), questionKey + "&nbsp;#&nbsp;" + questionCounter);
             $(elem).find("input[name='question_image']").attr({ id: "question-image-" + questionCounter });
             $(elem).attr({ id: "question" + questionCounter });
         });
         questionCount++;
-        $(".check-me").text(checkMeKey);
+        UxUtils.setText(".check-me", checkMeKey);
         $(".check-me-title").attr({ "title": checkMeKey });
-        $(".add-options").html(`
-        ${Constants.getPlusIcon()} ${addMoreOptionsKey}`);
+        UxUtils.setHtml(".add-options", `${Constants.getPlusIcon()} ${addMoreOptionsKey}`);
 
         /* Focus to last question input */
         $("#question" + questionCounter + " #question-title").focus();
@@ -145,25 +133,12 @@ $(document).on({
     click: function(e) {
         let element = $(this);
         $(this).parents(".question-container").find(".confirm-box").remove();
-        $(this).parents(".question-container").find(".question-required-err").remove();
+        $(this).parents(".question-container")
+            .find(".question-required-err").remove();
 
         if ($("div.question-container:visible").length > 1) {
             $(this).parents(".question-container").find(".add-options").hide();
-            $(this).parents(".question-container").find(".form-group-opt").after(`
-            <div class="confirm-box">
-                <div class="clearfix"></div>
-                <div class="d-flex-alert  mb--8">
-                    <div class="pr--8">
-                        <label class="confirm-box text-danger"> ${sureDeleteThisKey} </label>
-                    </div>
-                    <div class="pl--8 text-right">
-                        <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">${cancelKey}</button>
-                        <button type="button" class="btn btn-primary btn-sm" id="delete-question">${okKey}</button>
-                    </div>
-                </div>
-            </div>
-        `);
-
+            UxUtils.setAfter($(this).parents(".question-container").find(".form-group-opt"), UxUtils.deleteOption(sureDeleteThisKey, cancelKey, okKey));
             $([document.documentElement, document.body]).animate({
                 scrollTop: $(this).parents(".question-container").find(".confirm-box").offset().top - Constants.getWidthOffsets()
             }, Constants.setIntervalTimeThousand());
@@ -175,19 +150,16 @@ $(document).on({
                 let questionCounter;
                 $("div.question-container:visible").each(function(index, elem) {
                     questionCounter = index + 1;
-                    $(elem).find("span.question-number").html(questionKey + "&nbsp;#&nbsp;" + questionCounter);
+                    UxUtils.setHtml($(elem).find("span.question-number"), questionKey + "&nbsp;#&nbsp;" + questionCounter);
                     $(elem).find("input[name='question_image']").attr({ id: "question-image-" + questionCounter });
                     $(elem).attr({ id: "question" + questionCounter });
                 });
             });
         } else {
-            $(this).parents("div.question-container")
-                .find("div.d-flex-ques")
-                .after(`<label class="text-danger d-block question-required-err"><font class="mb--4 d-block">${forQuizAtleastOneQuestionKey}</font></label>`);
-
+            UxUtils.setAfter($(this).parents("div.question-container").find("div.d-flex-ques"), UxUtils.getQuizAtleastOneError(forQuizAtleastOneQuestionKey));
             $([document.documentElement, document.body]).animate({
                 scrollTop: $(".text-danger.d-block:first").offset().top - Constants.getWidthOffsets()
-            }, );
+            }, Constants.setIntervalTimeThousand());
         }
     }
 }, ".remove-question");
@@ -205,16 +177,13 @@ $(document).on({
         e.preventDefault();
         if ($(this).parents("div#options").find("div.option-div input[type='text'][id^=option]").length >= Constants.getOptionLimit()) {
             $(this).parents(".question-container").find(".add-options").hide();
-            $(this).parents(".question-container").find(".add-options").after(`
-                <div class="max-option-err-box"> ${maxTenOptionKey} </div>
-            `);
-
+            UxUtils.setAfter($(this).parents(".question-container"), UxUtils.getMaxTenOptionError(maxTenOptionKey));
             $([document.documentElement, document.body]).animate({
                 scrollTop: $(this).parents(".question-container").find(".max-option-err-box").offset().top - Constants.getWidthOffsets()
             }, Constants.setIntervalTimeThousand());
             return false;
         }
-        $(this).parents(".container").find("div.option-div:last").after(opt.clone());
+        UxUtils.setAfter($(this).parents(".container").find("div.option-div:last"), opt.clone());
 
         let selector = $(this).parents("div.container");
         let counter = 0;
@@ -222,9 +191,7 @@ $(document).on({
             .find("div.option-div div.input-group input[type='text']")
             .each(function(index, elem) {
                 counter = index + 1;
-                $(elem).attr({
-                    placeholder: optionKey,
-                });
+                $(elem).attr({placeholder: optionKey});
                 $(elem).attr({ id: "option" + counter });
                 $(elem)
                     .parents(".option-div")
@@ -235,7 +202,7 @@ $(document).on({
                     .find("input.form-check-input")
                     .attr({ id: "check" + counter });
             });
-        $(".check-me").text(checkMeKey);
+        UxUtils.setText(".check-me", checkMeKey);
         $(".check-me-title").attr({ "title": checkMeKey });
         $(this).parents(".container").find("div.option-div:last").find("input#option" + counter).focus();
         return false;
@@ -261,9 +228,7 @@ $(document).on("click", ".remove-option", function(eve) {
             .find("div.option-div div.input-group input[type='text']")
             .each(function(index, elem) {
                 let counter = index + 1;
-                $(elem).attr({
-                    placeholder: optionKey,
-                });
+                $(elem).attr({placeholder: optionKey});
                 $(elem).attr({ id: "option" + counter });
                 $(elem)
                     .parents(".option-div")
@@ -276,16 +241,7 @@ $(document).on("click", ".remove-option", function(eve) {
             });
 
     } else {
-        $(this).parents("div.question-container")
-            .find("div.form-group-opt:first")
-            .after(`
-                <div class="clearfix"></div>
-                <label class="label-alert d-block option-required-err text-left pull-left mt--8 mb--16">
-                    <font>${atLeastTwoOptionsRequiredKey}</font>
-                </label>
-                <div class="clearfix"></div>
-            `);
-
+        UxUtils.setAfter($(this).parents("div.question-container").find("div.form-group-opt:first"), UxUtils.getSelectCorrectOptionError(atLeastTwoOptionsRequiredKey));
         $([document.documentElement, document.body]).animate({
             scrollTop: $(".label-alert.d-block:first").offset().top
         }, Constants.setIntervalTimeThousand());
@@ -350,7 +306,7 @@ $(document).on("click", "#next", function() {
             if (element.attr("id") == "quiz-title") {
                 isError = true;
                 $("#quiz-title").addClass("danger");
-                $("#quiz-title").before(`<label class="label-alert d-block mb--4"><font class="required-key">${requiredKey}</font></label>`);
+                UxUtils.setBefore("#quiz-title", UxUtils.getRequiredError(requiredKey));
                 $("#next").prop("disabled", true);
             }
         }
@@ -375,9 +331,8 @@ $(document).on("click", "#next", function() {
         }
 
         /* Populate Data on the question area */
-        $("#quiz-title-content").html($("#quiz-title").val());
-        $("#quiz-description-content").html($("#quiz-description").val());
-
+        UxUtils.setHtml("#quiz-title-content", $("#quiz-title").val());
+        UxUtils.setHtml("#quiz-description-content", $("#quiz-description").val());
     }
 });
 
@@ -415,12 +370,19 @@ $(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], 
     let start = new Date();
     let days = Utils.calcDateDiff(start, end, weekKey, hoursKey, hourKey, minutesKey, minuteKey, daysKey);
     if (days == undefined || days == NaN) {
-        $(".setting-section .row:first").append(`<div class="col-12 mt--32 invalid-date-err"><p class="text-danger">${invalidDateTimeKey}</p></div>`);
+        UxUtils.setAppend(".setting-section .row:first", UxUtils.getInvalidDateError(invalidDateTimeKey));
         $("#back").addClass("disabled");
     } else {
-        let resultVisible = $(".visible-to:checked").val() == "Everyone" ? resultEveryoneKey : resultMeKey;
-        let correctAnswer = $("#show-correct-answer:eq(0)").is(":checked") == true ? correctAnswerKey : "";
-
+        let resultVisible = "";
+        let correctAnswer = "";
+        if ($(".visible-to:checked").val() == "Everyone") {
+            resultVisible = resultEveryoneKey;
+        } else {
+            resultVisible = resultMeKey;
+        }
+        if ($("#show-correct-answer:eq(0)").is(":checked") == true) {
+            correctAnswer = correctAnswerKey;
+        }
         Localizer.getString("dueIn", days + ", ", correctAnswer).then(function(result) {
             settingText = result;
         });
@@ -501,11 +463,11 @@ $(document).on("change", "#cover-image", function() {
         let fileData = this;
         if ($(fileData).val() != "") {
             let coverImage = fileData.files[0];
-            let attachment = ActionHelper.attachmentUpload(coverImage, coverImage["type"]);
+            let attachment = ActionHelper.attachmentUpload(coverImage, coverImage.type);
             let attachmentRequest = {};
             if (!$("#submit").hasClass("disabled")) {
                 $("#submit").addClass("disabled");
-                $("#submit").prepend(UxUtils.getButtonSpinner());
+                UxUtils.setPrepend("#submit", UxUtils.getButtonSpinner());
             }
             attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
             ActionHelper.executeApi(attachmentRequest)
@@ -516,7 +478,7 @@ $(document).on("change", "#cover-image", function() {
                         $("#quiz-attachment-set").val(JSON.stringify(attachmentData));
                     } else {
                         if ($(fileData).val() != "") {
-                            $(fileData).after(UxUtils.createQuizTextarea(attachmentData));
+                            UxUtils.setAfter(fileData, UxUtils.createQuizTextarea(attachmentData));
                         }
                     }
                     $("#submit").removeClass("disabled");
@@ -534,7 +496,7 @@ $(document).on("change", "#cover-image", function() {
         $(".quiz-updated-img").show();
         $(".quiz-clear").show();
     } else {
-        $(".photo-box").parents("div.form-group").find("label.clear-key").after(UxUtils.getInvalidFileError(invalidFileFormatKey));
+        UxUtils.setAfter($(".photo-box").parents("div.form-group").find("label.clear-key"), UxUtils.getInvalidFileError(invalidFileFormatKey));
     }
 
 });
@@ -570,10 +532,10 @@ $(document).on("change", "input[name='question_image']", function() {
         if ($(fileData).val() != "") {
             if (!$("#submit").hasClass("disabled")) {
                 $("#submit").addClass("disabled");
-                $("#submit").prepend(UxUtils.getButtonSpinner());
+                UxUtils.setPrepend("#submit", UxUtils.getButtonSpinner());
             }
             let coverImage = fileData.files[0];
-            let attachment = ActionHelper.attachmentUpload(coverImage, coverImage["type"]);
+            let attachment = ActionHelper.attachmentUpload(coverImage, coverImage.type);
             let attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
             let imgIndex = $(this).attr("id");
             ActionHelper.executeApi(attachmentRequest)
@@ -584,7 +546,7 @@ $(document).on("change", "input[name='question_image']", function() {
                         $("#" + selector).find("#question-attachment-set").val(JSON.stringify(attachmentData));
                     } else {
                         if ($(fileData).val() != "") {
-                            $(fileData).after(UxUtils.createQuestionTextarea(attachmentData));
+                            UxUtils.setAfter($(fileData), UxUtils.createQuestionTextarea(attachmentData));
                         }
                     }
                     $("#submit").removeClass("disabled");
@@ -597,7 +559,7 @@ $(document).on("change", "input[name='question_image']", function() {
     } else {
         $(".question-preview-image").attr("src", "");
         $(".question-preview").hide();
-        $(this).parents(".form-group-question").find(".question-preview").before(UxUtils.getQuestionInvalidFileError(invalidFileFormatKey));
+        UxUtils.setBefore($(this).parents(".form-group-question").find(".question-preview"), UxUtils.getQuestionInvalidFileError(invalidFileFormatKey));
         $(this).parents("div.input-group-append").find("#question-attachment-set").remove();
     }
 });
@@ -615,10 +577,10 @@ $(document).on("change", "input[name='option_image']", function() {
         if ($(fileData).val() != "") {
             if (!$("#submit").hasClass("disabled")) {
                 $("#submit").addClass("disabled");
-                $("#submit").prepend(UxUtils.getButtonSpinner());
+                UxUtils.setPrepend("#submit", UxUtils.getButtonSpinner());
             }
             let coverImage = fileData.files[0];
-            let attachment = ActionHelper.attachmentUpload(coverImage, coverImage["type"]);
+            let attachment = ActionHelper.attachmentUpload(coverImage, coverImage.type);
             let attachmentRequest = ActionHelper.requestAttachmentUploadDraft(attachment);
             let imgIndex = $(this).attr("id");
             ActionHelper.executeApi(attachmentRequest)
@@ -629,7 +591,7 @@ $(document).on("change", "input[name='option_image']", function() {
                         $(selector).find("textarea#option-attachment-set").val(JSON.stringify(attachmentData));
                     } else {
                         if ($(fileData).val() != "") {
-                            $(fileData).after(UxUtils.createOptionTextarea(attachmentData));
+                            UxUtils.setAfter(fileData, UxUtils.createOptionTextarea(attachmentData));
                         }
                     }
                     $("#submit").removeClass("disabled");
@@ -642,7 +604,7 @@ $(document).on("change", "input[name='option_image']", function() {
     } else {
         $(this).parents("div.option-div").find(".option-preview-image").attr("src", "");
         $(this).parents("div.option-div").find(".option-preview").hide();
-        $(this).parents("div.option-div").prepend(UxUtils.getOptionInvalidFileError(invalidFileFormatKey));
+        UxUtils.setPrepend($(this).parents("div.option-div"), UxUtils.getOptionInvalidFileError(invalidFileFormatKey));
         $(this).parents("div.option-div").find("#question-attachment-set").remove();
     }
 });
@@ -701,7 +663,7 @@ $(document).on({
         e.preventDefault();
 
         $("form #setting").hide();
-        $("#due").text(settingText);
+        UxUtils.setText("#due", settingText);
         return false;
     }
 }, "#back");
@@ -750,9 +712,7 @@ function submitForm() {
 
         if (isChecked != true) {
             let questionId = $(quest).attr("id");
-            $("#" + questionId)
-                .find("div.d-flex-ques")
-                .after(UxUtils.getSelectCorrectOptionError(selectCorrectChoiceKey));
+            UxUtils.setAfter($("#" + questionId).find("div.d-flex-ques"), UxUtils.getSelectCorrectOptionError(selectCorrectChoiceKey));
 
             $("#submit").prop("disabled", false);
 
@@ -774,49 +734,37 @@ function submitForm() {
             let element = $(this);
             if (element.val() == "") {
                 if (element.attr("id") == "quiz-title") {
-                    errorText += "<p>Quiz title is required.</p>";
+                    errorText += requiredKey;
                     $("#quiz-title").addClass("danger");
-                    $("#quiz-title").before(
-                        `<label class="label-alert d-block mb--4"><font class="required-key">${requiredKey}</font></label>`
-                    );
-
+                    UxUtils.setBefore("#quiz-title", UxUtils.getRequiredError(requiredKey));
                     if ($(this).find("div.card-box").length > 0) {
                         $(this).parents("div.card-box").removeClass("card-box").addClass("card-box-alert");
                     }
                 } else if (element.attr("id").startsWith("question-title")) {
-                    if ($(element).parents("div.form-group-question").find("img.question-preview-image").attr("src") != "") {
-                        // Do nothing
-                    } else {
+                    if ($(element).parents("div.form-group-question").find("img.question-preview-image").attr("src").length <= 0) {
                         if ($(this).find("div.card-box").length > 0) {
                             $(this).parents("div.card-box").removeClass("card-box").addClass("card-box-alert");
                         }
                         $(element).addClass("danger");
                         Localizer.getString("questionLeftBlank").then(function(result) {
-                            $(".question-blank-key").text(result);
-                            $(element)
-                                .parents("div.form-group-question").find(".question-number").parent("div")
-                                .after(UxUtils.getQuestionRequiredError(result));
+                            UxUtils.setText(".question-blank-key", result);
+                            UxUtils.setAfter($(element).parents("div.form-group-question").find(".question-number").parent("div"), UxUtils.getQuestionRequiredError(result));
                         });
 
-                        errorText += "<p>Question cannot not left blank.</p>";
+                        errorText += "Question cannot not left blank.";
                         $(element).addClass("danger");
                     }
                 } else if (element.attr("id").startsWith("option")) {
-                    if ($(element).parents("div.radio-outer").find("img.option-preview-image").attr("src") != "") {
-                        // Do nothing
-                    } else {
+                    if ($(element).parents("div.radio-outer").find("img.option-preview-image").attr("src").length <= 0) {
                         if ($(this).find("div.card-box").length > 0) {
                             $(this).parents("div.card-box").removeClass("card-box").addClass("card-box-alert");
                         }
                         $(this).addClass("danger");
-                        $(this)
-                            .parents("div.col-12").parents("div.option-div")
-                            .prepend(UxUtils.getRequiredError(requiredKey));
-
+                        UxUtils.setPrepend($(this).parents("div.col-12").parents("div.option-div"), UxUtils.getRequiredError(requiredKey));
                         errorText +=
-                            "<p>Blank option not allowed for " +
+                            "Blank option not allowed for " +
                             element.attr("placeholder") +
-                            ".</p>";
+                            ".";
                     }
                 }
             }
@@ -833,7 +781,7 @@ function submitForm() {
             });
     } else {
         $(".loader-overlay").hide();
-        $(".required-key").text(requiredKey);
+        UxUtils.setText(".required-key", requiredKey);
         $("#submit").prop("disabled", false);
         return;
     }
@@ -843,11 +791,11 @@ function submitForm() {
  * @description Method to get questions and return question object
  */
 function getQuestionSet() {
-    let questionCount = $("form").find("div.container.question-container").length;
+    let countquestion = $("form").find("div.container.question-container").length;
     questions = new Array();
     let error = false;
 
-    for (let i = 1; i <= questionCount; i++) {
+    for (let i = 1; i <= countquestion; i++) {
         let optionType = ActionHelper.getColumnType("singleselect");
         let option = [];
         let isSelected = 0;
@@ -909,10 +857,7 @@ function getQuestionSet() {
         }
 
         if (isSelected == 0) {
-            $("#question" + i)
-                .find("div.d-flex-ques")
-                .after(UxUtils.getSelectCorrectOptionError(selectCorrectChoiceKey));
-
+            UxUtils.setAfter($("#question" + i).find("div.d-flex-ques"), UxUtils.getSelectCorrectOptionError(selectCorrectChoiceKey));
             $("#submit").prop("disabled", false);
 
             $("#question" + i)
@@ -1116,49 +1061,48 @@ async function getStringKeys() {
 
     Localizer.getString("dueIn", " 1 " + weekKey, "").then(function(result) {
         settingText = result;
-        $("#due").text(settingText);
+        UxUtils.setText("#due", settingText);
     });
 
     Localizer.getString("addMoreOptions").then(function(result) {
         addMoreOptionsKey = result;
-        $(".add-options").html(`
-            ${Constants.getPlusIcon()} ${addMoreOptionsKey}`);
+        UxUtils.setHtml(".add-options", `${Constants.getPlusIcon()} ${addMoreOptionsKey}`);
     });
 
     Localizer.getString("choices").then(function(result) {
         choicesKey = result;
-        $(".choice-label").text(choicesKey);
+        UxUtils.setText(".choice-label", choicesKey);
     });
 
     Localizer.getString("checkMe").then(function(result) {
         checkMeKey = result;
-        $(".check-me").text(checkMeKey);
+        UxUtils.setText(".check-me", checkMeKey);
         $(".check-me-title").attr({ "title": checkMeKey });
     });
 
     Localizer.getString("next").then(function(result) {
         nextKey = result;
-        $(".next-key").text(nextKey);
+        UxUtils.setText(".next-key", nextKey);
     });
 
     Localizer.getString("back").then(function(result) {
         backKey = result;
-        $(".back-key").text(backKey);
+        UxUtils.setText(".back-key", backKey);
     });
 
     Localizer.getString("required").then(function(result) {
         requiredKey = result;
-        $(".required-key").text(requiredKey);
+        UxUtils.setText(".required-key", requiredKey);
     });
 
     Localizer.getString("dueBy").then(function(result) {
         dueByKey = result;
-        $(".due-by-key").text(dueByKey);
+        UxUtils.setText(".due-by-key", dueByKey);
     });
 
     Localizer.getString("resultVisibleTo").then(function(result) {
         resultVisibleToKey = result;
-        $(".result-visible-key").text(resultVisibleToKey);
+        UxUtils.setText(".result-visible-key", resultVisibleToKey);
     });
 
     Localizer.getString("resultEveryone").then(function(result) {
@@ -1175,22 +1119,22 @@ async function getStringKeys() {
 
     Localizer.getString("everyone", ", ").then(function(result) {
         everyoneKey = result;
-        $(".everyone-key").text(everyoneKey);
+        UxUtils.setText(".everyone-key", everyoneKey);
     });
 
     Localizer.getString("onlyMe", ", ").then(function(result) {
         onlyMeKey = result;
-        $(".onlyme-key").text(onlyMeKey);
+        UxUtils.setText(".onlyme-key", onlyMeKey);
     });
 
     Localizer.getString("showCorrectAnswer").then(function(result) {
         showCorrectAnswerKey = result;
-        $(".show-correct-key").text(showCorrectAnswerKey);
+        UxUtils.setText(".show-correct-key", showCorrectAnswerKey);
     });
 
     Localizer.getString("answerCannotChange").then(function(result) {
         answerCannotChangeKey = result;
-        $(".answer-cannot-change-key").text(answerCannotChangeKey);
+        UxUtils.setText(".answer-cannot-change-key", answerCannotChangeKey);
     });
 
     Localizer.getString("invalidDateTime").then(function(result) {
@@ -1223,7 +1167,7 @@ async function getStringKeys() {
 
     Localizer.getString("questionLeftBlank").then(function(result) {
         questionLeftBlankKey = result;
-        $(".question-blank-key").text(result);
+        UxUtils.setText(".question-blank-key", result);
     });
 
     Localizer.getString("selectCorrectChoice").then(function(result) {
@@ -1232,27 +1176,27 @@ async function getStringKeys() {
 
     Localizer.getString("addQuestion").then(function(result) {
         addQuestionKey = result;
-        $(".add-question-key").text(addQuestionKey);
+        UxUtils.setText(".add-question-key", addQuestionKey);
     });
 
     Localizer.getString("uploadCoverImage").then(function(result) {
         uploadCoverImageKey = result;
-        $(".upload-cover-image-key").text(uploadCoverImageKey);
+        UxUtils.setText(".upload-cover-image-key", uploadCoverImageKey);
     });
 
     Localizer.getString("coverImage").then(function(result) {
         coverImageKey = result;
-        $(".cover-image-key").text(coverImageKey);
+        UxUtils.setText(".cover-image-key", coverImageKey);
     });
 
     Localizer.getString("clear").then(function(result) {
         clearKey = result;
-        $(".clear-key").text(clearKey);
+        UxUtils.setText(".clear-key", clearKey);
     });
 
     Localizer.getString("invalidFileFormat").then(function(result) {
         invalidFileFormatKey = result;
-        $(".invalid-file-key").text(invalidFileFormatKey);
+        UxUtils.setText(".invalid-file-key", invalidFileFormatKey);
     });
 }
 
@@ -1267,14 +1211,12 @@ async function loadCreationPage(request) {
     let theme = context.theme;
     let langObj = Utils.getLocaleForCalendar(context.locale);
     $("link#theme").attr("href", "css/style-" + theme + ".css");
-    /* let langUrl = langObj.url;
-    $("script#datepickerURL").attr("src", langUrl); */
-    $(".body-outer").before(loader);
-    $("form.sec1").append(formSection);
-    $("form.sec1").append(questionsContainer);
-    $("form.sec1").after(settingSection);
-    $("form.sec1").after(optionSection);
-    $("form.sec1").after(questionArea);
+    UxUtils.setBefore(".body-outer", loader);
+    UxUtils.setAppend("form.sec1", formSection);
+    UxUtils.setAppend("form.sec1", questionsContainer);
+    UxUtils.setAfter("form.sec1", settingSection);
+    UxUtils.setAfter("form.sec1", optionSection);
+    UxUtils.setAfter("form.sec1", questionArea);
     getStringKeys();
     quesContainer = $("#question-section div.container").clone();
     opt = $("div#option-section .option-div").clone();
@@ -1383,7 +1325,7 @@ async function loadCreationPage(request) {
         let correctAnswer = correctAnswerSetting == "Yes" ? correctAnswerKey : "";
         Localizer.getString("dueIn", days + ", ", correctAnswer).then(function(result) {
             settingText = result;
-            $("#due").text(settingText);
+            UxUtils.setText("#due", settingText);
         });
     } else {
         let todayDate = new Date();
@@ -1392,7 +1334,7 @@ async function loadCreationPage(request) {
         setDate = new Date(todayDate.setDate(weekAgoDate));
         currentTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false }).toLowerCase();
     }
-    $("form").append($("#setting").clone());
+    UxUtils.setAppend("form", $("#setting").clone());
     $("#add-questions").click();
     $(".form_date").attr({ "data-date": setDate });
     let lang = langObj.lang;
@@ -1449,7 +1391,7 @@ async function loadCreationPage(request) {
                             if (i <= 1) {
                                 $("#question1").find("#option" + counter).val(optionName);
                             } else {
-                                $("#question1").find("div.option-div:last").after(option.clone());
+                                UxUtils.setAfter($("#question1").find("div.option-div:last"), option.clone());
                                 $("#question1").find("div.option-div:last input[type='text']").attr({
                                     placeholder: optionKey,
                                 });
@@ -1478,14 +1420,13 @@ async function loadCreationPage(request) {
                         });
                     } else {
                         let qcounter = ind + 1;
-                        $(".section-2").find("#add-questions").parents("div.container").before($("#question-section").html());
-
+                        UxUtils.setBefore($(".section-2").find("#add-questions").parents("div.container"), $("#question-section").html());
                         let ocounter = 0;
                         let questionTitleData = e.displayName;
                         let questionAttachmentData = e.attachments.length > 0 ? e.attachments[0].id : "";
                         $(".section-2").find("div.container.question-container:last").attr("id", "question" + qcounter);
                         Localizer.getString("question").then(function(result) {
-                            $("#question" + qcounter).find("span.question-number").text(result + " # " + qcounter);
+                            UxUtils.setText($("#question" + qcounter).find("span.question-number"), result + " # " + qcounter);
                         });
                         $("#question" + qcounter).find("#question-title").val(questionTitleData);
                         if (questionAttachmentData != "") {
@@ -1506,7 +1447,7 @@ async function loadCreationPage(request) {
                             if (i <= 1) {
                                 $("#question" + qcounter).find("#option" + ocounter).val(optionName);
                             } else {
-                                $("#question" + qcounter).find("div.option-div:last").after(option.clone());
+                                UxUtils.setAfter($("#question" + qcounter).find("div.option-div:last"), option.clone());
                                 $("#question" + qcounter).find("div.option-div:visible:last input[type='text']").attr({
                                     placeholder: optionKey,
                                 });

@@ -919,6 +919,35 @@ export class UxUtils {
     }
 
     /**
+     * @Method contains delete quiz section
+     * @param sureDeleteThisKey string Localization for delete quiz string
+     * @param cancelKey string Localization for cancel string
+     * @param okKey string Localization for confirm string
+     */
+    static deleteOption(sureDeleteThisKey, cancelKey, okKey) {
+        return `<div class="confirm-box">
+                <div class="clearfix"></div>
+                <div class="d-flex-alert  mb--8">
+                    <div class="pr--8">
+                        <label class="confirm-box text-danger"> ${sureDeleteThisKey} </label>
+                    </div>
+                    <div class="pl--8 text-right">
+                        <button type="button" class="btn btn-primary-outline btn-sm cancel-question-delete mr--8">${cancelKey}</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="delete-question">${okKey}</button>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    /**
+     * @Method getQuizAtleastOneError contains atleast one question required error
+     * @param resultLocale string Localization for quiz string
+     */
+    static getQuizAtleastOneError(resultLocale) {
+        return `<label class="text-danger d-block question-required-err"><font class="mb--4 d-block">${resultLocale}</font></label>`;
+    }
+
+    /**
      * @Method contains score container section
      * @param resultLocale string Localization for score string
      * @param scorePercentage Float value contain score with two decimal
@@ -1420,11 +1449,27 @@ export class UxUtils {
     }
 
     /**
+     * @Method getInvalidDateError contains string for invalid date
+     * @param resultLocale String contains localization for invalid date
+     */
+    static getInvalidDateError(resultLocale) {
+        return `<div class="col-12 mt--32 invalid-date-err"><p class="text-danger">${resultLocale}</p></div>`;
+    }
+
+    /**
      * @Method contains required error
      * @param resultLocale String contains localization of required error string
      */
     static getRequiredError(requiredKey) {
         return `<label class="label-alert d-block mb--4"><font class="required-key">${requiredKey}</font></label>`;
+    }
+
+    /**
+     * @Method contains max 10 options error
+     * @param resultLocale String contains localization of 10 option max error string
+     */
+    static getMaxTenOptionError(requiredKey) {
+        return `<div class="max-option-err-box"> ${requiredKey} </div>`;
     }
 
     /**
@@ -1555,5 +1600,59 @@ export class UxUtils {
             <strong class="semi-bold">${resultLocale} </strong>${scoreIs}%
         </label>
         <hr>`;
+    }
+
+    /**
+     * @Method to set html block inside the html selector
+     * @param selector object html
+     * @param content string for content
+     */
+    static setHtml(selector, content) {
+        $(selector).html(content);
+    }
+
+    /**
+     * @Method to set text inside the html selector
+     * @param selector object html
+     * @param content string for content
+     */
+    static setText(selector, content) {
+        $(selector).text(content);
+    }
+
+    /**
+     * @Method to set html block after the html selector
+     * @param selector object html
+     * @param content string for content
+     */
+    static setAfter(selector, content) {
+        $(selector).after(content);
+    }
+
+    /**
+     * @Method to set html block before the html selector
+     * @param selector object html
+     * @param content string for content
+     */
+    static setBefore(selector, content) {
+        $(selector).before(content);
+    }
+
+    /**
+     * @Method to set html block append the html selector
+     * @param selector object html
+     * @param content string for content
+     */
+    static setAppend(selector, content) {
+        $(selector).append(content);
+    }
+
+    /**
+     * @Method to set html block prepend the html selector
+     * @param selector object html
+     * @param content string for content
+     */
+    static setPrepend(selector, content) {
+        $(selector).prepend(content);
     }
 }
