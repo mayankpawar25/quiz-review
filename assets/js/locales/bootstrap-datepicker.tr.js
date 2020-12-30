@@ -23,6 +23,7 @@
 		today: "Bugün",
 		clear: "Temizle",
 		weekStart: 1,
+		meridiem: "",
 		format: "dd.mm.yyyy"
 	};
 }(jQuery));

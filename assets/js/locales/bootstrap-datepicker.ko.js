@@ -25,6 +25,7 @@
 		clear: "삭제",
 		format: "yyyy-mm-dd",
 		titleFormat: "yyyy년mm월",
+		meridiem: "",
 		weekStart: 0
 	};
 }(jQuery));

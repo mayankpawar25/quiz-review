@@ -24,6 +24,7 @@
 		today: "Hoje",
 		monthsTitle: "Meses",
 		clear: "Limpar",
+		meridiem: "",
 		format: "dd/mm/yyyy"
 	};
 }(jQuery));

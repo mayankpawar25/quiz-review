@@ -25,6 +25,7 @@
         monthsTitle: "Hilabeteak",
         clear: "Ezabatu",
         weekStart: 1,
+        meridiem: "",
         format: "yyyy/mm/dd"
     };
 }(jQuery));

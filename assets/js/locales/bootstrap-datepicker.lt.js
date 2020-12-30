@@ -26,6 +26,7 @@
         monthsTitle:"Mėnesiai",
         clear:"Išvalyti",
         weekStart: 1,
+        meridiem: "",
         format:"yyyy-mm-dd"
     };
 }(jQuery));

@@ -19,6 +19,7 @@
 		months: ["Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"],
 		monthsShort: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Avg", "Sep", "Okt", "Nov", "Dec"],
 		today: "Danes",
+		meridiem: "",
 		weekStart: 1
 	};
 }(jQuery));

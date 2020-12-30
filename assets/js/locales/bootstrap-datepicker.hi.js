@@ -25,6 +25,7 @@
 		monthsTitle: "महीने",
 		clear: "साफ",
 		weekStart: 1,
+		meridiem: "",
 		format: "dd / mm / yyyy"
 	};
 }(jQuery));

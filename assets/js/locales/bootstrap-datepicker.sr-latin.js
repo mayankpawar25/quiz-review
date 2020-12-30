@@ -21,6 +21,7 @@
 		monthsShort: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Avg", "Sep", "Okt", "Nov", "Dec"],
 		today: "Danas",
 		weekStart: 1,
+		meridiem: "",
 		format: "dd.mm.yyyy"
 	};
 }(jQuery));

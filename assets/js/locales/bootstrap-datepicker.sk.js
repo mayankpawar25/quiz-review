@@ -24,6 +24,7 @@
 		today: "Dnes",
 		clear: "Vymazať",
 		weekStart: 1,
+		meridiem: "",
 		format: "d.m.yyyy"
 	};
 }(jQuery));

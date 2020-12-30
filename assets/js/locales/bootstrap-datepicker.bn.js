@@ -26,6 +26,7 @@
 		monthsTitle: "মাস",
 		clear: "পরিষ্কার",
 		weekStart: 0,
+		meridiem: "",
 		format: "mm/dd/yyyy"
 	};
 }(jQuery));

@@ -27,6 +27,7 @@
 		clear: "清除",
 		format: "yyyy-mm-dd",
 		titleFormat: "yyyy年mm月",
+		meridiem: "",
 		weekStart: 1
 	};
 }(jQuery));

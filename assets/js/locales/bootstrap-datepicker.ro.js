@@ -23,6 +23,7 @@
 		today: "Astăzi",
 		clear: "Șterge",
 		weekStart: 1,
+		meridiem: "",
 		format: "dd/mm/yyyy"
 	};
 }(jQuery));

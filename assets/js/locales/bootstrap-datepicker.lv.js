@@ -24,6 +24,7 @@
         monthsTitle: "Mēneši",
         today: "Šodien",
         clear: "Nodzēst",
+        meridiem: "",
         weekStart: 1
     };
 }(jQuery));

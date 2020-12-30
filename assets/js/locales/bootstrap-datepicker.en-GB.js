@@ -25,6 +25,7 @@
 		monthsTitle: "Months",
 		clear: "Clear",
 		weekStart: 1,
+		meridiem: "",
 		format: "dd/mm/yyyy"
 	};
 }(jQuery));

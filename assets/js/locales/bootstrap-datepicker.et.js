@@ -24,6 +24,7 @@
 		today: "Täna",
 		clear: "Tühjenda",
 		weekStart: 1,
+		meridiem: "",
 		format: "dd.mm.yyyy"
 	};
 }(jQuery));

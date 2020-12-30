@@ -21,6 +21,7 @@
 		monthsShort: ["Th1", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7", "Th8", "Th9", "Th10", "Th11", "Th12"],
 		today: "Hôm nay",
 		clear: "Xóa",
+		meridiem: "",
 		format: "dd/mm/yyyy"
 	};
 }(jQuery));

@@ -26,6 +26,7 @@
 		clear: "Vymazat",
 		monthsTitle: "Měsíc",
 		weekStart: 1,
+		meridiem: "",
 		format: "dd.mm.yyyy"
 	};
 }(jQuery));

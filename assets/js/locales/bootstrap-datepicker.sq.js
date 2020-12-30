@@ -25,6 +25,7 @@
 		today: "Sot",
 		weekStart: 1,
 		format: "dd/mm/yyyy",
+		meridiem: "",
 		clear: "Pastro"
 	};
 }(jQuery));

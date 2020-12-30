@@ -25,6 +25,7 @@
 		monthsTitle: "Maanden",
 		clear: "Wissen",
 		weekStart: 1,
+		meridiem: "",
 		format: "dd-mm-yyyy"
 	};
 }(jQuery));

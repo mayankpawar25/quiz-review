@@ -23,6 +23,7 @@
 		today: "今日",
 		format: "yyyy/mm/dd",
 		titleFormat: "yyyy年mm月",
+		meridiem: "",
 		clear: "クリア"
 	};
 }(jQuery));

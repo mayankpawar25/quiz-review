@@ -24,6 +24,7 @@
 		today: "今天",
 		format: "yyyy年mm月dd日",
 		weekStart: 1,
+		meridiem: "",
 		clear: "清除"
 	};
 }(jQuery));

@@ -25,6 +25,7 @@
     monthsTitle: 'Måneder',
     clear: 'Nullstill',
     weekStart: 1,
+    meridiem: "",
     format: 'dd.mm.yyyy'
   };
 }(jQuery));

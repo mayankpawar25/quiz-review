@@ -23,6 +23,7 @@
         today: "Dzisiaj",
         weekStart: 1,
         clear: "Wyczyść",
+        meridiem: "",
         format: "dd.mm.yyyy"
     };
 }(jQuery));

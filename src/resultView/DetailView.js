@@ -231,8 +231,8 @@ $(document).on({
             forceParse: 0,
             todayHighlight: 1,
             todayBtn: 1,
-            meridiem: "",
-            language: lang
+            language: lang,
+            meridiem: ""
         });
 
         $(".form_time input").val(currentTime);
@@ -680,7 +680,11 @@ function head() {
 function headCreator() {
     let title = actionInstance.displayName;
     let description = actionInstance.customProperties[0].value;
-    let dueby = new Date(actionInstance.expiryTime).toDateString();
+    var options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+    var expiryTime = new Date(actionInstance.expiryTime);
+    console.log(context.locale, "context.locale: ");
+    let dueby = expiryTime.toLocaleDateString(context.locale, options);
+
     let $card = $(`<div class=""></div>`);
     let $titleDiv = $(`<div class="d-table mb--4"></div>`);
     let $titleSec = $(UxUtils.getQuizTitle(title));

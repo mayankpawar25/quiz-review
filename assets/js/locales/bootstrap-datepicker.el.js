@@ -22,6 +22,7 @@
     today: "Σήμερα",
     clear: "Καθαρισμός",
     weekStart: 1,
+    meridiem: "",
     format: "d/m/yyyy"
   };
 }(jQuery));

@@ -23,6 +23,7 @@
 		today: "Idag",
 		format: "yyyy-mm-dd",
 		weekStart: 1,
+		meridiem: "",
 		clear: "Rensa"
 	};
 }(jQuery));

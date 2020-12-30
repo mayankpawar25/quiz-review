@@ -25,6 +25,7 @@
 		clear: "Очистить",
 		format: "dd.mm.yyyy",
 		weekStart: 1,
+		meridiem: "",
 		monthsTitle: 'Месяцы'
 	};
 }(jQuery));
