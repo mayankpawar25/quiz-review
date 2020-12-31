@@ -6,7 +6,7 @@ import * as html2canvas from "html2canvas";
 import { UxUtils } from "./../common/utils/UxUtils";
 import { Utils } from "./../common/utils/Utils";
 import { KeyboardAccess } from "./../common/utils/KeyboardUtils";
-import "../../assets/js/bootstrap-localefile";
+import "../../assets/js/bootstrap-localefile1";
 
 let actionContext = null;
 let actionInstance = null;
@@ -652,7 +652,9 @@ async function createBody() {
 function head() {
     let title = actionInstance.displayName;
     let description = actionInstance.customProperties[0].value;
-    let dueby = new Date(actionInstance.expiryTime).toDateString();
+    let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+    let expiryTime = new Date(actionInstance.expiryTime);
+    let dueby = expiryTime.toLocaleDateString(context.locale, options);
     let $card = $(`<div class=""></div>`);
     let $titleSec = $(UxUtils.getQuizTitleResponders(title));
     let $descriptionSec = $(UxUtils.getQuizDescription(description));
@@ -680,9 +682,8 @@ function head() {
 function headCreator() {
     let title = actionInstance.displayName;
     let description = actionInstance.customProperties[0].value;
-    var options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-    var expiryTime = new Date(actionInstance.expiryTime);
-    console.log(context.locale, "context.locale: ");
+    let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+    let expiryTime = new Date(actionInstance.expiryTime);
     let dueby = expiryTime.toLocaleDateString(context.locale, options);
 
     let $card = $(`<div class=""></div>`);
