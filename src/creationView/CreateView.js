@@ -1383,6 +1383,8 @@ async function loadCreationPage(request) {
                         let questionTitleData = e.displayName;
                         let questionAttachmentData = e.attachments.length > 0 ? e.attachments[0].id : "";
                         $(".section-2").find("div.container.question-container:last").attr("id", "question" + qcounter);
+                        $(".section-2").find("div.container.question-container:last").find("input[name='question_image']").attr({ id: "question-image-" + qcounter });
+
                         Localizer.getString("question").then(function(result) {
                             UxUtils.setText($("#question" + qcounter).find("span.question-number"), result + " # " + qcounter);
                         });
