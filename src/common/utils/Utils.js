@@ -211,7 +211,7 @@ export class Utils {
                 lang = "es";
                 break;
             case "es-mx":
-                lang = "";
+                lang = "es-mx";
                 break;
             case "et-ee":
                 lang = "et";
@@ -222,20 +222,20 @@ export class Utils {
             case "fi-fi":
                 lang = "fi";
                 break;
-            case "fi-ph":
-                lang = "";
+            case "fil-ph":
+                lang = "fil-ph";
                 break;
             case "fr-ca":
-                lang = "";
+                lang = "fr-ca";
                 break;
             case "fr-fr":
-                lang = "";
+                lang = "fr-fr";
                 break;
             case "gl-es":
                 lang = "gl";
                 break;
             case "gu-in":
-                lang = "";
+                lang = "gu";
                 break;
             case "he-il":
                 lang = "he";
@@ -265,7 +265,7 @@ export class Utils {
                 lang = "kk";
                 break;
             case "kn-in":
-                lang = "";
+                lang = "kn";
                 break;
             case "ko-kr":
                 lang = "ko";
@@ -280,7 +280,7 @@ export class Utils {
                 lang = "mk";
                 break;
             case "ml-in":
-                lang = "";
+                lang = "ml";
                 break;
             case "mr-in":
                 lang = "mr";
@@ -288,11 +288,11 @@ export class Utils {
             case "nb-no":
                 lang = "no";
                 break;
+            case "nn-no":
+                lang = "nn-no";
+                break;
             case "nl-nl":
                 lang = "nl";
-                break;
-            case "nn-no":
-                lang = "no";
                 break;
             case "pl-pl":
                 lang = "pl";
@@ -301,7 +301,7 @@ export class Utils {
                 lang = "pt-BR";
                 break;
             case "pt-pt":
-                lang = "";
+                lang = "pt-pt";
                 break;
             case "ro-ro":
                 lang = "ro";
@@ -328,10 +328,10 @@ export class Utils {
                 lang = "ta";
                 break;
             case "te-in":
-                lang = "";
+                lang = "te";
                 break;
                 case "th-th":
-                lang = "";
+                lang = "th";
                 break;
             case "tr-tr":
                 lang = "tr";

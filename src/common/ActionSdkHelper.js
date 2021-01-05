@@ -252,10 +252,10 @@ export class ActionHelper {
         let request = new actionSDK.DownloadActionDataRowsResult.Request(actionId, fileName);
         try {
             let response = actionSDK.executeApi(request);
-            // Logger.logInfo(`downloadCSV success - Request: ${JSON.stringify(request)} Response: ${JSON.stringify(response)}`);
+            console.info(`downloadCSV success - Request: ${JSON.stringify(request)} Response: ${JSON.stringify(response)}`);
             return { success: true };
         } catch (error) {
-            Logger.logError(`downloadCSV failed, Error: ${error.category}, ${error.code}, ${error.message}`);
+            console.error(`downloadCSV failed, Error: ${error.category}, ${error.code}, ${error.message}`);
             return { success: false, error: error };
         }
     }

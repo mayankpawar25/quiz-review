@@ -8,7 +8,6 @@ import { Utils } from "../common/utils/Utils";
 import "../../assets/js/bootstrap-localefile";
 
 let request;
-let questionCount = 0;
 let questions = new Array();
 let settingText = "";
 let quesContainer = "";
@@ -18,15 +17,12 @@ let lastSession = "";
 let optionKey = "";
 let addMoreOptionsKey = "";
 let choicesKey = "";
-let questionTitleKey = "";
 let checkMeKey = "";
 let nextKey = "";
 let backKey = "";
 let requiredKey = "";
 let dueByKey = "";
 let resultVisibleToKey = "";
-let resultEveryoneKey = "";
-let resultMeKey = "";
 let correctAnswerKey = "";
 let everyoneKey = "";
 let onlyMeKey = "";
@@ -46,16 +42,12 @@ let attachmentSet = [];
 let coverImageKey = "";
 let clearKey = "";
 let invalidFileFormatKey = "";
-let questionLeftBlankKey = "";
-let nweekKey = "";
 let weekKey = "";
 let hourKey = "";
 let hoursKey = "";
 let minuteKey = "";
 let minutesKey = "";
-let dayKey = "";
 let daysKey = "";
-let questionsKey = "";
 let questionKey = "";
 
 /* ******************************** Events ************************************** */
@@ -101,7 +93,6 @@ $(document).on({
             $(elem).find("input[name='question_image']").attr({ id: "question-image-" + questionCounter });
             $(elem).attr({ id: "question" + questionCounter });
         });
-        questionCount++;
         UxUtils.setText(".check-me", checkMeKey);
         $(".check-me-title").attr({ "title": checkMeKey });
         UxUtils.setHtml(".add-options", `${Constants.getPlusIcon()} ${addMoreOptionsKey}`);
@@ -129,8 +120,7 @@ KeyboardAccess.keydownClick(document, ".remove-question");
  * @event Click for remove the Question from the section-2
  */
 $(document).on({
-    click: function(e) {
-        let element = $(this);
+    click: function() {
         $(this).parents(".question-container").find(".confirm-box").remove();
         $(this).parents(".question-container")
             .find(".question-required-err").remove();
@@ -211,7 +201,7 @@ $(document).on({
 /**
  * @event Click for remove the Option
  */
-$(document).on("click", ".remove-option", function(eve) {
+$(document).on("click", ".remove-option", function() {
     $(this).parents("div.question-container").find(".option-required-err").remove();
     /* Remove Error Message and show add option button */
     if ($(this).parents(".question-container").find(".max-option-err-box").length > 0) {
@@ -344,7 +334,7 @@ KeyboardAccess.keydownClick(document, "#back-questionsContainer");
  * @event Click to back button on section 2
  */
 $(document).on({
-    click: function(e) {
+    click: function() {
         $(".section-2").hide();
         $(".section-2-footer").hide();
 
@@ -368,17 +358,11 @@ $(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], 
 
     let start = new Date();
     let days = Utils.calcDateDiff(start, end, weekKey, hoursKey, hourKey, minutesKey, minuteKey, daysKey);
-    if (days == undefined || days == NaN) {
+    if (days == undefined) {
         UxUtils.setAppend(".setting-section .row:first", UxUtils.getInvalidDateError(invalidDateTimeKey));
         $("#back").addClass("disabled");
     } else {
-        let resultVisible = "";
         let correctAnswer = "";
-        if ($(".visible-to:checked").val() == "Everyone") {
-            resultVisible = resultEveryoneKey;
-        } else {
-            resultVisible = resultMeKey;
-        }
         if ($("#show-correct-answer:eq(0)").is(":checked") == true) {
             correctAnswer = correctAnswerKey;
         }
@@ -803,7 +787,7 @@ function getQuestionSet() {
         /* Looping for options */
         $("#question" + i)
             .find("div.option-div")
-            .each(function(index, elem) {
+            .each(function(index) {
                 let count = index + 1;
                 let optId = "question" + i + "option" + count;
                 let optTitle = $("#question" + i).find("#option" + count).val();
@@ -889,7 +873,7 @@ function getCorrectAnswer() {
         /* Looping for options */
         $("#question" + i)
             .find("div.option-div")
-            .each(function(index, elem) {
+            .each(function(index) {
                 let count = index + 1;
 
                 if ($("#question" + i).find("#check" + count).is(":checked")) {
@@ -1015,20 +999,11 @@ async function getStringKeys() {
 
     Localizer.getString("enterTheQuestion").then(function(result) {
         $("#question-title").attr({ "placeholder": result });
-        questionTitleKey = result;
     });
 
     Localizer.getString("option", "").then(function(result) {
         optionKey = result;
         $(".opt-cls").attr("placeholder", optionKey);
-    });
-
-    Localizer.getString("questions").then(function (result) {
-        questionsKey = result;
-    });
-
-    Localizer.getString("nWeek", "1").then(function (result) {
-        nweekKey = result;
     });
 
     Localizer.getString("nWeek", " ").then(function (result) {
@@ -1053,10 +1028,6 @@ async function getStringKeys() {
 
     Localizer.getString("days").then(function (result) {
         daysKey = result;
-    });
-
-    Localizer.getString("day").then(function (result) {
-        dayKey = result;
     });
 
     Localizer.getString("dueIn", " 1 " + weekKey, "").then(function(result) {
@@ -1103,14 +1074,6 @@ async function getStringKeys() {
     Localizer.getString("resultVisibleTo").then(function(result) {
         resultVisibleToKey = result;
         UxUtils.setText(".result-visible-key", resultVisibleToKey);
-    });
-
-    Localizer.getString("resultEveryone").then(function(result) {
-        resultEveryoneKey = result;
-    });
-
-    Localizer.getString("resultMe").then(function(result) {
-        resultMeKey = result;
     });
 
     Localizer.getString("correctAnswer", " ").then(function(result) {
@@ -1163,11 +1126,6 @@ async function getStringKeys() {
 
     Localizer.getString("atLeastTwoOptionsRequired").then(function(result) {
         atLeastTwoOptionsRequiredKey = result;
-    });
-
-    Localizer.getString("questionLeftBlank").then(function(result) {
-        questionLeftBlankKey = result;
-        UxUtils.setText(".question-blank-key", result);
     });
 
     Localizer.getString("selectCorrectChoice").then(function(result) {
@@ -1344,9 +1302,7 @@ async function loadCreationPage(request) {
         pickDate: "false",
         autoclose: true,
         startView: 1,
-        maxView: 1,
         useCurrent: false,
-        autoclose: 1,
         minView: 0,
         maxView: 1,
         forceParse: 0,

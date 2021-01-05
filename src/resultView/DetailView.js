@@ -22,7 +22,6 @@ let answerIs = "";
 let request = ActionHelper.getContextRequest();
 let dataResponse = "";
 let actionId = "";
-let root = document.getElementById("root");
 let theme = "";
 let isCreator = false;
 let context = "";
@@ -33,7 +32,6 @@ let expiredOnKey = "";
 let correctKey = "";
 let incorrectKey = "";
 let backKey = "";
-let youKey = "";
 let questionKey = "";
 let scoreKey = "";
 let closeKey = "";
@@ -61,7 +59,7 @@ KeyboardAccess.keydownClick(document, ".back");
  * @event Click Event for rerender the landing page
  */
 $(document).on({
-    click: function(e) {
+    click: function() {
         createBody();
     }
 }, ".back");
@@ -91,8 +89,7 @@ KeyboardAccess.keydownClick(document, ".back1");
  * @event Click Event for back to responder and non responder page
  */
 $(document).on({
-    click: function(e) {
-        let userId = $(this).attr("userid-data");
+    click: function() {
         create_responder_nonresponders();
     }
 }, ".back1");
@@ -101,7 +98,7 @@ $(document).on({
  * @event Click and Keydown Event for responder page
  */
 $(document).on({
-    click: function(e) {
+    click: function() {
         create_responder_nonresponders();
     },
     keydown: function(e) {
@@ -123,7 +120,7 @@ KeyboardAccess.keydownClick(document, ".getresult");
  * @event Click event fetching result of responders
  */
 $(document).on({
-    click: function(e) {
+    click: function() {
         let userId = $(this).attr("id");
         UxUtils.setHtml("#root", "");
         head();
@@ -155,7 +152,7 @@ KeyboardAccess.keydownClick(document, "#downloadCSV");
  * @event Click event for download CSV
  */
 $(document).on({
-    click: function(e) {
+    click: function() {
         ActionHelper.downloadCSV(actionId, "quiz");
     }
 }, "#downloadCSV");
@@ -169,7 +166,7 @@ KeyboardAccess.keydownClick(document, "#downloadImage");
  * @event Click event for download image in png
  */
 $(document).on({
-    click: function(e) {
+    click: function() {
         let bodyContainerDiv = document.getElementsByClassName("container")[0];
         let backgroundColorOfResultsImage = theme;
         $(".footer").hide();
@@ -307,7 +304,7 @@ $(document).on("click", ".cancel-question-delete", function() {
 /**
  * @event Click event for close dropdown lists
  */
-$(document).on("click", ".threedots .dropdown-menu a", function(event) {
+$(document).on("click", ".threedots .dropdown-menu a", function() {
     $(".threedots .dropdown-menu").toggleClass("show");
 });
 
@@ -399,9 +396,6 @@ async function getStringKeys() {
     Localizer.getString("close").then(function(result) {
         closeKey = result;
         $(".close-key").text(closeKey);
-    });
-    Localizer.getString("you").then(function(result) {
-        youKey = result;
     });
 
     Localizer.getString("changeDueBy").then(function(result) {
@@ -652,7 +646,9 @@ async function createBody() {
 function head() {
     let title = actionInstance.displayName;
     let description = actionInstance.customProperties[0].value;
-    let dueby = new Date(actionInstance.expiryTime).toDateString();
+    let options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
+    let expiryTime = new Date(actionInstance.expiryTime);
+    let dueby = expiryTime.toLocaleDateString(context.locale, options);
     let $card = $(`<div class=""></div>`);
     let $titleSec = $(UxUtils.getQuizTitleResponders(title));
     let $descriptionSec = $(UxUtils.getQuizDescription(description));
@@ -680,9 +676,8 @@ function head() {
 function headCreator() {
     let title = actionInstance.displayName;
     let description = actionInstance.customProperties[0].value;
-    var options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-    var expiryTime = new Date(actionInstance.expiryTime);
-    console.log(context.locale, "context.locale: ");
+    let options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
+    let expiryTime = new Date(actionInstance.expiryTime);
     let dueby = expiryTime.toLocaleDateString(context.locale, options);
 
     let $card = $(`<div class=""></div>`);
@@ -763,10 +758,11 @@ function getResponders() {
     UxUtils.setHtml("table#responder-table tbody", "");
 
     for (let itr = 0; itr < responderDate.length; itr++) {
-        let id = responderDate[itr].value2;
         let name = "";
         name = responderDate[itr].label;
-        let date = responderDate[itr].value;
+        let options = { weekday: "short", year: "numeric", month: "short", day: "numeric" };
+        let respondDate = new Date(responderDate[itr].value);
+        let date = respondDate.toLocaleDateString(context.locale, options);
         let matches = responderDate[itr].label.match(/\b(\w)/g); // [D,P,R]
         let initials = matches.join("").substring(0, 2); // DPR
         let score = scoreCalculate(responderDate[itr].value2);
@@ -835,15 +831,11 @@ function scoreCalculate(userId) {
  */
 function getNonresponders() {
     UxUtils.setHtml("table#non-responder-table tbody", "");
-
     for (let itr = 0; itr < actionNonResponders.length; itr++) {
-        let id = actionNonResponders[itr].value2;
         let name = "";
         name = actionNonResponders[itr].label;
         let matches = actionNonResponders[itr].label.match(/\b(\w)/g); // [D,P,R]
         let initials = matches.join("").substring(0, 2); // DPR
-
-        let date = actionNonResponders[itr].value;
         UxUtils.setAppend($(".tabs-content:first").find("table#non-responder-table tbody"), UxUtils.getInitialNonResponders(initials, name));
     }
 }
@@ -863,7 +855,7 @@ function createResponderQuestionView(userId, responder = "") {
         let initials = matches.join("").substring(0, 2); // DPR
 
         Localizer.getString("you_responded").then(function(result) {
-            UxUtils.setAfter("div.progress-section", UxUtils.getInitialsResponders(myUserId, initials));
+            UxUtils.setAfter("div.progress-section", UxUtils.getInitialsResponders(myUserId, initials, result));
             UxUtils.setAfter("div.progress-section", UxUtils.breakline());
             UxUtils.setAfter("div#" + myUserId, UxUtils.breakline());
         });
@@ -999,10 +991,9 @@ function createResponderQuestionView(userId, responder = "") {
  */
 function createCreatorQuestionView() {
     total = 0;
-    let count = 1;
     score = 0;
     UxUtils.setHtml("div#root > div.question-content", "");
-    
+
     Localizer.getString("aggregrateResult").then(function(result) {
         UxUtils.setAfter("div.progress-section", UxUtils.getaggregrateTextContainer(myUserId, result));
     });
@@ -1014,7 +1005,6 @@ function createCreatorQuestionView() {
         );
 
         dataTable.dataColumns.forEach((question, ind) => {
-            let correctCounter = 0;
             answerIs = "";
             let $quesContDiv = $(`<div class="question-content disabled2" id="content-${question.name}"></div>`);
             let $mtDiv = $(`<div class="mt--16"></div>`);
@@ -1054,7 +1044,6 @@ function createCreatorQuestionView() {
                         console.error("AttachmentAction - Error: " + JSON.stringify(error));
                     });
             }
-            let correctAnswerCounter = 0;
             scoreArray[question.name] = 0;
 
             /* check for correct answer for each users */
@@ -1096,7 +1085,7 @@ function createCreatorQuestionView() {
                 isRadio = false;
             }
 
-            question.options.forEach((option, iii) => {
+            question.options.forEach((option) => {
                 /* User Responded */
                 let $cardDiv = $(`<div class="card-box card-bg card-border mb--8 "></div>`);
                 let userResponse = [];
@@ -1136,19 +1125,6 @@ function createCreatorQuestionView() {
                     actionInstance.customProperties[5].value
                 );
                 let correctResponseLength = Object.keys(correctResponse).length;
-                let correctAnswer = "";
-                for (let j = 0; j < correctResponseLength; j++) {
-                    let correctResponseAns = correctResponse[j];
-                    let correctResponseAnsLen = correctResponseAns.length;
-
-                    for (let k = 0; k < correctResponseAnsLen; k++) {
-                        if (correctResponseAns[k] == option.name) {
-                            correctAnswer = correctResponseAns[k];
-                            correctAnswerCounter++;
-                        }
-                    }
-                }
-
                 let optName = option.displayName;
                 let attachmentId = option.attachments != "" ? option.attachments[0].id : "";
                 let optId = option.name;
@@ -1244,7 +1220,6 @@ function createQuestionView(userId) {
                 /* User Responded */
                 let userResponse = [];
                 let userResponseAnswer = "";
-                let correctAnsArr = [];
                 for (let i = 0; i < actionDataRowsLength; i++) {
                     if (actionDataRows[i].creatorId == userId) {
                         userResponse = actionDataRows[i].columnValues;
@@ -1286,7 +1261,6 @@ function createQuestionView(userId) {
                     for (let k = 0; k < correctResponseAnsLen; k++) {
                         if (correctResponseAns[k] == option.name) {
                             correctAnswer = correctResponseAns[k];
-                            correctAnsArr = correctResponseAns;
                         }
                     }
                 }

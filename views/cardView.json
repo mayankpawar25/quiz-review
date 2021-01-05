@@ -29,7 +29,7 @@
                 "id": "Close",
                 "type": "TextBlock",
                 "$when": "${equals(action.status, 'Closed')}",
-                "text": "${strings.QuizClosed}",
+                "text": "${strings.quizClosed}",
                 "color": "attention",
                 "size": "small",
                 "wrap": true
@@ -38,7 +38,7 @@
                 "id": "Expiry",
                 "type": "TextBlock",
                 "$when": "${equals(action.status, 'Expired')}",
-                "text": "${strings.QuizExpired}",
+                "text": "${strings.quizExpired}",
                 "color": "attention",
                 "size": "small",
                 "wrap": true

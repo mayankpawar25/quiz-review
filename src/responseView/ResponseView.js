@@ -21,23 +21,15 @@ let actionDataRowsLength = 0;
 let memberIds = [];
 let myUserId = [];
 let contextActionId;
-let answerIs = "";
 let addDataRowRequest = "";
 let questionKey = "";
 let questionsKey = "";
 let startKey = "";
 let noteKey = "";
 let choiceAnyChoiceKey = "";
-let continueKey = "";
-let answerResponseKey = "";
 let correctKey = "";
-let yourAnswerKey = "";
 let incorrectKey = "";
-let correctAnswerKey = "";
-let yourAnswerIsKey = "";
-let rightAnswerIsKey = "";
 let submitKey = "";
-let quizSummaryKey = "";
 let doneKey = "";
 let nextKey = "";
 let backKey = "";
@@ -63,7 +55,6 @@ $(document).on("click", "#next", function() {
     let answerKeys = JSON.parse(actionInstance.customProperties[5].value);
     let correctAnsArr = [];
     let selectedAnswer = [];
-    let checkCounter = 0;
     let correctAnswer = false;
     let attrName = "";
     let pagenumber = $(this).attr("data-next-id");
@@ -75,14 +66,15 @@ $(document).on("click", "#next", function() {
         if ($("#previous").attr("data-prev-id") >= 0) {
             $("#previous").removeClass("disabled");
         }
-        $("#previous").attr("data-prev-id", parseInt(currentPage) - 1);
+        if($(this).text() == nextKey) {
+            $("#previous").attr("data-prev-id", parseInt(currentPage) - 1);
+        }
     }
 
     /* Check if radio or checkbox is checked */
     let isChecked = false;
     $("div.card-box-question:visible").find("input[type='checkbox']:checked").each(function(ind, ele) {
         if ($(ele).is(":checked")) {
-            checkCounter++;
             selectedAnswer.push($.trim($(ele).attr("id")));
             attrName = $(ele).attr("name");
             isChecked = true;
@@ -91,7 +83,6 @@ $(document).on("click", "#next", function() {
 
     $("div.card-box-question:visible").find("input[type='radio']:checked").each(function(ind, ele) {
         if ($(ele).is(":checked")) {
-            checkCounter++;
             selectedAnswer.push($.trim($(ele).attr("id")));
             attrName = $(ele).attr("name");
             isChecked = true;
@@ -123,103 +114,62 @@ $(document).on("click", "#next", function() {
 
         nextButtonName();
         if (isShowAnswerEveryQuestion == "Yes") {
-
             if ($(this).find("span").attr("class") == "check-key") {
-                if (correctAnswer == true) {
-                    UxUtils.setHtml($("div.card-box-question:visible").find(".result-status"), UxUtils.getCorrectArea(correctKey));
-                    $("input[type='radio']:visible, input[type='checkbox']:visible").each(function(optindex, opt) {
-                        if ($(opt).is(":checked")) {
-                            let optId = $(opt).attr("id");
-                            $(opt).parents(".card-box").addClass("alert-success");
-                            UxUtils.setAppend($(`div#${optId}`).find("div.pr--32.check-in-div"), Constants.getSuccessTick());
-                            $(`div#${optId}`).find("div.pr--32.check-in-div").addClass("mh--20");
-                        }
-                        $(opt).parents("div.card-box").addClass("disabled");
-                    });
-                } else {
-                    UxUtils.setHtml($("div.card-box-question:visible").find(".result-status"), UxUtils.getIncorrectArea(incorrectKey));
-                    $("input[type='radio']:visible, input[type='checkbox']:visible").each(function(optindex, opt) {
-                        $(opt).parents("div.card-box").addClass("disabled");
-                        let optval = $(opt).attr("id");
-                        let ansKey = [];
-                        if (answerKeys[(attrName - 1)].indexOf(",") > -1) {
-                            ansKey = answerKeys[(attrName - 1)].split(",");
-                        } else {
-                            ansKey = answerKeys[(attrName - 1)];
-                        }
-                        if ($(opt).is(":checked") && ansKey.includes(optval)) {
-                            if ($(opt).parents("label.selector-inp").length > 0) {
-                                UxUtils.setAppend($(opt).parents("label.selector-inp").find("div.check-in-div"), UxUtils.getSuccessTick());
-                                $(opt).parents("label.selector-inp").find("div.check-in-div").addClass("mh--20");
-                            } else {
-                                UxUtils.setAppend($(opt).parents("label.d-block").find("div.check-in-div"), UxUtils.getSuccessTick());
-                                $(opt).parents("label.d-block").find("div.check-in-div").addClass("mh--20");
-                            }
-                        } else if ($(opt).is(":checked") && ansKey.includes(optval) == false) {
-                            $(opt).parents(".card-box").addClass("alert-danger");
-                        } else if (ansKey.includes(optval)) {
-                            if ($(opt).parents("label.selector-inp").length > 0) {
-                                UxUtils.setAppend($(opt).parents("label.selector-inp").find("div.check-in-div"), UxUtils.getSuccessTick());
-                                $(opt).parents("label.selector-inp").find("div.check-in-div").addClass("mh--20");
-                            } else {
-                                UxUtils.setAppend($(opt).parents("label.d-block").find("div.check-in-div"), UxUtils.getSuccessTick());
-                                $(opt).parents("label.d-block").find("div.check-in-div").addClass("mh--20");
-                            }
-                        }
-                    });
-                }
-                $(".check-key").addClass("next-key");
-                $(".check-key").removeClass("check-key");
+                checkAnswer(correctAnswer, answerKeys, attrName);
             } else {
-                $root.find(".card-box-question").hide();
-                if ((parseInt(currentPage) == $root.find("div.card-box-question").length) && (parseInt(currentPage)) < maxQuestionCount) {
-                    createQuestionView();
-                } else if (parseInt(currentPage) == maxQuestionCount) {
-                    /*  Submit your question  */
-                    addDataRowRequest = ActionHelper.addDataRow(
-                        getDataRow(contextActionId)
-                    );
-                    ActionHelper
-                        .executeApi(addDataRowRequest)
-                        .then(function(batchResponse) {
-                            console.info("BatchResponse: " + JSON.stringify(batchResponse));
-                            summarySection();
-                        })
-                        .catch(function(error) {
-                            console.log("Error1: " + JSON.stringify(error));
+                if ($.trim($(".result-status:visible").text()).length == 0) {
+                    checkAnswer(correctAnswer, answerKeys, attrName);
+                }else {
+                    $root.find(".card-box-question").hide();
+                    if ((parseInt(currentPage) == $root.find("div.card-box-question").length) && (parseInt(currentPage)) < maxQuestionCount) {
+                        createQuestionView();
+                    } else if (parseInt(currentPage) == maxQuestionCount) {
+                        /*  Submit your question  */
+                        addDataRowRequest = ActionHelper.addDataRow(
+                            getDataRow(contextActionId)
+                        );
+                        ActionHelper
+                            .executeApi(addDataRowRequest)
+                            .then(function(batchResponse) {
+                                console.info("BatchResponse: " + JSON.stringify(batchResponse));
+                                summarySection();
+                            })
+                            .catch(function(error) {
+                                console.log("Error1: " + JSON.stringify(error));
+                            });
+
+                    } else {
+                        $("#previous").attr("data-prev-id", (parseInt(currentPage) - 1));
+                        Localizer.getString("xofy", parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
+                            $("#xofy").text(result);
+                            nextButtonName();
                         });
+                        $("#check").attr("data-next-id", (parseInt(currentPage) + 1));
+                        $("#next").attr("data-next-id", (parseInt(currentPage) + 1));
+                        $root.find("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").show();
 
-                } else {
-                    $("#previous").attr("data-prev-id", (parseInt(currentPage) - 1));
-                    Localizer.getString("xofy", parseInt(currentPage) + 1, maxQuestionCount).then(function(result) {
-                        $("#xofy").text(result);
-                        nextButtonName();
-                    });
-                    $("#check").attr("data-next-id", (parseInt(currentPage) + 1));
-                    $("#next").attr("data-next-id", (parseInt(currentPage) + 1));
-                    $root.find("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").show();
-
-                    if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find(".card-box.disabled:first").length == 0) {
-                        if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find("input[name='" + (parseInt(currentPage) + 1) + "']").is(":checked") == false) {
-                            $(".section-1-footer").find(".next-key").addClass("check-key");
-                            $(".section-1-footer").find(".next-key").removeClass("next-key");
-                            $(".footer.section-1-footer").hide();
-                            if (isShowAnswerEveryQuestion != "Yes") {
-                                let timeids = setInterval(function() {
-                                    if($(".section-1-footer").find(".check-key").length > 0) {
-                                        $(".section-1-footer").find(".check-key").text(nextKey);
-                                        $(".footer.section-1-footer").show();
-                                        clearInterval(timeids);
-                                    }
-                                }, Constants.setIntervalTimeOne());
-                            } else {
-                                $(".section-1-footer").find(".check-key").text(checkKey);
-                                $(".footer.section-1-footer").show();
+                        if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find(".card-box.disabled:first").length == 0) {
+                            if ($("div.card-box-question:nth-child(" + (parseInt(currentPage) + 1) + ")").find("input[name='" + (parseInt(currentPage) + 1) + "']").is(":checked") == false) {
+                                $(".section-1-footer").find(".next-key").addClass("check-key");
+                                $(".section-1-footer").find(".next-key").removeClass("next-key");
+                                $(".footer.section-1-footer").hide();
+                                if (isShowAnswerEveryQuestion != "Yes") {
+                                    let timeids = setInterval(function() {
+                                        if($(".section-1-footer").find(".check-key").length > 0) {
+                                            $(".section-1-footer").find(".check-key").text(nextKey);
+                                            $(".footer.section-1-footer").show();
+                                            clearInterval(timeids);
+                                        }
+                                    }, Constants.setIntervalTimeOne());
+                                } else {
+                                    $(".section-1-footer").find(".check-key").text(checkKey);
+                                    $(".footer.section-1-footer").show();
+                                }
                             }
                         }
-                    }
-                    if ($("#previous").attr("data-prev-id") >= 0) {
-                        $("#previous").removeClass("disabled");
+                        if ($("#previous").attr("data-prev-id") >= 0) {
+                            $("#previous").removeClass("disabled");
+                        }
                     }
                 }
             }
@@ -472,45 +422,17 @@ async function getStringKeys() {
         choiceAnyChoiceKey = result;
     });
 
-    Localizer.getString("continue").then(function(result) {
-        continueKey = result;
-    });
-
-    Localizer.getString("answer_response").then(function(result) {
-        answerResponseKey = result;
-    });
-
     Localizer.getString("correct").then(function(result) {
         correctKey = result;
-    });
-
-    Localizer.getString("your_answer").then(function(result) {
-        yourAnswerKey = result;
     });
 
     Localizer.getString("incorrect").then(function(result) {
         incorrectKey = result;
     });
 
-    Localizer.getString("correctAnswer").then(function(result) {
-        correctAnswerKey = result;
-    });
-
-    Localizer.getString("your_answer_is").then(function(result) {
-        yourAnswerIsKey = result;
-    });
-
-    Localizer.getString("right_answer_is").then(function(result) {
-        rightAnswerIsKey = result;
-    });
-
     Localizer.getString("submit").then(function(result) {
         submitKey = result;
         $(".submit-key").text(submitKey);
-    });
-
-    Localizer.getString("quiz_summary").then(function(result) {
-        quizSummaryKey = result;
     });
 
     Localizer.getString("next").then(function(result) {
@@ -653,11 +575,9 @@ function createBody() {
         UxUtils.setAppend($spDiv, $sDiv);
         UxUtils.setAppend($root, $card);
     } else {
-        let isImage = false;
         /* Loads all images when launching landing page */
         actionInstance.dataTables.forEach((dataTable, ind) => {
             if (dataTable.attachments.length > 0) {
-                isImage = true;
                 let req = ActionHelper.getAttachmentInfo(contextActionId, dataTable.attachments[0].id);
                 ActionHelper.executeApi(req).then(function(response) {
                         actionInstance.dataTables[ind].attachments[0].url = response.attachmentInfo.downloadUrl;
@@ -677,7 +597,6 @@ function createBody() {
             }
             dataTable.dataColumns.forEach((questions, qindex) => {
                 if (questions.attachments.length > 0) {
-                    isImage = true;
                     let req = ActionHelper.getAttachmentInfo(contextActionId, questions.attachments[0].id);
                     ActionHelper.executeApi(req).then(function(response) {
                             actionInstance.dataTables[ind].dataColumns[qindex].attachments[0].url = response.attachmentInfo.downloadUrl;
@@ -689,7 +608,6 @@ function createBody() {
 
                 questions.options.forEach((option, optindex) => {
                     if (option.attachments.length > 0) {
-                        isImage = true;
                         let req = ActionHelper.getAttachmentInfo(contextActionId, option.attachments[0].id);
                         ActionHelper.executeApi(req).then(function(response) {
                                 actionInstance.dataTables[ind].dataColumns[qindex].options[optindex].attachments[0].url = response.attachmentInfo.downloadUrl;
@@ -849,15 +767,7 @@ function createQuestionView() {
             getClassFromDimension(question.attachments[0].url, "#root div.card-box-question:visible .question-template-image");
             UxUtils.removeImageLoader("#root div.card-box-question:visible .question-template-image");
         }
-
         UxUtils.setHtml("#root div.card-box-question:visible .question-title", `<p class="">${question.displayName}</p>`);
-        let choiceOccurance = 1;
-        /* Check multichoice or single choice options  */
-        if (question.valueType == "SingleOption") {
-            choiceOccurance = 1;
-        } else {
-            choiceOccurance = 2;
-        }
 
         //add checkbox input
         if (question.valueType == "SingleOption") {
@@ -942,6 +852,11 @@ function nextButtonName() {
             if($(".section-1-footer").find(".next-key").length > 0) {
                 console.log("test 8");
                 $(".section-1-footer").find(".next-key").text(`${doneKey}`);
+                if (isShowAnswerEveryQuestion == "Yes") {
+                    if ($.trim($(".result-status:visible").text()).length == 0){
+                        $(".section-1-footer").find(".next-key").text(`${checkKey}`);
+                    }
+                }
                 clearInterval(timeid);
             }
         }, Constants.setIntervalTimeOne());
@@ -950,6 +865,11 @@ function nextButtonName() {
             if($(".section-1-footer").find(".next-key").length > 0) {
                 console.log("test 9");
                 $(".section-1-footer").find(".next-key").text(`${nextKey}`);
+                if (isShowAnswerEveryQuestion == "Yes") {
+                    if ($.trim($(".result-status:visible").text()).length == 0){
+                        $(".section-1-footer").find(".next-key").text(`${checkKey}`);
+                    }
+                }
                 clearInterval(timeid);
             }
         }, Constants.setIntervalTimeOne());
@@ -983,7 +903,12 @@ function summarySection() {
 
         if (isShowAnswerEveryQuestion == "Yes") {
             $("#root").find("div.card-box-question").each(function(i, val) {
-                let answerIs = $(val).find(".result-status span").hasClass("text-danger") ? "Incorrect" : "Correct";
+                let answerIs = "";
+                if ($(val).find(".result-status span").hasClass("text-danger")) {
+                    answerIs = incorrectKey;
+                } else {
+                    answerIs = correctKey;
+                }
                 let cardQuestion = $(val).clone().show();
                 UxUtils.setAppend($cardQuestionDiv, cardQuestion);
                 if (answerIs == "Correct") {
@@ -1053,8 +978,7 @@ function summarySection() {
  */
 function radiobuttonclick() {
     let data = [];
-    // row = {};
-    $.each($("input[type='checkbox']:checked"), function(ind, v) {
+    $.each($("input[type='checkbox']:checked"), function() {
         if ($(this).is(":visible")) {
             let col = $(this).parents("div.radio-section").attr("columnid");
             data.push($(this).attr("id"));
@@ -1069,7 +993,6 @@ function radiobuttonclick() {
     $.each($("input[type='radio']:checked"), function() {
         if ($(this).is(":visible")) {
             let col = $(this).parents("div.radio-section").attr("columnid");
-
             if (!row[col]) {
                 row[col] = [];
             }
@@ -1121,6 +1044,54 @@ function getClassFromDimension(imgURL, selector) {
         }
         $(selector).addClass(getClass);
     });
+}
+
+function checkAnswer(correctAnswer, answerKeys, attrName) {
+    if (correctAnswer == true) {
+        UxUtils.setHtml($("div.card-box-question:visible").find(".result-status"), UxUtils.getCorrectArea(correctKey));
+        $("input[type='radio']:visible, input[type='checkbox']:visible").each(function (optindex, opt) {
+            if ($(opt).is(":checked")) {
+                let optId = $(opt).attr("id");
+                $(opt).parents(".card-box").addClass("alert-success");
+                UxUtils.setAppend($(`div#${optId}`).find("div.pr--32.check-in-div"), UxUtils.getSuccessTick());
+                $(`div#${optId}`).find("div.pr--32.check-in-div").addClass("mh--20");
+            }
+            $(opt).parents("div.card-box").addClass("disabled");
+        });
+    } else {
+        UxUtils.setHtml($("div.card-box-question:visible").find(".result-status"), UxUtils.getIncorrectArea(incorrectKey));
+        $("input[type='radio']:visible, input[type='checkbox']:visible").each(function (optindex, opt) {
+            $(opt).parents("div.card-box").addClass("disabled");
+            let optval = $(opt).attr("id");
+            let ansKey = [];
+            if (answerKeys[(attrName - 1)].indexOf(",") > -1) {
+                ansKey = answerKeys[(attrName - 1)].split(",");
+            } else {
+                ansKey = answerKeys[(attrName - 1)];
+            }
+            if ($(opt).is(":checked") && ansKey.includes(optval)) {
+                if ($(opt).parents("label.selector-inp").length > 0) {
+                    UxUtils.setAppend($(opt).parents("label.selector-inp").find("div.check-in-div"), UxUtils.getSuccessTick());
+                    $(opt).parents("label.selector-inp").find("div.check-in-div").addClass("mh--20");
+                } else {
+                    UxUtils.setAppend($(opt).parents("label.d-block").find("div.check-in-div"), UxUtils.getSuccessTick());
+                    $(opt).parents("label.d-block").find("div.check-in-div").addClass("mh--20");
+                }
+            } else if ($(opt).is(":checked") && ansKey.includes(optval) == false) {
+                $(opt).parents(".card-box").addClass("alert-danger");
+            } else if (ansKey.includes(optval)) {
+                if ($(opt).parents("label.selector-inp").length > 0) {
+                    UxUtils.setAppend($(opt).parents("label.selector-inp").find("div.check-in-div"), UxUtils.getSuccessTick());
+                    $(opt).parents("label.selector-inp").find("div.check-in-div").addClass("mh--20");
+                } else {
+                    UxUtils.setAppend($(opt).parents("label.d-block").find("div.check-in-div"), UxUtils.getSuccessTick());
+                    $(opt).parents("label.d-block").find("div.check-in-div").addClass("mh--20");
+                }
+            }
+        });
+    }
+    $(".check-key").addClass("next-key");
+    $(".check-key").removeClass("check-key");
 }
 
 // *********************************************** HTML SECTION ***********************************************

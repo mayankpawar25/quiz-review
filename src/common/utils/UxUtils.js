@@ -659,8 +659,9 @@ export class UxUtils {
      * @Method to get responder initials with name
      * @param initials string
      * @param name string
+     * @param result string localization string
      */
-    static getInitialsResponders(myUserId, initials) {
+    static getInitialsResponders(myUserId, initials, result) {
         return `<div class="d-flex cursor-pointer getresult" data-attr="home" id="${myUserId}">
                     <div class="avtar">
                         ${initials}
