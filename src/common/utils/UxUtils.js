@@ -1470,7 +1470,7 @@ export class UxUtils {
      * @param resultLocale String contains localization of 10 option max error string
      */
     static getMaxTenOptionError(requiredKey) {
-        return `<div class="max-option-err-box"> ${requiredKey} </div>`;
+        return `<div class="max-option-err-box text-danger font-12"> ${requiredKey} </div>`;
     }
 
     /**

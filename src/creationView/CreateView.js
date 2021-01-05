@@ -166,7 +166,7 @@ $(document).on({
         e.preventDefault();
         if ($(this).parents("div#options").find("div.option-div input[type='text'][id^=option]").length >= Constants.getOptionLimit()) {
             $(this).parents(".question-container").find(".add-options").hide();
-            UxUtils.setAfter($(this).parents(".question-container"), UxUtils.getMaxTenOptionError(maxTenOptionKey));
+            UxUtils.setAppend($(this).parents(".question-container").find(".card-box"), UxUtils.getMaxTenOptionError(maxTenOptionKey));
             $([document.documentElement, document.body]).animate({
                 scrollTop: $(this).parents(".question-container").find(".max-option-err-box").offset().top - Constants.getWidthOffsets()
             }, Constants.setIntervalTimeThousand());
