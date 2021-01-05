@@ -12,11 +12,13 @@
     },
     "dataTables": {
         "canAddMore": false,
-        "values": [{
-            "name": "QuizDataTable",
-            "dataColumns": {
-                "canAddMore": true
+        "values": [
+            {
+                "name": "QuizDataTable",
+                "dataColumns": {
+                    "canAddMore": true
+                }
             }
-        }]
+        ]
     }
 }
