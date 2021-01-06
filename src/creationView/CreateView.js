@@ -943,12 +943,13 @@ function createAction(actionPackageId) {
         canAddMore: false,
         type: "LargeText",
         value: quizAttachementId,
-    }, {
-        name: "Locale",
-        valueType: ActionHelper.actionPropertyValueType(),
-        value: context.locale,
     });
     properties.push(getcorrectanswers);
+    properties.push({
+        name: "Locale",
+        valueType: ActionHelper.actionPropertyValueType(),
+        value: context.locale
+    });
 
     let action = {
         id: Utils.generateGUID(),

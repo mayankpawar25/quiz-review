@@ -354,5 +354,9 @@ export class ActionHelper {
         }
     }
 
+    static actionPropertyValueType(){
+        return actionSDK.ActionPropertyValueType.Text;
+    }
+
 }
 Localizer.jsonObject = {};
