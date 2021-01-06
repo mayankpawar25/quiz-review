@@ -13,7 +13,7 @@ let settingText = "";
 let quesContainer = "";
 let opt = "";
 let lastSession = "";
-
+let context = "";
 let optionKey = "";
 let addMoreOptionsKey = "";
 let choicesKey = "";
@@ -943,6 +943,10 @@ function createAction(actionPackageId) {
         canAddMore: false,
         type: "LargeText",
         value: quizAttachementId,
+    }, {
+        name: "Locale",
+        valueType: ActionHelper.actionPropertyValueType(),
+        value: context.locale,
     });
     properties.push(getcorrectanswers);
 
@@ -1164,7 +1168,7 @@ async function getStringKeys() {
  */
 async function loadCreationPage(request) {
     let response = await ActionHelper.executeApi(request);
-    let context = response.context;
+    context = response.context;
     lastSession = context.lastSessionData;
     let theme = context.theme;
     let langObj = Utils.getLocaleForCalendar(context.locale);
