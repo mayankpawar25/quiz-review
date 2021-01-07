@@ -354,6 +354,9 @@ export class ActionHelper {
         }
     }
 
+    /**
+     * Method to set action property value to text for Adaptive card localization
+     */
     static actionPropertyValueType(){
         return actionSDK.ActionPropertyValueType.Text;
     }

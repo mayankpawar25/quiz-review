@@ -42,14 +42,14 @@ let closeKey = "";
 /* ********************************* Events ******************************************** */
 
 /**
- * @event Click handles the radio is selcct as correct answer
+ * @event Click event to handles the radio is selcct as correct answer
  */
 $(document).on("click", "div.radio-section", function() {
     radiobuttonclick();
 });
 
 /**
- * @event Click event handles next questions
+ * @event Click event to handles next questions
  */
 $(document).on("click", "#next", function() {
     let answerKeys = JSON.parse(actionInstance.customProperties[5].value);
@@ -251,7 +251,7 @@ $(document).on("click", "#next", function() {
 });
 
 /**
- * @event Change for radio or check box
+ * @event Change event for radio or check box for question
  */
 $(document).on("change", "input[type='radio'], input[type='checkbox']", function() {
     $(this).each(function(ind, opt) {
@@ -290,7 +290,7 @@ $(document).on("change", "input[type='radio'], input[type='checkbox']", function
 });
 
 /**
- * @event Click to check button
+ * @event Click event to check option is selected and show error if not
  */
 $(document).on("click", "#check", function() {
     $(".choice-required-err").remove();
@@ -301,7 +301,7 @@ $(document).on("click", "#check", function() {
 });
 
 /**
- * @event Click handles previous questions
+ * @event Click event to show previous questions
  */
 $(document).on("click", "#previous", function() {
     if ($(this).hasClass("disabled") == false) {
@@ -351,7 +351,7 @@ $(document).on("click", ".submit-key", function() {
 });
 
 /**
- * @event Click Event on start button and loads first question
+ * @event Click event on start button and loads first question
  */
 $(document).on("click", "#start", function() {
     UxUtils.setHtml($root, "");
@@ -361,14 +361,14 @@ $(document).on("click", "#start", function() {
 });
 
 /**
- * @event Click Event on submit quiz and loads summary view
+ * @event Click event on submit quiz and loads summary view
  */
 $(document).on("click", ".submit-form", function() {
     summarySection();
 });
 
 /**
- * @event Click Event to close
+ * @event Click event to close quiz
  */
 $(document).on("click", "#close-event", function() {
     let closeViewRequest = ActionHelper.closeView();
@@ -376,12 +376,12 @@ $(document).on("click", "#close-event", function() {
 });
 
 /**
- * @event Keydown for disable action on response summary section
+ * @event Keydown event for disable option if answers is selected for check answer setting
  */
 KeyboardAccess.selectCheckOrRadioKeydown(document, ".summary-section input[type='radio'], .summary-section input[type='checkbox']");
 
 /**
- * @event Click for disable action on response summary section
+ * @event Click event for disable option if answers is selected for check answer setting
  */
 $(document).on({
     click: function(e) {
@@ -395,7 +395,7 @@ $(document).on({
 /* ********************************* Methods ******************************************** */
 
 /**
- * @description Async method for fetching localization strings
+ * @description Method getStringKeys for fetching localization strings
  */
 async function getStringKeys() {
     Localizer.getString("question").then(function(result) {
@@ -477,8 +477,8 @@ async function getStringKeys() {
 }
 
 /**
- * @description Method to select theme based on the teams theme
- * @param request context request
+ * @description Method loadResponsView to select theme based on the teams theme
+ * @param request context request object
  */
 async function loadResponsView(request) {
     let response = await ActionHelper.executeApi(request);
@@ -494,14 +494,14 @@ async function loadResponsView(request) {
     OnPageLoad();
 }
 
-/* Initiate Method */
+/* Initiate Method and call methods during page load */
 $(document).ready(function() {
     request = ActionHelper.getContextRequest();
     loadResponsView(request);
 });
 
 /**
- * @description Method loads the landing page
+ * @description Method OnPageLoad retrieves action data and responders ids and loads the landing page
  */
 function OnPageLoad() {
     ActionHelper
@@ -517,8 +517,8 @@ function OnPageLoad() {
 }
 
 /**
- * @description Method get Responder Details
- * @param action context id
+ * @description Method getResponderIds get Responders id
+ * @param action context id identifier
  */
 async function getResponderIds(actionId) {
     ActionHelper
@@ -543,8 +543,8 @@ async function getResponderIds(actionId) {
 }
 
 /**
- * @description Method get questions and options
- * @param action context id
+ * @description Method getActionInstance creates quiz page during page load
+ * @param action context id identifier
  */
 function getActionInstance(actionId) {
     ActionHelper
@@ -559,7 +559,7 @@ function getActionInstance(actionId) {
 }
 
 /**
- * @description Method for creating the response view structure and initialize value
+ * @description Method createBody for creating the quiz page
  */
 function createBody() {
     /*  Check Expiry date time  */
@@ -656,7 +656,7 @@ function createBody() {
 }
 
 /**
- * @description Calculate User Score
+ * @description method calculateScore Calculates Responders Score
  */
 function calculateScore() {
     let total = 0;
@@ -717,7 +717,7 @@ function calculateScore() {
 }
 
 /**
- * @description Method for creating Question
+ * @description Method createQuestionView for creating Question pagewise
  */
 function createQuestionView() {
     $(".footer.section-1-footer").remove();
@@ -804,7 +804,7 @@ function createQuestionView() {
 }
 
 /**
- * @description Method for creating Radio button for single select type question
+ * @description Method getRadioButton for creating Radio button for single select type question
  * @param text label for radio button
  * @param name column id fo question
  * @param id unique identifier
@@ -820,7 +820,7 @@ function getRadioButton(text, name, id, attachmentURL) {
 }
 
 /**
- * @descriptions Method for creating checkbox button for single select type question
+ * @descriptions Method getCheckboxButton for creating checkbox button for multple select type question
  * @param text label for radio button
  * @param name column id fo question
  * @param id unique identifier
@@ -837,7 +837,7 @@ function getCheckboxButton(text, name, id, attachmentURL) {
 }
 
 /**
- * @description Method handles button text
+ * @description Method nextButtonName handles button text based on check answers setting
  */
 function nextButtonName() {
     let currentPage = "";
@@ -877,7 +877,7 @@ function nextButtonName() {
 }
 
 /**
- * @description Method creates Summary page after finish quiz
+ * @description Method summarySection creates Summary page after finishing quiz
  */
 function summarySection() {
     getStringKeys();
@@ -974,7 +974,7 @@ function summarySection() {
 }
 
 /**
- * @description Method for handle radio click event and returns saved object when user respond to quiz
+ * @description Method radiobuttonclick handles radio click event and returns saved object when user respond to quiz
  */
 function radiobuttonclick() {
     let data = [];
@@ -1002,7 +1002,7 @@ function radiobuttonclick() {
 }
 
 /**
- * @description Method for fetching the reponse data from creation view
+ * @description Method getDataRow for fetching the reponse data from creation view
  * @param actionId contains context action id
  */
 function getDataRow(actionId) {
@@ -1016,7 +1016,7 @@ function getDataRow(actionId) {
 }
 
 /**
- * @description Method to get image dimensions and image div dimensions
+ * @description Method getClassFromDimension to get image dimensions and image div dimensions
  * @param imageURL contains image url
  * @param selector contains image where url placed
  */
@@ -1046,6 +1046,12 @@ function getClassFromDimension(imgURL, selector) {
     });
 }
 
+/**
+ * @description Method checkAnswer will show correct or incorrect answers if check answer setting is enabled
+ * @param correctAnswer boolean contains if answer is correct or incorrect
+ * @param answerKeys contains users responded answer id
+ * @param attrName contains index for the visible question page
+ */
 function checkAnswer(correctAnswer, answerKeys, attrName) {
     if (correctAnswer == true) {
         UxUtils.setHtml($("div.card-box-question:visible").find(".result-status"), UxUtils.getCorrectArea(correctKey));
@@ -1096,36 +1102,36 @@ function checkAnswer(correctAnswer, answerKeys, attrName) {
 
 // *********************************************** HTML SECTION ***********************************************
 /**
- * @description HTML section for landing page
+ * @description HTML section for landing page html
  */
 let textSection1 = UxUtils.getResponseLandingSection();
 
 /**
- * @description HTML Footer section for start quiz
+ * @description HTML Footer section for start quiz html
  */
 let footerSection1 = UxUtils.getFooterResponseSection();
 
 /**
- * @description HTML section for question area
+ * @description HTML section for question area html
  */
 let questionSection = UxUtils.getResponseQuestionSection();
 
 /**
- * @description HTML section for footer quiz area with pagination
+ * @description HTML section for footer quiz area with pagination html
  */
 let paginationFooterSection = UxUtils.getPaginationFooterSection();
 
 /**
- * @description HTML section for summary
+ * @description HTML section for summary html
  */
 let summarySectionArea = UxUtils.getSummarySection();
 
 /**
- * @description HTML section for summary footer
+ * @description HTML section for summary footer html
  */
 let summaryFooter = UxUtils.getSummaryFooterSection();
 
 /**
- * @description Variable contains close button at footer
+ * @description Variable contains close button at footer html
  */
 let closeFooter = UxUtils.getCloseFooterSection();

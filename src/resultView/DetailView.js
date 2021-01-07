@@ -51,12 +51,12 @@ let changeDueDateKey = "";
 /* ********************************* Events ******************************************** */
 
 /**
- * @event Keydown Event for rerender the landing page
+ * @event Keydown Event for render the landing page
  */
 KeyboardAccess.keydownClick(document, ".back");
 
 /**
- * @event Click Event for rerender the landing page
+ * @event Click Event for render the landing page
  */
 $(document).on({
     click: function() {
@@ -355,7 +355,7 @@ $(document).ready(function() {
 loadDetailView(request);
 
 /**
- * @description Async method for fetching localization strings
+ * @description getStringKeys method for fetching localization strings
  */
 async function getStringKeys() {
     Localizer.getString("dueBy").then(function(result) {
@@ -771,7 +771,7 @@ function getResponders() {
 }
 
 /**
- * @description Calculate the score
+ * @description scoreCalculate method Calculate the score
  * @param userId String Identifier
  */
 function scoreCalculate(userId) {
@@ -1325,7 +1325,7 @@ function createQuestionView(userId) {
 }
 
 /**
- * @desc Method for Question view based on user id
+ * @description Method for Question view based on user id
  * @param text String contains correct and incorrect message
  * @param name String contains option name
  * @param id String contains option id
@@ -1368,7 +1368,7 @@ function getRadioOptions(text, name, id, userResponse, correctAnswer, attachment
 }
 
 /**
- * @desc Method for Question view Checkbox based on user id
+ * @description Method for Question view Checkbox based on user id
  * @param text String contains correct and incorrect message
  * @param name String contains option name
  * @param id String contains option id

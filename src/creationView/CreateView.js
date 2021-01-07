@@ -52,12 +52,12 @@ let questionKey = "";
 
 /* ******************************** Events ************************************** */
 /**
- * @event Keydown for add Question Section
+ * @event Keydown event to add Question
  */
 KeyboardAccess.keydownClick(document, "#add-questions");
 
 /**
- * @event Click for add Question Section
+ * @event Click event to add Question
  */
 $(document).on({
     click: function(e) {
@@ -104,7 +104,7 @@ $(document).on({
 }, "#add-questions");
 
 /**
- * @event Click for cancel button on confirm box of question deletion
+ * @event Click event of confirm box cancel button during delete question
  */
 $(document).on("click", ".cancel-question-delete", function() {
     $(this).parents(".question-container").find(".add-options").show();
@@ -112,12 +112,12 @@ $(document).on("click", ".cancel-question-delete", function() {
 });
 
 /**
- * @event Keydown for remove the Question from the section-2
+ * @event Keydown event to remove Question
  */
 KeyboardAccess.keydownClick(document, ".remove-question");
 
 /**
- * @event Click for remove the Question from the section-2
+ * @event Click event to remove Question
  */
 $(document).on({
     click: function() {
@@ -154,12 +154,12 @@ $(document).on({
 }, ".remove-question");
 
 /**
- * @event Keydown to add the Option under question
+ * @event Keydown event to add the Option under the question area
  */
 KeyboardAccess.keydownClick(document, ".add-options");
 
 /**
- * @event Click to add the Option under question
+ * @event Click event to add the Option under the question area
  */
 $(document).on({
     click: function(e) {
@@ -199,7 +199,7 @@ $(document).on({
 }, ".add-options");
 
 /**
- * @event Click for remove the Option
+ * @event Click event to remove the Option under the question area
  */
 $(document).on("click", ".remove-option", function() {
     $(this).parents("div.question-container").find(".option-required-err").remove();
@@ -238,7 +238,7 @@ $(document).on("click", ".remove-option", function() {
 });
 
 /**
- * @event Click to Submit Quiz
+ * @event Click event to Submit Quiz
  */
 $(document).on("click", "#submit", function(e) {
     e.preventDefault();
@@ -250,7 +250,7 @@ $(document).on("click", "#submit", function(e) {
 });
 
 /**
- * @event Change on quiz title
+ * @event Change event on quiz title, this remove error message and remove next button disabled
  */
 $(document).on("change", "#quiz-title", function() {
     if ($("#quiz-title").val().length > 0) {
@@ -261,7 +261,7 @@ $(document).on("change", "#quiz-title", function() {
 });
 
 /**
- * @event Click on clear button on training section
+ * @event Click event on clear button for remove banner image
  */
 $(document).on("click", ".quiz-clear", function() {
     $(".error-msg").remove();
@@ -282,7 +282,7 @@ $(document).on("click", ".quiz-clear", function() {
 });
 
 /**
- * @event Click for next section at Quiz title and description page
+ * @event Click event on next button this will change the page from quiz detail to add question area
  */
 $(document).on("click", "#next", function() {
     let isError = false;
@@ -326,12 +326,12 @@ $(document).on("click", "#next", function() {
 });
 
 /**
- * @event Keydown  to back button on section 2
+ * @event Keydown event on back button at add question area
  */
 KeyboardAccess.keydownClick(document, "#back-questionsContainer");
 
 /**
- * @event Click to back button on section 2
+ * @event Click event on back button at add question area
  */
 $(document).on({
     click: function() {
@@ -345,7 +345,7 @@ $(document).on({
 }, "#back-questionsContainer");
 
 /**
- * @event Change event for setting inputs
+ * @event Change event for setting area inputs
  */
 $(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], .visible-to, #show-correct-answer", function() {
     $(".invalid-date-err").remove();
@@ -373,12 +373,12 @@ $(document).on("change", "input[name='expiry_time'], input[name='expiry_date'], 
 });
 
 /**
- * @event Keydown event for correct answer inputs
+ * @event Keydown event on check correct option under questions
  */
 KeyboardAccess.keydownClick(document, ".check-me-title");
 
 /**
- * @event Click event for correct answer inputs
+ * @event Click event on check correct option under questions
  */
 $(document).on({
     click: function(e) {
@@ -395,12 +395,12 @@ $(document).on({
 }, ".check-me-title");
 
 /**
- * @event Keydown event for remove options
+ * @event Keydown event for remove options under question
  */
 KeyboardAccess.removeOptionKeydown(document, ".remove-option-href");
 
 /**
- * @event Click when click on class then open hidden file
+ * @event Click event for open file explorer to choose media file
  */
 $(document).on("click", ".upvj", function(event) {
     event.preventDefault();
@@ -412,28 +412,28 @@ $(document).on("click", ".upvj", function(event) {
 });
 
 /**
- * @event Focusin to show trash on focusin at input
+ * @event Focusin event to show trash when cursor focused on input box of options
  */
 $(document).on("focusin", ".option-div, .input-group-append, .input-group, .input-group input[type='text'], .input-tpt, .input-tpt .remove-option", function() {
     $(this).parents("div.row").find(".remove-option").show();
 });
 
 /**
- * @event Focusout to hide trash on focusout at input
+ * @event Focusout event to hide trash when cursor focusout from input box of options
  */
 $(document).on("focusout", ".option-div, .input-tpt, .input-tpt .remove-option, .check-me-title, .input-group input[type='text']", function() {
     $(this).parents("div.row").find(".remove-option").hide();
 });
 
 /**
- * @event Hover to show trash on focusin at input
+ * @event Hover event to show trash when focusin at input box of options
  */
 $(document).on("hover", ".remove-option", function() {
     $(this).show();
 });
 
 /**
- * @event Change when quiz cover image changes
+ * @event Change event on cover image for quiz banner image
  */
 $(document).on("change", "#cover-image", function() {
     $(".error-msg").remove();
@@ -485,12 +485,12 @@ $(document).on("change", "#cover-image", function() {
 });
 
 /**
- * @event Keydown when question cover image changes
+ * @event Keydown event on question and option images upload section
  */
 KeyboardAccess.keydownClick(document, ".question-image, .option-image");
 
 /**
- * @event Click when question cover image changes
+ * @event Click event on question and option images upload section
  */
 $(document).on({
     click: function(e) {
@@ -501,7 +501,7 @@ $(document).on({
 }, ".question-image, .option-image");
 
 /**
- * @event Change when question cover image changes
+ * @event Change event for question image
  */
 $(document).on("change", "input[name='question_image']", function() {
     $(".invalid-file-question").remove();
@@ -548,7 +548,7 @@ $(document).on("change", "input[name='question_image']", function() {
 });
 
 /**
- * @event Change when option cover image changes
+ * @event Change event for option image
  */
 $(document).on("change", "input[name='option_image']", function() {
     $(".invalid-file-option").remove();
@@ -593,17 +593,17 @@ $(document).on("change", "input[name='option_image']", function() {
 });
 
 /**
- * @event Keydown for open image upload
+ * @event Keydown event on quiz template image
  */
 KeyboardAccess.photoBoxKeydown(document, ".photo-box-href");
 
 /**
- * @event Keydown for clear banner image from quiz
+ * @event Keydown event for clear banner image from quiz
  */
 KeyboardAccess.clearKeydown(document, ".clear-key-href");
 
 /**
- * @event Click for clear banner image from quiz
+ * @event Click event for clear banner image from quiz
  */
 $(document).on({
     click: function(e) {
@@ -614,12 +614,12 @@ $(document).on({
 }, ".clear-key-href");
 
 /**
- * @event Keydown to show setting section
+ * @event Keydown event to show setting area
  */
 KeyboardAccess.keydownClick(document, ".show-setting");
 
 /**
- * @event Click to show setting section
+ * @event Click event to show setting area
  */
 $(document).on({
     click: function(e) {
@@ -632,12 +632,12 @@ $(document).on({
 }, ".show-setting");
 
 /**
- * @event Keydown for back to landing page
+ * @event Keydown event for back to landing page
  */
 KeyboardAccess.keydownClick(document, "#back");
 
 /**
- * @event Click for back to landing page
+ * @event Click event for back to landing page
  */
 $(document).on({
     click: function(e) {
@@ -657,7 +657,7 @@ $(document).on({
 KeyboardAccess.keydownClick(document, "#back-section2");
 
 /**
- * @event Event to back button on question area
+ * @event Event for back button on question area
  */
 $(document).on("click", "#back-section2", function() {
     $(".section-2").hide();
@@ -668,13 +668,13 @@ $(document).on("click", "#back-section2", function() {
 });
 
 /**
- * @event Keydown to clear image
+ * @event Keydown event to clear image
  */
 KeyboardAccess.clearQuizKeydown(document, ".clear-key-href");
 
 /* ****************************** Method ************************************* */
 /**
- * @description Method for quiz data and submit the datas
+ * @description Method submitForm for submitting quiz data
  */
 function submitForm() {
     /* Validate */
@@ -771,7 +771,7 @@ function submitForm() {
 }
 
 /**
- * @description Method to get questions and return question object
+ * @description Method getQuestionSet to get questions data with options and return question json object
  */
 function getQuestionSet() {
     let countquestion = $("form").find("div.container.question-container").length;
@@ -861,7 +861,7 @@ function getQuestionSet() {
 }
 
 /**
- * @description Method to get correct answers and retrun property object
+ * @description Method getCorrectAnswer gets correct answer and return correct answer json object
  */
 function getCorrectAnswer() {
     let questionCount = $("form").find("div.container.question-container").length;
@@ -895,7 +895,7 @@ function getCorrectAnswer() {
 }
 
 /**
- * @description Method to create Action Request and submit data to server
+ * @description Method createAction will create the stucture for quiz properties and execute the json data
  * @param action package id
  */
 function createAction(actionPackageId) {
@@ -982,7 +982,7 @@ function createAction(actionPackageId) {
 }
 
 /**
- * Initiate Method
+ * Initiate Method will call methods during page load
  */
 $(document).ready(function() {
     request = ActionHelper.getContextRequest();
@@ -991,7 +991,7 @@ $(document).ready(function() {
 });
 
 /**
- * @description Async method for fetching localization strings
+ * @description Method getStringKeys for fetching localization strings
  */
 async function getStringKeys() {
     Localizer.getString("quizTitle").then(function(result) {
@@ -1164,8 +1164,8 @@ async function getStringKeys() {
 }
 
 /**
- * @description Method to select theme based on the teams theme
- * @param request context request
+ * @description Method loadCreationPage to select theme and load quiz data if clicked on edit quiz button
+ * @param request context request object
  */
 async function loadCreationPage(request) {
     let response = await ActionHelper.executeApi(request);
@@ -1446,18 +1446,17 @@ async function loadCreationPage(request) {
 
 /********************************************   HTML Sections  ***********************************************************/
 /**
- * @description Quiz Landing Page
+ * @description Quiz Landing Page html
  */
 let formSection = UxUtils.getQuizLanding();
 
 /**
- * @description question Container Question Landing page
- * Change naming questionsContainer
+ * @description question Container Question Landing page html
  */
 let questionsContainer = UxUtils.getQuestionContainerLanding();
 
 /**
- * @description Question Section
+ * @description Question Section html
  */
 let questionArea = "";
 Localizer.getString("question").then(function(result) {
@@ -1466,16 +1465,16 @@ Localizer.getString("question").then(function(result) {
 });
 
 /**
- * @description Option Section
+ * @description Option Section html
  */
 let optionSection = UxUtils.getOptionSection();
 
 /**
- * @description Setting Section
+ * @description Setting Section html
  */
 let settingSection = UxUtils.getSettingBackButton();
 
 /**
- * @description Variable contains Loader
+ * @description Variable contains Loader html
  */
 let loader = UxUtils.getLoader();
