@@ -495,7 +495,7 @@ async function loadResponsView(request) {
 }
 
 /* Initiate Method and call methods during page load */
-$(document).ready(function() {
+$(function () {
     request = ActionHelper.getContextRequest();
     loadResponsView(request);
 });

@@ -984,7 +984,7 @@ function createAction(actionPackageId) {
 /**
  * Initiate Method will call methods during page load
  */
-$(document).ready(function() {
+$(function() {
     request = ActionHelper.getContextRequest();
     getStringKeys();
     loadCreationPage(request);

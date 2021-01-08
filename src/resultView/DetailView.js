@@ -344,7 +344,7 @@ $(document).on("click", "#change-quiz-date", function() {
 /**
  * @description Initiate Method
  */
-$(document).ready(function() {
+$(function () {
     OnPageLoad();
 });
 
