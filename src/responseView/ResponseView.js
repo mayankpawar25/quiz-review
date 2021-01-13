@@ -122,7 +122,7 @@ $(document).on("click", "#next", function() {
             } else {
                 if ($.trim($(".result-status:visible").text()).length == 0) {
                     checkAnswer(correctAnswer, answerKeys, attrName);
-                }else {
+                } else {
                     $root.find(".card-box-question").hide();
                     if ((parseInt(currentPage) == $root.find("div.card-box-question").length) && (parseInt(currentPage)) < maxQuestionCount) {
                         createQuestionView();
@@ -856,7 +856,7 @@ function nextButtonName() {
                 console.log("test 8");
                 $(".section-1-footer").find(".next-key").text(`${doneKey}`);
                 if (isShowAnswerEveryQuestion == "Yes") {
-                    if ($.trim($(".result-status:visible").text()).length == 0){
+                    if ($.trim($(".result-status:visible").text()).length == 0) {
                         $(".section-1-footer").find(".next-key").text(`${checkKey}`);
                     }
                 }
@@ -869,7 +869,7 @@ function nextButtonName() {
                 console.log("test 9");
                 $(".section-1-footer").find(".next-key").text(`${nextKey}`);
                 if (isShowAnswerEveryQuestion == "Yes") {
-                    if ($.trim($(".result-status:visible").text()).length == 0){
+                    if ($.trim($(".result-status:visible").text()).length == 0) {
                         $(".section-1-footer").find(".next-key").text(`${checkKey}`);
                     }
                 }

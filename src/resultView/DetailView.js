@@ -531,7 +531,7 @@ function getDataRows(actionId) {
             actionDataRows = batchResponse.responses[2].dataRows;
             if (actionDataRows == null) {
                 actionDataRowsLength = 0;
-            }else{
+            } else {
                 actionDataRowsLength = actionDataRows.length;
             }
             createBody();
@@ -1468,8 +1468,8 @@ function getCheckOptionsCreator(text, optId, ind, result, attachmentId) {
     /*  If answer is correct  and answered */
     if (result == "correct") {
         UxUtils.setAppend($oDiv, UxUtils.getCorrectCheckbox(optId, ind, text));
-    } else {UxUtils.getRadioboxSimple(optId, ind, text)
-        UxUtils.setAppend($oDiv, UxUtils.getCheckboxSimple(optId, ind, text));
+    } else {UxUtils.getRadioboxSimple(optId, ind, text);
+            UxUtils.setAppend($oDiv, UxUtils.getCheckboxSimple(optId, ind, text));
     }
     if (attachmentId.length > 0) {
         let req = ActionHelper.getAttachmentInfo(actionId, attachmentId);

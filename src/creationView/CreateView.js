@@ -766,7 +766,7 @@ function submitForm() {
             .executeApi(request)
             .then(function(response) {
                 createAction(response.context.actionPackageId);
-            })
+            });
             /* .catch(function(error) {
                 console.error("GetContext - Error1: " + JSON.stringify(error));
             }); */
@@ -1448,7 +1448,7 @@ async function loadCreationPage(request) {
         }, Constants.setIntervalTimeHundred());
     }
 
-    dateInput.datepicker().on("show", function(){
+    dateInput.datepicker().on("show", function() {
         let $calendarSelector = $(".datepicker.datepicker-dropdown.dropdown-menu");
         $calendarSelector.find(".prev").empty();
         $calendarSelector.find(".next").empty();
