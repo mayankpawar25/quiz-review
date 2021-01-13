@@ -1,12 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import "../common/utils/JqueryGlobal";
+import "bootstrap/dist/js/bootstrap";
+import "bootstrap-datepicker";
+import "bootstrap-datetime-picker";
+import "../common/utils/BootstrapLocaleFile";
+import "bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css";
+import "bootstrap-datetime-picker/css/bootstrap-datetimepicker.min.css";
 import { ActionHelper, Localizer } from "../common/ActionSdkHelper";
 import * as html2canvas from "html2canvas";
 import { UxUtils } from "./../common/utils/UxUtils";
 import { Utils } from "./../common/utils/Utils";
 import { KeyboardAccess } from "./../common/utils/KeyboardUtils";
-import "../../assets/js/bootstrap-localefile";
+import "../../assets/css/style-custom";
+import "../../assets/css/style-default";
 
 let actionContext = null;
 let actionInstance = null;
@@ -250,6 +258,11 @@ $(document).on({
         };
         dateInput.datepicker(options);
         dateInput.datepicker("setDate", setDate);
+        dateInput.datepicker().on("show", function () {
+            let $calendarSelector = $(".datepicker.datepicker-dropdown.dropdown-menu");
+            $calendarSelector.find(".prev").empty();
+            $calendarSelector.find(".next").empty();
+        });
         return false;
     }
 }, ".change-due-by-event");

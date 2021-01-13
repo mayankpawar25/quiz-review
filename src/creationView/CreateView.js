@@ -1,11 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+import "../common/utils/JqueryGlobal";
+import "bootstrap/dist/js/bootstrap";
+import "bootstrap-datepicker";
+import "bootstrap-datetime-picker";
+import "../common/utils/BootstrapLocaleFile";
+import "bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css";
+import "bootstrap-datetime-picker/css/bootstrap-datetimepicker.min.css";
 import { Localizer, ActionHelper } from "./../common/ActionSdkHelper";
 import { UxUtils } from "../common/utils/UxUtils";
 import { Constants } from "../common/utils/Constants";
 import { KeyboardAccess } from "../common/utils/KeyboardUtils";
 import { Utils } from "../common/utils/Utils";
-import "../../assets/js/bootstrap-localefile";
+import "../../assets/css/style-custom";
+import "../../assets/css/style-default";
 
 let request;
 let questions = new Array();
@@ -1440,6 +1448,11 @@ async function loadCreationPage(request) {
         }, Constants.setIntervalTimeHundred());
     }
 
+    dateInput.datepicker().on("show", function(){
+        let $calendarSelector = $(".datepicker.datepicker-dropdown.dropdown-menu");
+        $calendarSelector.find(".prev").empty();
+        $calendarSelector.find(".next").empty();
+    });
     $("form.sec1").show();
     await ActionHelper.hideLoader();
 }

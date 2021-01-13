@@ -1,9 +1,9 @@
 /**
- * Hindi translation for bootstrap-datepicker
+ * Malyalam translation for bootstrap-datepicker
  * Visar Uruqi <visar.uruqi@gmail.com>
  */
 ; (function($){
-	$.fn.datepicker.dates['hi'] = {
+	$.fn.datepicker.dates['ml'] = {
 		days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"],
 		daysShort: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"],
 		daysMin: ["ഞാ", "തി", "ചൊ", "ബു", "വ്യാ", "വെ", "ശ"],
@@ -15,7 +15,7 @@
 		weekStart: 1,
 		format: "dd / mm / yyyy"
 	};
-	$.fn.datetimepicker.dates['hi'] = {
+	$.fn.datetimepicker.dates['ml'] = {
 		days: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"],
 		daysShort: ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"],
 		daysMin: ["ഞാ", "തി", "ചൊ", "ബു", "വ്യാ", "വെ", "ശ"],

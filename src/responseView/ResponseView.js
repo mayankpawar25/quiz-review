@@ -1,11 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-
+import "../common/utils/JqueryGlobal";
+import "bootstrap/dist/js/bootstrap";
 import { ActionHelper, Localizer } from "../common/ActionSdkHelper";
 import { Constants } from "../common/utils/Constants";
 import { UxUtils } from "./../common/utils/UxUtils";
 import { Utils } from "./../common/utils/Utils";
 import { KeyboardAccess } from "./../common/utils/KeyboardUtils";
+import "../../assets/css/style-custom";
+import "../../assets/css/style-default";
 
 // Fetching HTML Elements in Variables by ID.
 let request;
