@@ -11,20 +11,20 @@ subscription.
 
 ![](./images/QuizCompose.gif)
 
-* [Solution Overview](Solution-overview.md)
+* [Solution Overview](Solution-overview)
 
 * Deploying the app
 
-  * [Deployment guide](Deployment-guide.md)
+  * [Deployment guide](Deployment-guide)
 
-  * [Troubleshooting](Troubleshooting.md)
+  * [Troubleshooting](Troubleshooting)
 
-  * [Continuous Deployment](Continuous-deployment.md)
+  * [Continuous Deployment](Continuous-deployment)
 
 * [Architecture](Architecture)
 
-* [Extending Quiz App Template](Taking-it-further.md)
+* [Extending Quiz App Template](Taking-it-further)
 
-* [Costing](Costing.md)
+* [Costing](Costing)
 
-* [FAQs](Frequently-asked-questions.md)
+* [FAQs](Frequently-asked-questions)

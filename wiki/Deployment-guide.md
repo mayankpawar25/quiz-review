@@ -105,4 +105,4 @@ If you want to update the existing Quiz Teams app with latest functionality -
 
 # Troubleshooting
 
-Please see our [Troubleshooting](./Troubleshooting.md) page
+Please see our [Troubleshooting](./Troubleshooting) page
