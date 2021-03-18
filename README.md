@@ -1,6 +1,6 @@
 # Quiz  App Template
 
-| [Documentation](./wiki/Home.md) | [Deployment guide](./wiki/Deployment-guide.md) | [Architecture](./wiki/Solution-overview.md) | [Costing](./wiki/Costing.md) |
+| [Documentation](https://github.com/mayankpawar25/quiz-review/wiki/Home) | [Deployment guide](https://github.com/mayankpawar25/quiz-review/wiki/Deployment-guide) | [Architecture](https://github.com/mayankpawar25/quiz-review/wiki/Solution-overview) | [Costing](https://github.com/mayankpawar25/quiz-review/wiki/Costing) |
 |---- | ---- | ---- | ---- |
 
 Quiz is a custom [Teams messaging
@@ -11,7 +11,7 @@ check within team and for fun quizzes within team. Quiz app is supported across
 all platforms – Teams desktop, browser, iOS, and Android clients. It is ready
 for deployment as part of your existing Microsoft 365 subscription.
 
-![](./wiki/images/QuizCompose.gif)
+![](https://github.com/mayankpawar25/quiz-review/wiki/images/QuizCompose.gif)
 
 ## Key features
 
@@ -22,14 +22,14 @@ define when the correct answers should be visible. In next page, add as many
 questions to the quiz and options to each question as you want, and also add
 images to each of these. When you are done, click **Send** to publish your Quiz.
 
-![](./wiki/images/QuizTemplateCreation.png)
+![](https://github.com/mayankpawar25/quiz-review/wiki/images/QuizTemplateCreation.png)
 
 * **Quiz response:** To respond to a Quiz, click **Respond** on the card. Read
     description of the quiz and attempt each question in subsequent screens.
 
-![](./wiki/images/QuizTemplateResponse1.png)
+![](https://github.com/mayankpawar25/quiz-review/wiki/images/QuizTemplateResponse1.png)
 
-![](./wiki/images/QuizTemplateResponse2.png)
+![](https://github.com/mayankpawar25/quiz-review/wiki/images/QuizTemplateResponse2.png)
 
 * **Quiz Results:** To see the results of your Quiz, click **View Result** on
     the card. You can view question wise result as well as your total score.
@@ -39,17 +39,17 @@ images to each of these. When you are done, click **Send** to publish your Quiz.
     Quiz. Also, download an image of your Quiz’s results or a .csv file of the
     response list by selecting **Download**.
 
-![](./wiki/images/QuizTemplateResult1.png)
+![](https://github.com/mayankpawar25/quiz-review/wiki/images/QuizTemplateResult1.png)
 
-![](./wiki/images/QuizTemplateResult2.png)
+![](https://github.com/mayankpawar25/quiz-review/wiki/images/QuizTemplateResult2.png)
 
 ## Get started
 
-Begin with the [Solution overview](./wiki/Solution-overview.md) to read about what the
+Begin with the [Solution overview](https://github.com/mayankpawar25/quiz-review/wiki/Solution-overview) to read about what the
 app does and how it works.
 
 When you're ready to try out Quiz, or to use it in your own organization, follow
-the steps in the [Deployment guide](./wiki/Deployment-guide.md).
+the steps in the [Deployment guide](https://github.com/mayankpawar25/quiz-review/wiki/Deployment-guide).
 
 ## Feedback 
 
