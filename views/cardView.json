@@ -38,7 +38,7 @@
                 "id": "Expiry",
                 "type": "TextBlock",
                 "$when": "${equals(action.status, 'Expired')}",
-                "text": "${strings.quizExpired}",
+                "text": "${strings.quiz_expired}",
                 "color": "attention",
                 "size": "small",
                 "wrap": true
